@@ -41,16 +41,19 @@ jobs:
           python-version: '3.10'
 
       - name: 🚀 Ejecutar Captura y Dealer Build
-        # AQUÍ ESTÁ EL CORAZÓN DE LA TAREA:
-        # Vi que tienes "npm run uw:daily" en package.json, así que lo pongo por defecto.
-        # Si prefieres correr scripts sueltos, puedes reemplazar esta línea por:
-        # run: |
-        #   node uw-capture.js
-        #   node scripts/dealer-builder.js
+        # Inyectamos los secretos y corremos el servidor local de Next.js en el fondo
         env:
           UW_EMAIL: ${{ secrets.UW_EMAIL }}
           UW_PASSWORD: ${{ secrets.UW_PASSWORD }}
-        run: npm run uw:daily
+        run: |
+          # 1. Levantamos Next.js en el puerto 3002 en el fondo (background) para proveer data de Yahoo
+          npx next dev -p 3002 &
+          
+          # 2. Esperamos unos segundos a que levante el servidor
+          sleep 15
+          
+          # 3. Corremos la recolección
+          npm run uw:daily
 
       - name: 💾 Commit & Push de los nuevos datos
         run: |

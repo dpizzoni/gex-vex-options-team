@@ -396,7 +396,7 @@ async function run() {
   // Step 6: Open browser
   console.log("Launching browser...");
   const browser = await chromium.launch({
-    headless: false,
+    headless: process.env.CI ? true : false,
     args: [
       '--start-maximized',
       '--disable-features=Translate'
@@ -570,4 +570,7 @@ async function run() {
   }
 }
 
-run().catch(console.error);
+run().catch(err => {
+  console.error("Unhandled execution error:", err);
+  process.exit(1);
+});

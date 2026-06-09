@@ -405,7 +405,8 @@ async function run() {
 
   const contextOptions = {
     viewport: { width: 1366, height: 768 },
-    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+    locale: 'es-AR'
   };
   if (fs.existsSync(STATE_FILE)) {
     contextOptions.storageState = STATE_FILE;

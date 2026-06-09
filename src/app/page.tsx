@@ -55,36 +55,26 @@ interface OptionsResponse {
 }
 
 export default function Home() {
-  const getStoredItem = (key: string, defaultValue: string) => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem(key) || defaultValue;
-    }
-    return defaultValue;
-  };
-
-  const [symbol, setSymbol] = useState<string>(() => getStoredItem("gex_vex_symbol", "SPY"));
+  const [symbol, setSymbol] = useState<string>("SPY");
   const [customTicker, setCustomTicker] = useState<string>("");
   const [data, setData] = useState<OptionsResponse | null>(null);
-  const [selectedExp, setSelectedExp] = useState<string>(() => getStoredItem("gex_vex_selectedExp", ""));
+  const [selectedExp, setSelectedExp] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [filterType, setFilterType] = useState<"ALL" | "CALL" | "PUT">(() => getStoredItem("gex_vex_filterType", "ALL") as any);
-  const [exposureMode, setExposureMode] = useState<"RAW" | "DEALER">(() => getStoredItem("gex_vex_exposureMode", "DEALER") as any);
+  const [filterType, setFilterType] = useState<"ALL" | "CALL" | "PUT">("ALL");
+  const [exposureMode, setExposureMode] = useState<"RAW" | "DEALER">("DEALER");
   const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' } | null>(null);
 
   // Matrix Mode State
-  const [viewMode, setViewMode] = useState<"chain" | "matrix">(() => getStoredItem("gex_vex_viewMode", "matrix") as any);
+  const [viewMode, setViewMode] = useState<"chain" | "matrix">("matrix");
   const matrixAggregation = exposureMode;
-  const [matrixExpMode, setMatrixExpMode] = useState<"SINGLE" | "MULTI">(() => getStoredItem("gex_vex_matrixExpMode", "SINGLE") as any);
-  const [matrixSelectedExps, setMatrixSelectedExps] = useState<string[]>(() => {
-    const stored = getStoredItem("gex_vex_matrixSelectedExps", "");
-    return stored ? JSON.parse(stored) : [];
-  });
+  const [matrixExpMode, setMatrixExpMode] = useState<"SINGLE" | "MULTI">("SINGLE");
+  const [matrixSelectedExps, setMatrixSelectedExps] = useState<string[]>([]);
   const [matrixRelevantOnly, setMatrixRelevantOnly] = useState<boolean>(false);
-  const [matrixStrikeWindow, setMatrixStrikeWindow] = useState<10 | 20 | 30 | 0>(() => parseInt(getStoredItem("gex_vex_matrixStrikeWindow", "10")) as any);
+  const [matrixStrikeWindow, setMatrixStrikeWindow] = useState<10 | 20 | 30 | 0>(10);
   const [matrixRawData, setMatrixRawData] = useState<MatrixRawData[]>([]);
   const [matrixLoading, setMatrixLoading] = useState<boolean>(false);
-  const [matrixDisplayFormat, setMatrixDisplayFormat] = useState<"HEATMAP" | "TABLE">(() => getStoredItem("gex_vex_matrixDisplayFormat", "HEATMAP") as any);
+  const [matrixDisplayFormat, setMatrixDisplayFormat] = useState<"HEATMAP" | "TABLE">("HEATMAP");
   // Dealer Engine State
   const [dealerCache, setDealerCache] = useState<Record<string, any> | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -130,8 +120,43 @@ export default function Home() {
     currentTickerRef.current = symbol;
   }, [symbol]);
 
+  const [hasLoadedStorage, setHasLoadedStorage] = useState(false);
+
   useEffect(() => {
     if (typeof window !== "undefined") {
+      const savedSymbol = localStorage.getItem("gex_vex_symbol");
+      if (savedSymbol) setSymbol(savedSymbol);
+      
+      const savedExp = localStorage.getItem("gex_vex_selectedExp");
+      if (savedExp) setSelectedExp(savedExp);
+
+      const savedFilter = localStorage.getItem("gex_vex_filterType");
+      if (savedFilter) setFilterType(savedFilter as any);
+
+      const savedExposure = localStorage.getItem("gex_vex_exposureMode");
+      if (savedExposure) setExposureMode(savedExposure as any);
+
+      const savedViewMode = localStorage.getItem("gex_vex_viewMode");
+      if (savedViewMode) setViewMode(savedViewMode as any);
+
+      const savedMatrixExp = localStorage.getItem("gex_vex_matrixExpMode");
+      if (savedMatrixExp) setMatrixExpMode(savedMatrixExp as any);
+
+      const savedMatrixSelected = localStorage.getItem("gex_vex_matrixSelectedExps");
+      if (savedMatrixSelected) setMatrixSelectedExps(JSON.parse(savedMatrixSelected));
+
+      const savedStrikeWindow = localStorage.getItem("gex_vex_matrixStrikeWindow");
+      if (savedStrikeWindow) setMatrixStrikeWindow(parseInt(savedStrikeWindow) as any);
+
+      const savedDisplayFormat = localStorage.getItem("gex_vex_matrixDisplayFormat");
+      if (savedDisplayFormat) setMatrixDisplayFormat(savedDisplayFormat as any);
+
+      setHasLoadedStorage(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (hasLoadedStorage && typeof window !== "undefined") {
       localStorage.setItem("gex_vex_symbol", symbol);
       if (selectedExp) localStorage.setItem("gex_vex_selectedExp", selectedExp);
       localStorage.setItem("gex_vex_filterType", filterType);
@@ -142,7 +167,7 @@ export default function Home() {
       localStorage.setItem("gex_vex_matrixStrikeWindow", matrixStrikeWindow.toString());
       localStorage.setItem("gex_vex_matrixDisplayFormat", matrixDisplayFormat);
     }
-  }, [symbol, selectedExp, filterType, exposureMode, viewMode, matrixExpMode, matrixSelectedExps, matrixStrikeWindow, matrixDisplayFormat]);
+  }, [hasLoadedStorage, symbol, selectedExp, filterType, exposureMode, viewMode, matrixExpMode, matrixSelectedExps, matrixStrikeWindow, matrixDisplayFormat]);
 
 
 
@@ -222,20 +247,22 @@ export default function Home() {
     }
   }, [viewMode, displayExpirations, symbol, fetchMatrixData, matrixRawData.length, matrixLoading, data?.symbol]);
 
-  const isInitialLoad = useRef(true);
+  const isInitialFetch = useRef(true);
 
   // Fetch when symbol changes
   useEffect(() => {
+    if (!hasLoadedStorage) return;
+
     setMatrixRawData([]);
     let expToFetch = undefined;
-    if (isInitialLoad.current) {
-       expToFetch = typeof window !== 'undefined' ? localStorage.getItem("gex_vex_selectedExp") || undefined : undefined;
-       isInitialLoad.current = false;
+    if (isInitialFetch.current) {
+       expToFetch = selectedExp || undefined;
+       isInitialFetch.current = false;
     } else {
        setSelectedExp("");
     }
     fetchOptions(symbol, expToFetch);
-  }, [symbol, fetchOptions]);
+  }, [symbol, hasLoadedStorage, fetchOptions]); // excluding selectedExp since we only use it on initial fetch
 
   // Handle expiration tab change
   const handleExpirationChange = (expDate: string) => {

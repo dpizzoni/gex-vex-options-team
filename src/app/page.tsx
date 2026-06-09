@@ -55,26 +55,36 @@ interface OptionsResponse {
 }
 
 export default function Home() {
-  const [symbol, setSymbol] = useState<string>("SPY");
+  const getStoredItem = (key: string, defaultValue: string) => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(key) || defaultValue;
+    }
+    return defaultValue;
+  };
+
+  const [symbol, setSymbol] = useState<string>(() => getStoredItem("gex_vex_symbol", "SPY"));
   const [customTicker, setCustomTicker] = useState<string>("");
   const [data, setData] = useState<OptionsResponse | null>(null);
-  const [selectedExp, setSelectedExp] = useState<string>("");
+  const [selectedExp, setSelectedExp] = useState<string>(() => getStoredItem("gex_vex_selectedExp", ""));
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [filterType, setFilterType] = useState<"ALL" | "CALL" | "PUT">("ALL");
-  const [exposureMode, setExposureMode] = useState<"RAW" | "DEALER">("DEALER");
+  const [filterType, setFilterType] = useState<"ALL" | "CALL" | "PUT">(() => getStoredItem("gex_vex_filterType", "ALL") as any);
+  const [exposureMode, setExposureMode] = useState<"RAW" | "DEALER">(() => getStoredItem("gex_vex_exposureMode", "DEALER") as any);
   const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' } | null>(null);
 
   // Matrix Mode State
-  const [viewMode, setViewMode] = useState<"chain" | "matrix">("matrix");
+  const [viewMode, setViewMode] = useState<"chain" | "matrix">(() => getStoredItem("gex_vex_viewMode", "matrix") as any);
   const matrixAggregation = exposureMode;
-  const [matrixExpMode, setMatrixExpMode] = useState<"SINGLE" | "MULTI">("SINGLE");
-  const [matrixSelectedExps, setMatrixSelectedExps] = useState<string[]>([]);
+  const [matrixExpMode, setMatrixExpMode] = useState<"SINGLE" | "MULTI">(() => getStoredItem("gex_vex_matrixExpMode", "SINGLE") as any);
+  const [matrixSelectedExps, setMatrixSelectedExps] = useState<string[]>(() => {
+    const stored = getStoredItem("gex_vex_matrixSelectedExps", "");
+    return stored ? JSON.parse(stored) : [];
+  });
   const [matrixRelevantOnly, setMatrixRelevantOnly] = useState<boolean>(false);
-  const [matrixStrikeWindow, setMatrixStrikeWindow] = useState<10 | 20 | 30 | 0>(10);
+  const [matrixStrikeWindow, setMatrixStrikeWindow] = useState<10 | 20 | 30 | 0>(() => parseInt(getStoredItem("gex_vex_matrixStrikeWindow", "10")) as any);
   const [matrixRawData, setMatrixRawData] = useState<MatrixRawData[]>([]);
   const [matrixLoading, setMatrixLoading] = useState<boolean>(false);
-  const [matrixDisplayFormat, setMatrixDisplayFormat] = useState<"HEATMAP" | "TABLE">("HEATMAP");
+  const [matrixDisplayFormat, setMatrixDisplayFormat] = useState<"HEATMAP" | "TABLE">(() => getStoredItem("gex_vex_matrixDisplayFormat", "HEATMAP") as any);
   // Dealer Engine State
   const [dealerCache, setDealerCache] = useState<Record<string, any> | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -119,6 +129,20 @@ export default function Home() {
   useEffect(() => {
     currentTickerRef.current = symbol;
   }, [symbol]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("gex_vex_symbol", symbol);
+      if (selectedExp) localStorage.setItem("gex_vex_selectedExp", selectedExp);
+      localStorage.setItem("gex_vex_filterType", filterType);
+      localStorage.setItem("gex_vex_exposureMode", exposureMode);
+      localStorage.setItem("gex_vex_viewMode", viewMode);
+      localStorage.setItem("gex_vex_matrixExpMode", matrixExpMode);
+      localStorage.setItem("gex_vex_matrixSelectedExps", JSON.stringify(matrixSelectedExps));
+      localStorage.setItem("gex_vex_matrixStrikeWindow", matrixStrikeWindow.toString());
+      localStorage.setItem("gex_vex_matrixDisplayFormat", matrixDisplayFormat);
+    }
+  }, [symbol, selectedExp, filterType, exposureMode, viewMode, matrixExpMode, matrixSelectedExps, matrixStrikeWindow, matrixDisplayFormat]);
 
 
 
@@ -198,10 +222,19 @@ export default function Home() {
     }
   }, [viewMode, displayExpirations, symbol, fetchMatrixData, matrixRawData.length, matrixLoading, data?.symbol]);
 
+  const isInitialLoad = useRef(true);
+
   // Fetch when symbol changes
   useEffect(() => {
     setMatrixRawData([]);
-    fetchOptions(symbol);
+    let expToFetch = undefined;
+    if (isInitialLoad.current) {
+       expToFetch = typeof window !== 'undefined' ? localStorage.getItem("gex_vex_selectedExp") || undefined : undefined;
+       isInitialLoad.current = false;
+    } else {
+       setSelectedExp("");
+    }
+    fetchOptions(symbol, expToFetch);
   }, [symbol, fetchOptions]);
 
   // Handle expiration tab change

@@ -30,7 +30,7 @@ jobs:
           cache: 'npm'
 
       - name: 📦 Instalar dependencias Node
-        run: npm ci
+        run: npm install
 
       - name: 🌐 Instalar navegadores Playwright (para UW)
         # Vi que tienes playwright en el package.json, esto es crucial para que el scraper funcione en GitHub.

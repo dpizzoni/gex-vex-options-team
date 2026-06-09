@@ -304,6 +304,25 @@ export default function Home() {
     }
   };
 
+  const autoRefreshFn = useRef<() => void>(() => {});
+  autoRefreshFn.current = () => {
+    handleRefresh();
+    if (viewMode === "matrix" && displayExpirations.length > 0) {
+      if (data?.symbol === symbol) {
+        fetchMatrixData(symbol, displayExpirations);
+      }
+    } else {
+      fetchOptions(symbol, selectedExp || undefined);
+    }
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      autoRefreshFn.current();
+    }, 10 * 60 * 1000); // 10 minutes
+    return () => clearInterval(interval);
+  }, []);
+
   // Format GEX values to standard professional abbreviations (e.g. $1.2M, -$450K)
   const formatGex = (val: number) => {
     const absVal = Math.abs(val);

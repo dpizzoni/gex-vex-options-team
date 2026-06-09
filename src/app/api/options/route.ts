@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const quote = await yahooFinance.quote(symbol);
+    const quote = await yahooFinance.quote(symbol) as any;
     const spot = quote.regularMarketPrice || quote.ask || quote.bid;
 
     if (!spot) {

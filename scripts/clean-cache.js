@@ -59,6 +59,5 @@ async function main() {
   
   console.log('\nCache cleanup routine complete.');
 }
-}
 
 main().catch(console.error);

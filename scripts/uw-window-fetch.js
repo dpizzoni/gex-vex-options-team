@@ -410,69 +410,68 @@ async function run() {
   const page = await context.newPage();
 
   // Verify session login for fsuar813@gmail.com
-  console.log("Checking if user fsuar813@gmail.com is logged in...");
+  console.log("Checking if user is logged in...");
+  const userEmail = process.env.UW_EMAIL ? process.env.UW_EMAIL.toLowerCase() : "fsuar813@gmail.com";
   
   async function checkUserLoggedIn(p) {
     try {
       await p.goto("https://unusualwhales.com/settings", { waitUntil: "networkidle", timeout: 20000 });
       const html = await p.content();
-      if (html.toLowerCase().includes("fsuar813@gmail.com")) {
-        return true;
-      }
+      if (html.toLowerCase().includes(userEmail)) return true;
     } catch (e) {
       console.log("Settings page check failed/timed out, checking homepage fallback...");
     }
     try {
       await p.goto("https://unusualwhales.com/", { waitUntil: "networkidle", timeout: 20000 });
       const html = await p.content();
-      return html.toLowerCase().includes("fsuar813@gmail.com");
+      return html.toLowerCase().includes(userEmail);
     } catch (e) {
       return false;
     }
   }
 
-  let isLoggedIn = await checkUserLoggedIn(page);
-  
-  if (!isLoggedIn) {
-    console.log("User fsuar813@gmail.com is NOT logged in. Attempting automatic login...");
-    await page.goto('https://unusualwhales.com/login', { waitUntil: 'networkidle', timeout: 30000 });
-    console.log(`Inserting credentials for: ${process.env.UW_EMAIL}`);
-    try {
-      // Find email input by placeholder, name, type, or ID
-      const emailInput = page.locator('input[type="email"], input[name="email"], input[placeholder*="@"], input[placeholder*="email"], input[placeholder*="Address"]').first();
-      // Find password input by placeholder, name, type, or ID
-      const passwordInput = page.locator('input[type="password"], input[name="password"], input[placeholder*="password"]').first();
+  async function ensureLoggedIn(p, ctx) {
+    let loggedIn = await checkUserLoggedIn(p);
+    if (!loggedIn) {
+      console.log(`User ${userEmail} is NOT logged in. Attempting automatic login...`);
+      await p.goto('https://unusualwhales.com/login', { waitUntil: 'networkidle', timeout: 30000 });
+      try {
+        const emailInput = p.locator('input[type="email"], input[name="email"], input[placeholder*="@"], input[placeholder*="email"], input[placeholder*="Address"]').first();
+        const passwordInput = p.locator('input[type="password"], input[name="password"], input[placeholder*="password"]').first();
 
-      await emailInput.waitFor({ state: 'visible', timeout: 15000 });
-      await emailInput.fill(process.env.UW_EMAIL);
-      await passwordInput.fill(process.env.UW_PASSWORD);
-      
-      const loginButton = page.getByRole('button', { name: 'Sign in', exact: true });
-      await loginButton.click();
-      
-      console.log("Submitting login form... Waiting for redirect...");
-      await page.waitForURL('**/unusualwhales.com/**', { timeout: 20000 });
-      await page.waitForLoadState('networkidle');
-      await page.waitForTimeout(3000); 
+        await emailInput.waitFor({ state: 'visible', timeout: 15000 });
+        await emailInput.fill(process.env.UW_EMAIL);
+        await passwordInput.fill(process.env.UW_PASSWORD);
+        
+        const loginButton = p.getByRole('button', { name: 'Sign in', exact: true });
+        await loginButton.click();
+        
+        console.log("Submitting login form... Waiting for redirect...");
+        await p.waitForURL('**/unusualwhales.com/**', { timeout: 20000 });
+        await p.waitForLoadState('networkidle');
+        await p.waitForTimeout(3000); 
 
-      // Save the state to STATE_FILE so it is persistent
-      await context.storageState({ path: STATE_FILE });
-      console.log(`Session state updated and saved to ${STATE_FILE}`);
-      
-      // Verify login using checkUserLoggedIn helper (navigates to settings/home)
-      isLoggedIn = await checkUserLoggedIn(page);
-      if (!isLoggedIn) {
-        throw new Error("Email still not found after login attempt");
+        await ctx.storageState({ path: STATE_FILE });
+        console.log(`Session state updated and saved to ${STATE_FILE}`);
+        
+        loggedIn = await checkUserLoggedIn(p);
+        if (!loggedIn) throw new Error("Email still not found after login attempt");
+      } catch (loginErr) {
+        console.error("\n==================================================================");
+        console.error("ERROR: Automatic login failed!", loginErr.message);
+        console.error("==================================================================\n");
+        throw loginErr;
       }
-    } catch (loginErr) {
-      console.error("\n==================================================================");
-      console.error("ERROR: Automatic login failed!", loginErr.message);
-      console.error("==================================================================\n");
-      await browser.close();
-      process.exit(1);
     }
+    console.log(`Session verified! User ${userEmail} is logged in.`);
   }
-  console.log("Session verified! User fsuar813@gmail.com is logged in.");
+
+  try {
+    await ensureLoggedIn(page, context);
+  } catch (err) {
+    await browser.close();
+    process.exit(1);
+  }
 
   // Load errors log
   let errors = [];
@@ -531,6 +530,22 @@ async function run() {
 
     } catch (err) {
       console.error(`Error processing ${item.contractId}:`, err.message);
+      
+      // Check if we got logged out
+      try {
+        const stillLoggedIn = await checkUserLoggedIn(page);
+        if (!stillLoggedIn) {
+          console.log("⚠️ DETECTED LOGOUT DURING QUEUE. Attempting to recover session...");
+          await ensureLoggedIn(page, context);
+          console.log("✅ Session recovered. Retrying contract...");
+          i--; // Retry current contract
+          processCount--; // Adjust progress count
+          continue; // Skip adding to errors
+        }
+      } catch (recoverErr) {
+        console.error("Failed to recover session:", recoverErr.message);
+      }
+
       errors.push({
         contractId: item.contractId,
         error: err.message,

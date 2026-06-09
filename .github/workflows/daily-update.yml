@@ -1,0 +1,67 @@
+name: Daily Market Update & UW Capture
+
+# Este workflow se ejecutará automáticamente de lunes a viernes.
+# Nota: La hora en el cron se define en UTC. 
+# 10:30 UTC = 06:30 AM EST (Nueva York) / 07:30 AM (Argentina/Chile, dependiendo de horario de verano).
+# Ajusta el cron según tu zona horaria exacta para que corra antes de la apertura.
+on:
+  schedule:
+    - cron: '30 10 * * 1-5'
+  workflow_dispatch: # Esto agrega un botón en GitHub para que puedas forzar la ejecución manualmente
+
+# Damos permiso al bot para que pueda hacer commit y push con los JSON nuevos
+permissions:
+  contents: write
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Checkout del código
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 📦 Instalar dependencias Node
+        run: npm install
+
+      - name: 🌐 Instalar navegadores Playwright (para UW)
+        # Vi que tienes playwright en el package.json, esto es crucial para que el scraper funcione en GitHub.
+        run: npx playwright install chromium --with-deps
+
+      - name: 🐍 Setup Python (Opcional)
+        # Por si test_yf.py o alguna otra herramienta usa Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: 🚀 Ejecutar Captura y Dealer Build
+        # AQUÍ ESTÁ EL CORAZÓN DE LA TAREA:
+        # Vi que tienes "npm run uw:daily" en package.json, así que lo pongo por defecto.
+        # Si prefieres correr scripts sueltos, puedes reemplazar esta línea por:
+        # run: |
+        #   node uw-capture.js
+        #   node scripts/dealer-builder.js
+        env:
+          UW_EMAIL: ${{ secrets.UW_EMAIL }}
+          UW_PASSWORD: ${{ secrets.UW_PASSWORD }}
+        run: npm run uw:daily
+
+      - name: 💾 Commit & Push de los nuevos datos
+        run: |
+          git config --global user.name 'GitHub Action Bot'
+          git config --global user.email 'action@github.com'
+          
+          # Agregamos los archivos modificados (la carpeta cache donde se guardan los JSON)
+          git add cache/ capture_state.json errors.json || true
+          
+          # Si todo está bien, hace el commit. El [skip ci] evita que se desencadenen otros workflows accidentalmente
+          git commit -m "chore(data): daily UW capture & dealer update [skip ci]" || echo "No hay datos nuevos para guardar"
+          
+          # Sube los cambios a tu repositorio
+          git push

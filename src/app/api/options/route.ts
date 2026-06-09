@@ -4,6 +4,7 @@ import YF from 'yahoo-finance2';
 const yahooFinance = new YF({ suppressNotices: ['yahooSurvey'] });
 
 export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 
 function calculateGamma(S: number, K: number, T: number, r: number, sigma: number): number {
   if (T <= 0) T = 1e-5;
@@ -36,7 +37,7 @@ export async function GET(request: NextRequest) {
 
     const resultWithExps = await yahooFinance.options(symbol) as any;
     if (!resultWithExps || !resultWithExps.expirationDates || resultWithExps.expirationDates.length === 0) {
-      return NextResponse.json({ spot, expirations: [], calls: [], puts: [] });
+      return NextResponse.json({ spot, symbol, expirations: [], calls: [], puts: [] });
     }
 
     const expirations = resultWithExps.expirationDates.map((d: Date) => d.toISOString().split('T')[0]).sort();
@@ -144,6 +145,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       spot,
+      symbol,
       expirations,
       selectedExpiration: finalExp,
       calls,

@@ -103,6 +103,9 @@
   background: #0f172a !important;
   box-shadow: 1px 1px 0 rgba(255,255,255,0.1) !important;
   text-align: left !important;
+  width: 25%;
+  min-width: 80px;
+  white-space: nowrap;
 }
 
 .stickyStrikeCell {
@@ -113,9 +116,9 @@
   z-index: 5;
   text-align: left !important;
   box-shadow: 1px 0 0 rgba(255,255,255,0.05);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  width: 25%;
+  min-width: 80px;
+  white-space: nowrap;
 }
 
 .nearTheMoney .stickyStrikeCell {

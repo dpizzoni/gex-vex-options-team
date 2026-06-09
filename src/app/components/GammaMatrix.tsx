@@ -337,10 +337,12 @@ export default function GammaMatrix({
                 onMouseLeave={() => onHoverStrike && onHoverStrike(null)}
               >
                 <td className={styles.stickyStrikeCell}>
-                  {st.toFixed(0)}
-                  {Math.abs(st - spot) < (strikes[0] - strikes[1]) && (
-                    <span className={styles.spotIndicator}>SPOT</span>
-                  )}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span>{Number.isInteger(st) ? st : Number(st.toFixed(2))}</span>
+                    {Math.abs(st - spot) < (strikes[0] - strikes[1]) && (
+                      <span className={styles.spotIndicator}>SPOT</span>
+                    )}
+                  </div>
                 </td>
                 {expirations.map(exp => {
                   const cell = matrixData.get(st)?.get(exp);

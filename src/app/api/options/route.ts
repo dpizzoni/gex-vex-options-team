@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: `Could not retrieve spot price for ${symbol}` }, { status: 404 });
     }
 
-    const resultWithExps = await yahooFinance.options(symbol);
+    const resultWithExps = await yahooFinance.options(symbol) as any;
     if (!resultWithExps || !resultWithExps.expirationDates || resultWithExps.expirationDates.length === 0) {
       return NextResponse.json({ spot, expirations: [], calls: [], puts: [] });
     }
@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
       selectedExp = expirations[0];
     }
 
-    const chainData = await yahooFinance.options(symbol, { date: new Date(selectedExp) });
+    const chainData = await yahooFinance.options(symbol, { date: new Date(selectedExp) }) as any;
     const chain = chainData.options[0] || { calls: [], puts: [] };
 
     const expDate = new Date(selectedExp);

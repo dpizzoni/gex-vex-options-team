@@ -531,6 +531,16 @@ async function run() {
     } catch (err) {
       console.error(`Error processing ${item.contractId}:`, err.message);
       
+      // Save debug screenshot
+      try {
+        const debugDir = path.join(__dirname, '..', 'debug');
+        if (!fs.existsSync(debugDir)) fs.mkdirSync(debugDir, { recursive: true });
+        await page.screenshot({ path: path.join(debugDir, `error_${item.contractId}.png`), fullPage: true });
+        console.log(`Saved debug screenshot for ${item.contractId}`);
+      } catch (screenshotErr) {
+        console.error("Failed to take debug screenshot:", screenshotErr.message);
+      }
+      
       // Check if we got logged out
       try {
         const stillLoggedIn = await checkUserLoggedIn(page);

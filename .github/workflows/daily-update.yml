@@ -61,5 +61,5 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore(data): daily UW capture & dealer update [skip ci]"
-          file_pattern: "cache/ capture_state.json errors.json"
+          file_pattern: "cache/ debug/ capture_state.json errors.json"
           skip_fetch: false

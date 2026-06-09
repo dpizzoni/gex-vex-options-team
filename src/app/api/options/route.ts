@@ -81,8 +81,8 @@ export async function GET(request: NextRequest) {
       };
     };
 
-    const calls = (chain.calls || []).map(c => formatContract(c, true));
-    const puts = (chain.puts || []).map(p => formatContract(p, false));
+    const calls = (chain.calls || []).map((c: any) => formatContract(c, true));
+    const puts = (chain.puts || []).map((p: any) => formatContract(p, false));
 
     const strikeGexMap = new Map<number, number>();
     for (const c of calls) strikeGexMap.set(c.strike, (strikeGexMap.get(c.strike) || 0) + c.gex);

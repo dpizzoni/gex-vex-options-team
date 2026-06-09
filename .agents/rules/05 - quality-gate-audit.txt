@@ -1,0 +1,52 @@
+# 5. Visual & Functional Quality Gate – Comando: /audit
+
+Cuando el usuario escriba exactamente "/audit" o "ejecutar audit":
+
+Ejecuta este procedimiento completo en orden.
+
+Step 1 – Environmental Check
+- Abre el browser integrado si es posible
+- Verifica que el build sea estable (npm run dev o similar)
+- Confirma render inicial (Next.js App Router)
+
+Step 2 – Visual Excellence Audit
+Criterios obligatorios (evalúa 1–10 cada uno):
+1. Information Architecture (IA): escaneable < 3s, organizado por objetivos del usuario
+2. Modular Bento Grid: grid limpio, alta densidad, spacing consistente
+3. Glassmorphism: blur y transparencias consistentes
+4. Typography: legible, reactiva, kinetic si aplica
+5. Sidebar: visualmente silenciosa, agrupada por intención
+
+Step 3 – Interaction & Trust Audit
+Stress test UX:
+1. Immediate Feedback (<100ms)
+2. System States obligatorios: Loading (skeletons), Empty (CTA claro), Error (mensajes amigables), Success (toast)
+3. Optimistic UI: actualiza antes del server response
+4. Intent Check: modals para destructivas, popovers para ediciones rápidas
+
+Step 4 – Audit Report (output obligatorio)
+Estructura fija:
+- Squad Status (de PLAN.md si existe)
+- Visual Score [1-10]
+- Functional Score [1-10]
+- Trust Score [1-10]
+- Visual Wins
+- Critical Fails (Immediate Fix Required)
+- Logic & Trust Bugs
+
+Step 5 – Recursive Self-Correction Loop (CRÍTICO)
+Umbral: 9/10 en cada categoría.
+Si alguna < 9:
+1. Diagnose → analiza fails y bugs
+2. Assign & Fix:
+   - Visual <9 → asume rol Design Lead → refactor CSS/layout
+   - Functional <9 → asume rol Builder → fix lógica
+3. Validate → re-ejecuta /audit automáticamente
+Stop cuando:
+- Todas >=9  O
+- 3 intentos fallidos → responde "Blocked – escalar a humano" + estado actual
+
+Step 6 – Final Sync
+Cuando todas >=9:
+- Actualiza PLAN.md → agrega "Verified & Polished" en Current Trajectory
+- Sugiere commit con prefijo: [AUTO-HEALED] ...

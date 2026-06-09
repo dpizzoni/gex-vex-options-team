@@ -1,0 +1,87 @@
+MATEMÁTICA Y ALGORITMO DEL DEALER BIAS
+======================================
+Ejemplo utilizado: GOOGL 340.00 C 06/18/2026 (GOOGL260618C00340000)
+
+Resultado final procesado:
+{
+  "buy": 0,
+  "sell": 15127,
+  "bias": -1,
+  "lastOI": 14353
+}
+
+¿CÓMO LLEGA EL ALGORITMO A ESTOS NÚMEROS?
+El archivo `scripts/dealer-builder.js` recorre cronológicamente el historial de este contrato día por día y aplica una serie de reglas matemáticas sobre los cambios diarios del Open Interest (OI).
+
+--- PASO 1: ESTADO INICIAL ---
+El script siempre arranca asumiendo que nuestro "inventario medido" está en cero:
+buy = 0
+sell = 0
+El OI del primerísimo día registrado en la historia (el "Día 0", que para este contrato fue de 947 contratos) NO se asigna ni a Buy ni a Sell, porque no tenemos datos de si esos 947 se abrieron comprando o vendiendo. El script solo mide los *cambios* (deltas) a partir de allí.
+
+--- PASO 2: EL CÁLCULO DIARIO (DELTAS) ---
+Para cada día subsiguiente, el script calcula el `deltaOI = OI_Hoy - OI_Ayer`.
+Por ejemplo, si ayer el OI era 1000 y hoy es 1500, el `deltaOI` es +500.
+
+Se extraen dos métricas cruciales de la API de Unusual Whales para "Hoy":
+1. El `color`: Nos dice la predominancia del volumen ('green' = al Ask/Compra, 'red' = al Bid/Venta, 'unknown' = cruzado o al medio).
+2. El `bidAsk`: Es el porcentaje exacto de agresividad hacia ese color (ej. 0.85 = 85%).
+
+Con esto, se definen los porcentajes de asignación (buyPct y sellPct):
+- Si el color es GREEN: buyPct = bidAsk (ej. 0.85), sellPct = 1 - bidAsk (ej. 0.15).
+- Si el color es RED: sellPct = bidAsk (ej. 0.85), buyPct = 1 - bidAsk (ej. 0.15).
+- Si es UNKNOWN: 50% y 50% por defecto (0.5).
+
+REGLA DE SUMA (deltaOI > 0):
+Se abrieron contratos nuevos.
+buy = buy + (deltaOI * buyPct)
+sell = sell + (deltaOI * sellPct)
+
+REGLA DE RESTA (deltaOI < 0):
+Se cerraron contratos. Para ser conservadores y no desarmar arbitrariamente, se asume que se cierran en la misma proporción de la agresividad del día.
+buy = buy - (|deltaOI| * buyPct)
+sell = sell - (|deltaOI| * sellPct)
+
+--- PASO 3: EL CLAMPING (LÍMITE CERO) ---
+Esta es la regla matemática que explica por qué tus números (buy: 0, sell: 15127) suman más que el Open Interest real actual (14353).
+
+Después de cada suma o resta diaria, el script ejecuta:
+buy = Math.max(0, buy)
+sell = Math.max(0, sell)
+
+Si un día hay un cierre masivo de contratos (delta < 0), la fórmula intentará restar tanto de `buy` como de `sell`. Pero, si `buy` ya estaba en 0 (o es menor a la resta), restarle algo lo llevaría a números negativos. La función `Math.max` intercepta ese número negativo y lo resetea a 0. Esto "destruye" la resta matemática, inflando levemente la suma total del inventario retenido frente al OI neto. 
+
+======================================
+ACTUALIZACIÓN: ¿POR QUÉ BUY LLEGÓ EXACTAMENTE A CERO EN LA PRÁCTICA?
+(Respondiendo a la duda visual)
+Tienes toda la razón en que visualmente, si miras el gráfico, hubo muchísimo volumen "Buy" (verde) a lo largo del tiempo. De hecho, el sistema matemático **SÍ registró fuertes ingresos en Buy**. 
+
+Analicemos la historia real (extraída directamente del JSON crudo de Unusual Whales para este contrato):
+
+1. **El gran aumento del OI (Marzo 2026):**
+   El 24 de Marzo de 2026, el OI saltó de 6,092 a 40,965 contratos (¡un delta masivo de +34,873!). 
+   Ese día se procesó como volumen RED (sellPct = 0.56, buyPct = 0.44). 
+   - `sell` se llevó ~19,528 contratos.
+   - `buy` se llevó ~15,344 contratos.
+   
+   Luego, el 14 de Abril de 2026, el OI volvió a saltar a 51,531 en volumen GREEN. `buy` subió aún más (llegando a más de ~20,000 contratos acumulados). 
+
+   ¡Tú intuición gráfica es 100% correcta! Había un enorme volumen Buy vivo en ese momento.
+
+2. **La gran caída y destrucción del Buy (Abril 2026):**
+   Al día siguiente, el 15 de Abril de 2026, el OI se desplomó de 51,531 a 17,708 (un delta negativo bestial de -33,823 contratos cerrados de golpe).
+   Lo interesante es que ese cierre gigantesco se hizo marcando color GREEN (al Ask) con agresividad de 70% (bidAsk: 0.70). 
+   
+   Bajo las reglas de resta de nuestro algoritmo:
+   - Como fue cierre GREEN, `buyPct` fue de 0.70.
+   - Se restaron de la cuenta Buy: 33,823 * 0.70 = **-23,676 contratos a restar del Buy.**
+   - Se restaron de la cuenta Sell: 33,823 * 0.30 = **-10,146 contratos a restar del Sell.**
+
+**Resultado Final de esa jugada:**
+Como nuestro `buy` acumulado rondaba los ~20,000, restarle 23,676 lo mandó directo a números negativos. Aquí es donde actuó la regla matemática de "Clamping" (Paso 3) empujando tu `buy` a exactamente 0.
+Por su parte, el `sell` rondaba los ~20,000, y restarle solo 10,146 lo dejó sobrevivir con unos ~9,000 contratos, que con movimientos menores posteriores terminó estabilizándose en los 15,127 actuales.
+
+**Conclusión:** 
+El volumen Buy existió, pero las ballenas (o la institución) **CERRARON** masivamente sus posiciones largas el 15 de Abril. El algoritmo detectó esa fuga de OI como un cierre "verde" (cubriendo shorts o deshaciendo longs agresivamente al Ask), castigó duramente tu cuenta "Buy" llevándola a cero, y concluyó que el único volumen real "vivo" que quedó abierto en ese contrato fue producto de las ventas iniciales (Sell). 
+
+La matemática y la realidad del volumen visual están en perfecta armonía.

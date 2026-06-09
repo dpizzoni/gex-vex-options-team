@@ -1,0 +1,37 @@
+{
+  "name": "squad-project",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run backend\" \"next dev -p 3002\"",
+    "backend": ".venv\\Scripts\\python -m uvicorn backend.main:app --port 8000 --reload",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "dealer:build": "node scripts/dealer-builder.js",
+    "uw:capture": "node scripts/uw-fetch.js",
+    "uw:parse": "node scripts/uw-parse.js",
+    "uw:window": "node scripts/uw-window-fetch.js",
+    "uw:daily": "node scripts/uw-window-fetch.js --daily && node scripts/dealer-builder.js && node scripts/clean-cache.js",
+    "uw:expand": "node scripts/uw-expand.js",
+    "cache:migrate": "node scripts/cache-migrate.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "lucide-react": "^1.17.0",
+    "next": "^15.1.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "concurrently": "^10.0.3",
+    "eslint": "^9",
+    "eslint-config-next": "^15.1.0",
+    "jsdom": "^29.1.1",
+    "playwright": "^1.60.0",
+    "typescript": "^5"
+  }
+}

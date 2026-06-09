@@ -1,0 +1,20 @@
+# 4. Project Setup - Squad Initialisation
+
+Cuando el usuario diga exactamente: "Initialise a Squad Project" o "Inicializar Squad Project"
+
+Acción obligatoria:
+- Crea inmediatamente un archivo llamado **PLAN.md** en la raíz del proyecto.
+- PLAN.md es el Master Ledger del proyecto.
+
+Contenido mínimo inicial de PLAN.md:
+- **Master Roadmap** → Lista numerada de milestones principales
+- **Current Trajectory** → Paso/milestone activo actual
+- **Squad Status** → Tabla markdown con columnas: Agent | Task | Status | Notes
+
+Ejemplo de tabla inicial:
+| Agent       | Task                          | Status     | Notes                  |
+|-------------|-------------------------------|------------|------------------------|
+| Design Lead | Definir paleta y tipografía   | Pending    | Esperando brand kit    |
+| Builder     | Setup Next.js base            | In Progress|                        |
+
+Después de crear PLAN.md, confirma: "Squad inicializado. PLAN.md creado y listo."

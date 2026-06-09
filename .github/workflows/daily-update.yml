@@ -66,5 +66,8 @@ jobs:
           # Si todo está bien, hace el commit. El [skip ci] evita que se desencadenen otros workflows accidentalmente
           git commit -m "chore(data): daily UW capture & dealer update [skip ci]" || echo "No hay datos nuevos para guardar"
           
+          # Hacemos pull --rebase por si alguien hizo un push a main mientras el scraper estaba corriendo
+          git pull --rebase origin main || true
+          
           # Sube los cambios a tu repositorio
           git push

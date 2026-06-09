@@ -39,15 +39,12 @@ export async function GET(request: NextRequest) {
 
     const expirations = resultWithExps.expirationDates.map((d: Date) => d.toISOString().split('T')[0]).sort();
 
-    let selectedExp = expParam;
-    if (!selectedExp || !expirations.includes(selectedExp)) {
-      selectedExp = expirations[0];
-    }
+    const finalExp: string = (expParam && expirations.includes(expParam)) ? expParam : expirations[0];
 
-    const chainData = await yahooFinance.options(symbol, { date: new Date(selectedExp) }) as any;
+    const chainData = await yahooFinance.options(symbol, { date: new Date(finalExp) }) as any;
     const chain = chainData.options[0] || { calls: [], puts: [] };
 
-    const expDate = new Date(selectedExp);
+    const expDate = new Date(finalExp);
     const today = new Date();
     const daysToExpiration = Math.max((expDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24), 0.5);
     const T = daysToExpiration / 365.25;
@@ -146,7 +143,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       spot,
       expirations,
-      selectedExpiration: selectedExp,
+      selectedExpiration: finalExp,
       calls,
       puts,
       kingNode,

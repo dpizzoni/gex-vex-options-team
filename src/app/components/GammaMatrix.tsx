@@ -32,6 +32,9 @@ export default function GammaMatrix({
   hoveredStrike, onHoverStrike, selectedNode, onSelectNode, scrollRef, onScroll, onStatsUpdate, dealerCache 
 }: GammaMatrixProps) {
 
+  // Ref to the spot-closest row for auto-centering
+  const spotRowRef = React.useRef<HTMLTableRowElement | null>(null);
+
   const {
     matrixData,
     maxAbsExposure,
@@ -278,6 +281,29 @@ export default function GammaMatrix({
     }
   }, [threshold, visibleNodes, hiddenNodes, kingNode, totalGex, totalVex, exposureType, matrixData]);
 
+  // Auto-scroll: center the SPOT row when data changes
+  const closestStrike = React.useMemo(() => {
+    if (!strikes.length || !spot) return null;
+    return strikes.reduce((prev, curr) =>
+      Math.abs(curr - spot) < Math.abs(prev - spot) ? curr : prev
+    );
+  }, [strikes, spot]);
+
+  React.useEffect(() => {
+    if (!closestStrike || !scrollRef?.current) return;
+    // Small timeout ensures DOM rows are painted before measuring offsets
+    const raf = requestAnimationFrame(() => {
+      if (!spotRowRef.current || !scrollRef?.current) return;
+      const container = scrollRef.current;
+      const row = spotRowRef.current;
+      const containerH = container.clientHeight;
+      const rowTop = row.offsetTop;
+      const rowH = row.clientHeight;
+      container.scrollTop = rowTop - containerH / 2 + rowH / 2;
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [closestStrike, strikes.length, scrollRef]);
+
   const formatCompact = (val: number) => {
     const absVal = Math.abs(val);
     const sign = val < 0 ? "−" : "";
@@ -329,9 +355,11 @@ export default function GammaMatrix({
               const isHoveredRow = hoveredStrike === st;
               const isNearMoney = Math.abs(st - spot) < 5;
               
+              const isSpotRow = st === closestStrike;
               return (
               <tr 
-                key={st} 
+                key={st}
+                ref={isSpotRow ? spotRowRef : undefined}
                 className={`${isNearMoney ? styles.nearTheMoney : ""} ${isHoveredRow ? styles.hoveredCrosshair : ""}`}
                 onMouseEnter={() => onHoverStrike && onHoverStrike(st)}
                 onMouseLeave={() => onHoverStrike && onHoverStrike(null)}

@@ -1134,22 +1134,22 @@ gex_prev = gex_curr;
     else densityClass = "Dispersa";
     const densityText = `${visibleInRangeCount}/${strikesInRangeCount} (${densityPercent.toFixed(1)}%) [${densityClass}]`;
 
-    // 6. Absorción cercanos (within +-5 strikes of spot)
-    const nearbyNodes = strikeData.filter(sd => Math.abs(sd.strike - spot) <= 5);
-    const nearbyPositiveSum = nearbyNodes.filter(sd => sd.gex > 0).reduce((sum, sd) => sum + sd.gex, 0);
-    const nearbyNegativeSum = nearbyNodes.filter(sd => sd.gex < 0).reduce((sum, sd) => sum + Math.abs(sd.gex), 0);
-    let absorptionLabel = "Media";
-    const totalNearby = nearbyPositiveSum + nearbyNegativeSum;
-    if (totalNearby > 0) {
-      const positiveRatio = nearbyPositiveSum / totalNearby;
-      if (positiveRatio > 0.6) {
-        absorptionLabel = "Alta";
-      } else if (positiveRatio < 0.4) {
-        absorptionLabel = "Baja";
-      } else {
-        absorptionLabel = "Media";
-      }
-    }
+    // 6. Absorción — Peso efectivo: top-3 nodos (excluyendo King) vs King
+    // absorptionScore = sumAbs(top3SupportResistance) / (abs(king) + sumAbs(top3SupportResistance))
+    const nonKingNodes = strikeData
+      .filter(sd => sd.strike !== kingNode.strike)
+      .sort((a, b) => Math.abs(b.gex) - Math.abs(a.gex));
+    const top3NonKing = nonKingNodes.slice(0, 3);
+    const sumTop3Abs = top3NonKing.reduce((sum, sd) => sum + Math.abs(sd.gex), 0);
+    const kingAbsGex = Math.abs(kingNode.gex);
+    const absorptionDenominator = kingAbsGex + sumTop3Abs;
+    const absorptionScore = absorptionDenominator > 0 ? sumTop3Abs / absorptionDenominator : 0;
+    let absorptionLabel = "Ausente";
+    if (absorptionScore >= 0.80) absorptionLabel = "Muy Alta";
+    else if (absorptionScore >= 0.60) absorptionLabel = "Alta";
+    else if (absorptionScore >= 0.40) absorptionLabel = "Media";
+    else if (absorptionScore >= 0.20) absorptionLabel = "Baja";
+    else absorptionLabel = "Ausente";
 
     // Spot Drift and Snapshot Compare
     const getSpotDriftAndPersist = () => {
@@ -1311,22 +1311,31 @@ gex_prev = gex_curr;
       };
     });
 
-    // Risk V4.5
-    const vexRatio = Math.abs(totalNetVex) / Math.max(1, Math.abs(totalNetGex));
-    let rawRiskScore = Math.max(0.1, dominanceScore * vexRatio);
-    
-    // Penalizador por concentración
-    const kingWeight = Math.min(Math.abs(kingNode.gex) / Math.max(Math.abs(totalNetGex), 1), 2);
-    let riskScoreUnclamped = rawRiskScore * (1 + (kingWeight - 1) * 0.2);
-    
-    // Normalizar 0-1
-    const riskScore = Math.min(1, Math.max(0, riskScoreUnclamped / 100));
-    
+    // Risk V5.0 — Composición ponderada sin VEX/GEX ratio
+    // Componentes normalizados 0–1:
+    // Dominancia (0-1): kingAbs / sumVisibleAbs
+    const riskDominance = sumAbsVisibleGex > 0 ? Math.abs(kingNode.gex) / sumAbsVisibleGex : 0;
+    // Sesgo (0-1): abs(netGex) / sumVisibleAbs
+    const riskBias = sumAbsVisibleGex > 0 ? Math.abs(totalNetGex) / sumAbsVisibleGex : 0;
+    // Proximidad (0-1): 1 - min(distSpotKing / windowSize, 1)
+    const windowSize = Math.max(1, widthPts);
+    const distSpotKing = Math.abs(spot - kingNode.strike);
+    const riskProximity = 1 - Math.min(distSpotKing / windowSize, 1);
+    // Persistencia (0-1)
+    const riskPersistence = persistenceInfo.count >= 5 ? 1 : persistenceInfo.count >= 3 ? 0.6 : 0.3;
+    // Score final ponderado
+    const riskScore = Math.min(1, Math.max(0,
+      riskDominance * 0.45 +
+      riskBias      * 0.30 +
+      riskProximity * 0.20 +
+      riskPersistence * 0.05
+    ));
     let riskLabel = "Bajo";
-    if (riskScore < 0.2) riskLabel = "Bajo";
-    else if (riskScore <= 0.5) riskLabel = "Medio";
-    else riskLabel = "Alto";
-    const riskDesc = `Dominancia: ${dominanceScore.toFixed(1)}%, VEX: ${vexPressureVal.toFixed(1)}%, Interpretar: estructura ${dominanceLabel.toLowerCase()}.`;
+    if (riskScore >= 0.75) riskLabel = "Crítico";
+    else if (riskScore >= 0.50) riskLabel = "Alto";
+    else if (riskScore >= 0.25) riskLabel = "Moderado";
+    else riskLabel = "Bajo";
+    const riskDesc = `Dom: ${(riskDominance*100).toFixed(1)}% · Sesgo: ${(riskBias*100).toFixed(1)}% · Prox: ${(riskProximity*100).toFixed(1)}% · Persist: ${(riskPersistence*100).toFixed(0)}%`;
 
     // 6. Sesgo estructural
     const visiblePositives = visibleNodes.filter(n => n.gex > 0);
@@ -2047,14 +2056,22 @@ ${blockSoportesResistencias}`;
                     </div>
 
                     {/* Risk Rating */}
-                    <div style={{ background: dealerAnalysis.risk.label === "Alto" ? "rgba(239, 68, 68, 0.04)" : dealerAnalysis.risk.label === "Medio" ? "rgba(251, 191, 36, 0.04)" : "rgba(56, 189, 248, 0.04)", border: dealerAnalysis.risk.label === "Alto" ? "1px solid rgba(239, 68, 68, 0.15)" : dealerAnalysis.risk.label === "Medio" ? "1px solid rgba(251, 191, 36, 0.15)" : "1px solid rgba(56, 189, 248, 0.15)", padding: "0.5rem 0.6rem", borderRadius: "6px" }}>
-                      <div style={{ fontSize: "0.75rem", fontWeight: 600, color: dealerAnalysis.risk.label === "Alto" ? "#ef4444" : dealerAnalysis.risk.label === "Medio" ? "#fbbf24" : "#38bdf8" }}>
-                        ⚠️ Riesgo Estructural: {dealerAnalysis.risk.score.toFixed(2)} ({dealerAnalysis.risk.label})
-                      </div>
-                      <div style={{ fontSize: "0.75rem", color: "#cbd5e1", marginTop: "0.2rem" }}>
-                        {dealerAnalysis.risk.desc}
-                      </div>
-                    </div>
+                    {(() => {
+                      const rl = dealerAnalysis.risk.label;
+                      const riskBg = rl === "Crítico" ? "rgba(239, 68, 68, 0.08)" : rl === "Alto" ? "rgba(239, 68, 68, 0.04)" : rl === "Moderado" ? "rgba(251, 191, 36, 0.04)" : "rgba(56, 189, 248, 0.04)";
+                      const riskBorder = rl === "Crítico" ? "1px solid rgba(239, 68, 68, 0.30)" : rl === "Alto" ? "1px solid rgba(239, 68, 68, 0.15)" : rl === "Moderado" ? "1px solid rgba(251, 191, 36, 0.15)" : "1px solid rgba(56, 189, 248, 0.15)";
+                      const riskColor = rl === "Crítico" ? "#ff4444" : rl === "Alto" ? "#ef4444" : rl === "Moderado" ? "#fbbf24" : "#38bdf8";
+                      return (
+                        <div style={{ background: riskBg, border: riskBorder, padding: "0.5rem 0.6rem", borderRadius: "6px" }}>
+                          <div style={{ fontSize: "0.75rem", fontWeight: 600, color: riskColor }}>
+                            ⚠️ Riesgo Estructural: {dealerAnalysis.risk.score.toFixed(2)} ({dealerAnalysis.risk.label})
+                          </div>
+                          <div style={{ fontSize: "0.75rem", color: "#cbd5e1", marginTop: "0.2rem" }}>
+                            {dealerAnalysis.risk.desc}
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
 
                   {/* Niveles GEX Section */}
@@ -2138,8 +2155,10 @@ ${blockSoportesResistencias}`;
                         <span style={{ color: "#94a3b8" }}>Absorción:</span>
                         <span style={{ 
                           fontWeight: 700, 
-                          color: dealerAnalysis.absorption.label === "Alta" ? "#34d399" : 
-                                 dealerAnalysis.absorption.label === "Media" ? "#fbbf24" : "#f87171" 
+                          color: dealerAnalysis.absorption.label === "Muy Alta" ? "#10b981" :
+                                 dealerAnalysis.absorption.label === "Alta"     ? "#34d399" :
+                                 dealerAnalysis.absorption.label === "Media"    ? "#fbbf24" :
+                                 dealerAnalysis.absorption.label === "Baja"     ? "#fb923c" : "#f87171"
                         }}>
                           {dealerAnalysis.absorption.label}
                         </span>

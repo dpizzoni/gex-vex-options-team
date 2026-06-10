@@ -306,7 +306,13 @@ export default function Home() {
 
   const autoRefreshFn = useRef<() => void>(() => {});
   autoRefreshFn.current = () => {
-    handleRefresh();
+    // Para el auto-refresh de fondo, solo consultamos los datos actualizados de la caché del servidor.
+    // No disparamos el reconstructor pesado de dealer (handleRefresh) para evitar alertas y bloqueos.
+    fetch(`/api/dealer?t=${Date.now()}`)
+      .then(res => res.json())
+      .then(cacheData => setDealerCache(cacheData))
+      .catch(err => console.error("Auto-refresh dealer cache fetch failed", err));
+
     if (viewMode === "matrix" && displayExpirations.length > 0) {
       if (data?.symbol === symbol) {
         fetchMatrixData(symbol, displayExpirations);

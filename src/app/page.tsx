@@ -1277,51 +1277,37 @@ gex_prev = gex_curr;
     
     const kingDistText = `Spot ${spot.toFixed(1)} | King ${kingNode.strike} | Distancia ${kingDistValText} (${kingDistClass})`;
 
-    // V5.1 Zonas GEX — King excluido (tiene panel propio). Mostrar estructura secundaria.
+    // V5.2 Zonas GEX — King excluido sin fallback. Vacío = estado explícito.
     const kingGexAbs = Math.abs(kingNode.gex);
     const minWeightThreshold = kingGexAbs * 0.01;
 
-    // Resistances: nodos superiores al spot, excluyendo King, ordenados por magnitud desc → cercanía asc
+    // Resistances: nodos superiores al spot, excluyendo King
     const filteredResNodes = strikeData
       .filter(sd => sd.strike > spot && sd.strike !== kingNode.strike && sd.gex > 0 && Math.abs(sd.gex) >= minWeightThreshold)
       .sort((a, b) => Math.abs(b.gex) - Math.abs(a.gex) || a.strike - b.strike);
 
-    // Fallback: si no hay nodos secundarios arriba, incluir King etiquetado
-    const resSource = filteredResNodes.length > 0
-      ? filteredResNodes.slice(0, 3)
-      : (kingNode.strike > spot ? [kingNode] : []);
-
-    const resistances = resSource.map((sd, index) => {
-      const isKingFallback = filteredResNodes.length === 0 && sd.strike === kingNode.strike;
+    const resistances = filteredResNodes.slice(0, 3).map((sd, index) => {
       const weight = (Math.abs(sd.gex) / Math.max(1, kingGexAbs)) * 100;
       return {
         label: `R${index + 1}`,
         strike: sd.strike,
         formatted: formatSignVal(sd.gex),
-        weight: parseFloat(weight.toFixed(1)),
-        isKing: isKingFallback
+        weight: parseFloat(weight.toFixed(1))
       };
     });
 
-    // Supports: nodos inferiores al spot, excluyendo King, ordenados por magnitud desc → cercanía desc
+    // Supports: nodos inferiores al spot, excluyendo King
     const filteredSuppNodes = strikeData
       .filter(sd => sd.strike < spot && sd.strike !== kingNode.strike && sd.gex > 0 && Math.abs(sd.gex) >= minWeightThreshold)
       .sort((a, b) => Math.abs(b.gex) - Math.abs(a.gex) || b.strike - a.strike);
 
-    // Fallback: si no hay nodos secundarios abajo, incluir King etiquetado
-    const suppSource = filteredSuppNodes.length > 0
-      ? filteredSuppNodes.slice(0, 3)
-      : (kingNode.strike < spot ? [kingNode] : []);
-
-    const supports = suppSource.map((sd, index) => {
-      const isKingFallback = filteredSuppNodes.length === 0 && sd.strike === kingNode.strike;
+    const supports = filteredSuppNodes.slice(0, 3).map((sd, index) => {
       const weight = (Math.abs(sd.gex) / Math.max(1, kingGexAbs)) * 100;
       return {
         label: `S${index + 1}`,
         strike: sd.strike,
         formatted: formatSignVal(sd.gex),
-        weight: parseFloat(weight.toFixed(1)),
-        isKing: isKingFallback
+        weight: parseFloat(weight.toFixed(1))
       };
     });
 
@@ -2097,12 +2083,12 @@ ${blockSoportesResistencias}`;
                         <span style={{ fontSize: "0.6rem", color: "#f87171", textTransform: "uppercase", fontWeight: 600 }}>Zonas superiores</span>
                         {dealerAnalysis.levels.resistances.map((r: any, idx: number) => (
                           <div key={idx} style={{ background: "rgba(248, 113, 113, 0.03)", border: "1px solid rgba(248, 113, 113, 0.08)", padding: "0.3rem", borderRadius: "4px", display: "flex", justifyContent: "space-between", fontSize: "0.7rem", fontFamily: "monospace" }}>
-                            <span style={{ color: r.isKing ? "#f59e0b" : "#f87171", fontWeight: 600 }}>{r.label}: {r.strike}{r.isKing ? " (King)" : ""}</span>
-                            <span style={{ color: "#cbd5e1" }}>{r.formatted}{!r.isKing ? ` (${r.weight.toFixed(1)}% King)` : ""}</span>
+                            <span style={{ color: "#f87171", fontWeight: 600 }}>{r.label}: {r.strike}</span>
+                            <span style={{ color: "#cbd5e1" }}>{r.formatted} ({r.weight.toFixed(1)}% King)</span>
                           </div>
                         ))}
                         {dealerAnalysis.levels.resistances.length === 0 && (
-                          <span style={{ fontSize: "0.65rem", color: "#64748b", fontStyle: "italic" }}>Ninguna</span>
+                          <span style={{ fontSize: "0.65rem", color: "#475569", fontStyle: "italic", opacity: 0.7 }}>Sin niveles superiores relevantes</span>
                         )}
                       </div>
                       {/* Zonas inferiores */}
@@ -2110,12 +2096,12 @@ ${blockSoportesResistencias}`;
                         <span style={{ fontSize: "0.6rem", color: "#34d399", textTransform: "uppercase", fontWeight: 600 }}>Zonas inferiores</span>
                         {dealerAnalysis.levels.supports.map((s: any, idx: number) => (
                           <div key={idx} style={{ background: "rgba(52, 211, 153, 0.03)", border: "1px solid rgba(52, 211, 153, 0.08)", padding: "0.3rem", borderRadius: "4px", display: "flex", justifyContent: "space-between", fontSize: "0.7rem", fontFamily: "monospace" }}>
-                            <span style={{ color: s.isKing ? "#f59e0b" : "#34d399", fontWeight: 600 }}>{s.label}: {s.strike}{s.isKing ? " (King)" : ""}</span>
-                            <span style={{ color: "#cbd5e1" }}>{s.formatted}{!s.isKing ? ` (${s.weight.toFixed(1)}% King)` : ""}</span>
+                            <span style={{ color: "#34d399", fontWeight: 600 }}>{s.label}: {s.strike}</span>
+                            <span style={{ color: "#cbd5e1" }}>{s.formatted} ({s.weight.toFixed(1)}% King)</span>
                           </div>
                         ))}
                         {dealerAnalysis.levels.supports.length === 0 && (
-                          <span style={{ fontSize: "0.65rem", color: "#64748b", fontStyle: "italic" }}>Ninguno</span>
+                          <span style={{ fontSize: "0.65rem", color: "#475569", fontStyle: "italic", opacity: 0.7 }}>Sin niveles inferiores relevantes</span>
                         )}
                       </div>
                     </div>

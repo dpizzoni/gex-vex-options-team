@@ -1,11 +1,20 @@
 import { NextResponse } from 'next/server';
-import { runDealerBuilder } from '../../../../../../scripts/dealer-builder';
 
 export async function POST() {
+  // Evitar ejecutar reconstrucción en producción (Vercel) ya que el sistema de archivos es de solo lectura
+  if (process.env.VERCEL) {
+    return NextResponse.json({ 
+      success: false, 
+      error: "La reconstrucción manual no está disponible en producción (Vercel). GitHub Actions actualiza los datos automáticamente cada día." 
+    }, { status: 400 });
+  }
+
   try {
     const t0 = Date.now();
     
-    // Ejecutamos la función directamente en lugar de usar un comando de consola.
+    // Importamos dinámicamente para que Vercel no falle en el proceso de compilación
+    // debido a la falta del archivo scripts/dealer-builder.js en el bundle de la nube.
+    const { runDealerBuilder } = await import('../../../../../../scripts/dealer-builder');
     runDealerBuilder();
     
     const t1 = Date.now();

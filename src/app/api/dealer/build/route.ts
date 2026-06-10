@@ -12,8 +12,7 @@ export async function POST() {
   try {
     const t0 = Date.now();
     
-    // Importamos dinámicamente para que Vercel no falle en el proceso de compilación
-    // debido a la falta del archivo scripts/dealer-builder.js en el bundle de la nube.
+    // @ts-ignore
     const { runDealerBuilder } = await import('../../../../../../scripts/dealer-builder');
     runDealerBuilder();
     

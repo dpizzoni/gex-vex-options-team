@@ -79,6 +79,7 @@ export default function Home() {
   const [dealerCache, setDealerCache] = useState<Record<string, any> | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [refreshStats, setRefreshStats] = useState<{ uw: number, dealer: number, duration: number } | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   useEffect(() => {
     fetch(`/api/dealer?t=${Date.now()}`).then(res => res.json()).then(data => {
@@ -179,10 +180,12 @@ export default function Home() {
     setSortConfig({ key, direction });
   };
 
-  const fetchOptions = useCallback(async (ticker: string, expDate?: string) => {
-    setLoading(true);
+  const fetchOptions = useCallback(async (ticker: string, expDate?: string, isBackground = false) => {
+    if (!isBackground) {
+      setLoading(true);
+      setData(null);
+    }
     setError(null);
-    setData(null);
     try {
       let url = `/api/options?symbol=${ticker}`;
       if (expDate) {
@@ -198,6 +201,7 @@ export default function Home() {
       const json: OptionsResponse = await res.json();
       if (currentTickerRef.current === ticker) {
         setData(json);
+        setLastUpdated(new Date());
         if (json.selectedExpiration) {
           setSelectedExp(json.selectedExpiration);
         }
@@ -206,13 +210,17 @@ export default function Home() {
       console.error("Error fetching options data:", err);
       setError(err.message || "An unexpected error occurred while fetching option chain data.");
     } finally {
-      setLoading(false);
+      if (!isBackground) {
+        setLoading(false);
+      }
     }
   }, []);
 
   // Fetch Matrix Data for ALL expirations
-  const fetchMatrixData = useCallback(async (ticker: string, expirations: string[]) => {
-    setMatrixLoading(true);
+  const fetchMatrixData = useCallback(async (ticker: string, expirations: string[], isBackground = false) => {
+    if (!isBackground) {
+      setMatrixLoading(true);
+    }
     try {
       const promises = expirations.map(async (exp) => {
         const url = `/api/options?symbol=${ticker}&expiration=${exp}`;
@@ -228,16 +236,20 @@ export default function Home() {
       const results = await Promise.all(promises);
       if (currentTickerRef.current === ticker) {
         setMatrixRawData(results);
-        if (results.length > 0) {
+        setLastUpdated(new Date());
+        if (results.length > 0 && matrixSelectedExps.length === 0) {
           setMatrixSelectedExps([results[0].expiration]);
         }
       }
     } catch (err: any) {
       console.error("Error fetching matrix data:", err);
+      setError(err.message || "Failed to fetch matrix data");
     } finally {
-      setMatrixLoading(false);
+      if (!isBackground) {
+        setMatrixLoading(false);
+      }
     }
-  }, []);
+  }, [matrixSelectedExps.length]);
 
   useEffect(() => {
     if (viewMode === "matrix" && displayExpirations.length > 0 && matrixRawData.length === 0 && !matrixLoading) {
@@ -315,17 +327,17 @@ export default function Home() {
 
     if (viewMode === "matrix" && displayExpirations.length > 0) {
       if (data?.symbol === symbol) {
-        fetchMatrixData(symbol, displayExpirations);
+        fetchMatrixData(symbol, displayExpirations, true);
       }
     } else {
-      fetchOptions(symbol, selectedExp || undefined);
+      fetchOptions(symbol, selectedExp || undefined, true);
     }
   };
 
   useEffect(() => {
     const interval = setInterval(() => {
       autoRefreshFn.current();
-    }, 10 * 60 * 1000); // 10 minutes
+    }, 1 * 60 * 1000); // 1 minute
     return () => clearInterval(interval);
   }, []);
 
@@ -1169,12 +1181,17 @@ export default function Home() {
         </div>
 
         <div className={styles.controls} style={{ gap: '0.5rem', display: 'flex', alignItems: 'stretch' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', flexDirection: 'row', gap: '0.5rem', alignItems: 'center' }}>
             {/* Connection Pill */}
-            <div className={styles.connectionStatus} style={{ width: '100%', justifyContent: 'center', background: error ? "rgba(255, 42, 109, 0.08)" : "rgba(0, 230, 118, 0.08)", padding: "0.2rem 0.5rem", borderRadius: "4px", border: error ? "1px solid rgba(255, 42, 109, 0.2)" : "1px solid rgba(0, 230, 118, 0.2)", fontSize: "0.65rem", display: 'flex', alignItems: 'center' }}>
+            <div className={styles.connectionStatus} style={{ justifyContent: 'center', background: error ? "rgba(255, 42, 109, 0.08)" : "rgba(0, 230, 118, 0.08)", padding: "0.2rem 0.5rem", borderRadius: "4px", border: error ? "1px solid rgba(255, 42, 109, 0.2)" : "1px solid rgba(0, 230, 118, 0.2)", fontSize: "0.65rem", display: 'flex', alignItems: 'center' }}>
               <Activity size={10} style={{ marginRight: 4, color: error ? "#ff2a6d" : "#00e676" }} />
               <b style={{ color: error ? "#ff2a6d" : "#00e676" }}>{error ? "Offline" : "Live"}</b>
             </div>
+            {lastUpdated && (
+              <span style={{ fontSize: '0.65rem', color: '#94a3b8', whiteSpace: 'nowrap' }}>
+                {lastUpdated.toLocaleTimeString()}
+              </span>
+            )}
           </div>
 
           <button 

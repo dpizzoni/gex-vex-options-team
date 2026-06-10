@@ -2,11 +2,11 @@ name: Daily Market Update & UW Capture
 
 # Este workflow se ejecutará automáticamente de lunes a viernes.
 # Nota: La hora en el cron se define en UTC. 
-# 10:30 UTC = 06:30 AM EST (Nueva York) / 07:30 AM (Argentina/Chile, dependiendo de horario de verano).
-# Ajusta el cron según tu zona horaria exacta para que corra antes de la apertura.
+# 09:30 UTC = 05:30 AM EST (Nueva York) / 06:30 AM (Argentina/Chile).
+# Ajusta el cron para contemplar los retrasos de GitHub Actions y que finalice antes de la apertura.
 on:
   schedule:
-    - cron: '30 10 * * 1-5'
+    - cron: '30 09 * * 1-5'
   workflow_dispatch: # Esto agrega un botón en GitHub para que puedas forzar la ejecución manualmente
 
 # Damos permiso al bot para que pueda hacer commit y push con los JSON nuevos

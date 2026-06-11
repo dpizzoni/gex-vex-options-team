@@ -23,27 +23,46 @@ jobs:
         with:
           fetch-depth: 0 # Necesario para que el bot pueda hacer push sin conflictos
 
+      - name: 🔍 Verificar si ya se ejecutó manualmente hoy
+        id: check_today
+        run: |
+          TODAY=$(date +%Y-%m-%d)
+          DEALER_DIR="cache/dealer/SPY/$TODAY"
+          echo "Buscando data para: $DEALER_DIR"
+          if [ -d "$DEALER_DIR" ] && [ -n "$(ls -A "$DEALER_DIR" 2>/dev/null)" ]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "✅ Ya existe data para $TODAY — run manual detectado. Saltando ejecución automática."
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+            echo "🚀 No hay data para $TODAY — ejecutando update automático normal."
+          fi
+
       - name: 🟢 Setup Node.js
+        if: steps.check_today.outputs.skip == 'false'
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
       - name: 📦 Instalar dependencias Node
+        if: steps.check_today.outputs.skip == 'false'
         run: npm install
 
       - name: 🌐 Instalar navegadores Playwright (para UW)
         # Vi que tienes playwright en el package.json, esto es crucial para que el scraper funcione en GitHub.
+        if: steps.check_today.outputs.skip == 'false'
         run: npx playwright install chromium --with-deps
 
       - name: 🐍 Setup Python (Opcional)
         # Por si test_yf.py o alguna otra herramienta usa Python
+        if: steps.check_today.outputs.skip == 'false'
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
       - name: 🚀 Ejecutar Captura y Dealer Build
         # Inyectamos los secretos y corremos el servidor local de Next.js en el fondo
+        if: steps.check_today.outputs.skip == 'false'
         env:
           UW_EMAIL: ${{ secrets.UW_EMAIL }}
           UW_PASSWORD: ${{ secrets.UW_PASSWORD }}
@@ -59,13 +78,14 @@ jobs:
 
       - name: 📤 Subir capturas de pantalla de diagnóstico (en caso de error)
         uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && steps.check_today.outputs.skip == 'false'
         with:
           name: debug-screenshots
           path: debug/
           if-no-files-found: ignore
 
       - name: 💾 Commit & Push de los nuevos datos
+        if: steps.check_today.outputs.skip == 'false'
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore(data): daily UW capture & dealer update [skip ci]"

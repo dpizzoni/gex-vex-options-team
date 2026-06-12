@@ -22,8 +22,9 @@ function getAllJsonFiles(dir) {
 }
 
 function buildDealer(contractId, history) {
-  let buy = 0;
-  let sell = 0;
+  // FIX 3: day-0 OI included with neutral 50/50 prior (was discarded before)
+  let buy = history[0].oi * 0.5;
+  let sell = history[0].oi * 0.5;
 
   for (let i = 0; i < history.length - 1; i++) {
     const currentOI = history[i].oi;
@@ -48,27 +49,40 @@ function buildDealer(contractId, history) {
     }
 
     if (delta > 0) {
+      // New contracts: decompose by color signal
       buy += delta * buyPct;
       sell += delta * sellPct;
     } else {
+      // FIX 1+2: Close proportionally to current split.
+      // Eliminates path dependency and asymmetric inflation from per-leg clamping.
       const absDelta = Math.abs(delta);
-      buy -= absDelta * buyPct;
-      sell -= absDelta * sellPct;
+      const total = buy + sell;
+      if (total > 0) {
+        buy -= absDelta * (buy / total);
+        sell -= absDelta * (sell / total);
+      }
+      buy = Math.max(0, buy);
+      sell = Math.max(0, sell);
     }
-
-    buy = Math.max(0, buy);
-    sell = Math.max(0, sell);
   }
 
-  const inventory = buy + sell;
-  const bias = inventory > 0 ? (buy - sell) / inventory : 0;
+  // Renormalize to actual last OI — eliminates float drift, ensures buy+sell = lastOI
   const lastRecord = history[history.length - 1];
+  const lastOI = lastRecord ? lastRecord.oi : 0;
+  const total = buy + sell;
+  if (total > 0 && lastOI > 0) {
+    const scale = lastOI / total;
+    buy *= scale;
+    sell *= scale;
+  }
+
+  const bias = lastOI > 0 ? (buy - sell) / lastOI : 0;
 
   return {
     buy: Math.round(buy),
     sell: Math.round(sell),
     bias: Number(bias.toFixed(3)),
-    lastOI: lastRecord ? lastRecord.oi : 0,
+    lastOI: lastOI,
     lastDate: lastRecord ? lastRecord.date : ""
   };
 }

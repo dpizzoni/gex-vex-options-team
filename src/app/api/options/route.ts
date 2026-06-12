@@ -1,22 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import YF from 'yahoo-finance2';
+import { calcT, calcGamma, sanitizeIV, findGammaFlip } from '@/lib/gex-engine';
 
 const yahooFinance = new YF({ suppressNotices: ['yahooSurvey'] });
 
 export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
-
-function calculateGamma(S: number, K: number, T: number, r: number, sigma: number): number {
-  if (T <= 0) T = 1e-5;
-  sigma = Math.max(sigma, 0.01);
-  try {
-    const d1 = (Math.log(S / K) + (r + 0.5 * Math.pow(sigma, 2)) * T) / (sigma * Math.sqrt(T));
-    const pdf = Math.exp(-0.5 * Math.pow(d1, 2)) / Math.sqrt(2.0 * Math.PI);
-    return pdf / (S * sigma * Math.sqrt(T));
-  } catch {
-    return 0.0;
-  }
-}
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -47,41 +36,29 @@ export async function GET(request: NextRequest) {
     const chainData = await yahooFinance.options(symbol, { date: new Date(finalExp) }) as any;
     const chain = chainData.options[0] || { calls: [], puts: [] };
 
-    const expDate = new Date(finalExp);
-    const today = new Date();
-    const daysToExpiration = Math.max((expDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24), 0.5);
-    const T = daysToExpiration / 365.25;
-    const r = 0.045;
+    // AUDIT M1/M2 FIX: T unified via calcT (16:00 ET), r via RISK_FREE_RATE in engine
+    const T = calcT(finalExp);
 
     let totalCallGex = 0;
     let totalPutGex = 0;
 
     const formatContract = (row: any, isCall: boolean) => {
       const strike = row.strike || 0;
-      const iv = row.impliedVolatility || 0;
+      const rawIv = row.impliedVolatility || 0;
       const oi = row.openInterest || 0;
       const vol = row.volume || 0;
       const bid = row.bid || 0;
       const ask = row.ask || 0;
 
-      const gamma = calculateGamma(spot, strike, T, r, iv);
-      const gex = (isCall ? gamma : -gamma) * oi * Math.pow(spot, 2);
-      
+      // AUDIT C4 FIX: sanitize IV — valid range [3%, 400%] in decimal
+      const iv = sanitizeIV(rawIv);
+      const gamma = iv > 0 ? calcGamma(spot, strike, T, iv) : 0;
+      const gex = iv > 0 ? (isCall ? gamma : -gamma) * oi * Math.pow(spot, 2) : 0;
+
       if (isCall) totalCallGex += gex;
       else totalPutGex += gex;
 
-      return {
-        strike,
-        impliedVolatility: iv,
-        openInterest: oi,
-        volume: vol,
-        bid,
-        ask,
-        gamma,
-        gex,
-        vanna: 0.0,
-        vex: 0
-      };
+      return { strike, impliedVolatility: iv, openInterest: oi, volume: vol, bid, ask, gamma, gex, vanna: 0.0, vex: 0 };
     };
 
     const calls = (chain.calls || []).map((c: any) => formatContract(c, true));
@@ -102,63 +79,18 @@ export async function GET(request: NextRequest) {
 
     const netGex = totalCallGex + totalPutGex;
 
-    const getNetGexAtS = (sTest: number) => {
-      let gexSum = 0;
-      for (const c of calls) gexSum += calculateGamma(sTest, c.strike, T, r, c.impliedVolatility) * c.openInterest * Math.pow(sTest, 2);
-      for (const p of puts) gexSum -= calculateGamma(sTest, p.strike, T, r, p.impliedVolatility) * p.openInterest * Math.pow(sTest, 2);
-      return gexSum;
-    };
-
-    let gammaFlip = null;
-    const spotMin = spot * 0.8;
-    const spotMax = spot * 1.2;
-    const steps = 40;
-    const stepSize = (spotMax - spotMin) / steps;
-
-    let sPrev = spotMin;
-    let gexPrev = getNetGexAtS(sPrev);
-
-    for (let i = 1; i <= steps; i++) {
-      const sCurr = spotMin + i * stepSize;
-      const gexCurr = getNetGexAtS(sCurr);
-      if ((gexPrev < 0 && gexCurr >= 0) || (gexPrev > 0 && gexCurr <= 0)) {
-        let lowS = sPrev;
-        let highS = sCurr;
-        for (let j = 0; j < 8; j++) {
-          const midS = (lowS + highS) / 2.0;
-          const gexMid = getNetGexAtS(midS);
-          if (gexMid === 0) {
-            lowS = midS;
-            break;
-          } else if ((gexPrev < 0 && gexMid < 0) || (gexPrev > 0 && gexMid > 0)) {
-            lowS = midS;
-          } else {
-            highS = midS;
-          }
-        }
-        gammaFlip = (lowS + highS) / 2.0;
-        break;
-      }
-      sPrev = sCurr;
-      gexPrev = gexCurr;
-    }
+    // AUDIT C7 FIX: closest crossing via engine (fixes first-crossing bug)
+    const allContracts = [
+      ...calls.map((c: any) => ({ ...c, type: 'CALL' as const, T })),
+      ...puts.map((p: any) => ({ ...p, type: 'PUT' as const, T }))
+    ];
+    const gammaFlip = findGammaFlip(spot, allContracts);
 
     return NextResponse.json({
-      spot,
-      symbol,
-      expirations,
-      selectedExpiration: finalExp,
-      calls,
-      puts,
-      kingNode,
-      gammaFlip,
-      vannaFlip: null,
-      totalCallGex,
-      totalPutGex,
-      netGex,
-      totalCallVex: 0,
-      totalPutVex: 0,
-      netVex: 0,
+      spot, symbol, expirations, selectedExpiration: finalExp,
+      calls, puts, kingNode, gammaFlip, vannaFlip: null,
+      totalCallGex, totalPutGex, netGex,
+      totalCallVex: 0, totalPutVex: 0, netVex: 0,
       dealerBias: { overall: "N/A", gexRegime: "N/A", vexRegime: "N/A" }
     });
 

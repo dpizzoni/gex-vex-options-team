@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import styles from "./GammaMatrix.module.css";
 import { Download, X } from "lucide-react";
+import { calcT, calcVanna } from "@/lib/gex-engine";
 
 export interface MatrixRawData {
   expiration: string;
@@ -57,33 +58,22 @@ export default function GammaMatrix({
       };
     }
 
-    const r = 0.05;
-    const now = new Date().getTime();
-    
     // Process all data into a flat array of options with computed VEX
     const allOptions: any[] = [];
-    
+
     rawData.forEach(chain => {
       const expDateStr = chain.expiration;
-      let T = (new Date(expDateStr).getTime() - now) / (1000 * 60 * 60 * 24 * 365);
-      if (T <= 0) T = 0.0001;
+      const T = calcT(expDateStr);
 
       const processChain = (opts: any[], type: "CALL" | "PUT") => {
         opts.forEach(opt => {
           let vex = 0;
           let sigma = opt.impliedVolatility;
-          if (sigma > 1) sigma /= 100;
+          if (sigma <= 0 || sigma > 4.0) sigma = 0; // AUDIT C5 FIX
           
           if (sigma > 0 && spot > 0) {
-            const d1 = (Math.log(spot / opt.strike) + (r + Math.pow(sigma, 2) / 2) * T) / (sigma * Math.sqrt(T));
-            const d2 = d1 - sigma * Math.sqrt(T);
-            const pdf = Math.exp(-0.5 * Math.pow(d1, 2)) / Math.sqrt(2 * Math.PI);
-            const vega = spot * pdf * Math.sqrt(T);
-            let vanna = -(vega * d2) / (spot * sigma);
-            if (!Number.isFinite(vanna)) vanna = 0;
-            
-            const vexPreScale = vanna * opt.openInterest * spot;
-            vex = vexPreScale;
+            const vanna = calcVanna(spot, opt.strike, T, sigma);
+            vex = vanna * opt.openInterest * spot;
           }
           
           allOptions.push({
@@ -109,7 +99,9 @@ export default function GammaMatrix({
     const getExposureValue = (mode: "RAW" | "DEALER", contract: any, baseValue: number) => {
       if (mode === "RAW") return baseValue;
       if (mode === "DEALER") {
-        let dealerBiasVal = 1;
+        // AUDIT C2+C3 FIX: dealer = OPUESTO al cliente → multiplicar por -clientBias
+        // Default SqueezeMetrics: cliente largo puts (+1), corto calls (-1)
+        let clientBias = contract.type === "CALL" ? -1 : 1;
         const occId = (() => {
           const dateStr = contract.expiration.replace(/-/g, "").slice(2);
           const typeStr = contract.type === "CALL" ? "C" : "P";
@@ -118,12 +110,10 @@ export default function GammaMatrix({
         })();
 
         if (dealerCache && dealerCache[occId]) {
-          dealerBiasVal = dealerCache[occId].bias;
-        } else if (symbol === "SPY" && contract.strike === 745 && contract.expiration.includes("2026-06-08")) {
-          if (contract.type === "CALL") dealerBiasVal = (117 - 146) / 263;
-          else if (contract.type === "PUT") dealerBiasVal = (1286 - 4257) / 5543;
+          clientBias = dealerCache[occId].bias; // bias = posicionamiento del CLIENTE
         }
-        return baseValue * dealerBiasVal;
+        // dealer = -clientBias → signo correcto para calls Y puts
+        return -clientBias * Math.abs(baseValue);
       }
       return baseValue;
     };

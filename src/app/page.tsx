@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import styles from "./page.module.css";
 import GammaMatrix, { MatrixRawData } from "./components/GammaMatrix";
+import { calcT, calcGamma, calcVanna, findGammaFlip } from "@/lib/gex-engine";
 
 interface OptionContract {
   strike: number;
@@ -89,6 +90,11 @@ export default function Home() {
   const [analysisTab, setAnalysisTab] = useState<"visual" | "text">("visual");
   const [copied, setCopied] = useState(false);
 
+  // Server-side persistence EMA (AUDIT 6.6 FIX)
+  const [serverPersistence, setServerPersistence] = useState<{
+    ema: number; prevSpot: number | null; count: number; prevKing: number | null;
+  } | null>(null);
+
   useEffect(() => {
     fetch(`/api/dealer?t=${Date.now()}`).then(res => res.json()).then(data => {
       setDealerCache(data);
@@ -108,6 +114,11 @@ export default function Home() {
     }
     return uniqueExps;
   }, [data?.expirations, symbol]);
+
+  const totalExpirations = useMemo(() => {
+    if (!data?.expirations) return 0;
+    return Array.from(new Set(data.expirations)).length;
+  }, [data?.expirations]);
 
   
   // Dual Matrix States
@@ -349,6 +360,27 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
+  // AUDIT 6.6 FIX: POST snapshot server-side after each data refresh.
+  // Moved out of useMemo to eliminate the localStorage side-effect that React StrictMode
+  // would execute twice, contaminating the snapshot series.
+  useEffect(() => {
+    if (!data?.spot || !selectedExp) return;
+    fetch('/api/snapshots', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        symbol,
+        exp: selectedExp,
+        king: data.kingNode ?? 0,
+        spot: data.spot,
+        netGex: data.netGex ?? 0,
+      }),
+    })
+      .then(r => r.json())
+      .then(d => setServerPersistence({ ema: d.ema, prevSpot: d.prevSpot, count: d.count, prevKing: d.prevKing }))
+      .catch(() => {});
+  }, [data, symbol, selectedExp]);
+
   // Format GEX values to standard professional abbreviations (e.g. $1.2M, -$450K)
   const formatGex = (val: number) => {
     const absVal = Math.abs(val);
@@ -465,37 +497,20 @@ export default function Home() {
       oiRankMap.set(`${row.strike}-${row.type}`, (row.oi === null || row.oi === undefined) ? null : index + 1);
     });
 
-    // Time to expiry (T in years)
-    const now = new Date().getTime();
-    const msPerDay = 1000 * 60 * 60 * 24;
-    const DTE = selectedExp ? (new Date(selectedExp).getTime() - now) / msPerDay : 0.5;
-    const T = Math.max(DTE, 0.5) / 365;
-    const r = 0.05; // 5% risk-free rate assumption
+    const T = selectedExp ? calcT(selectedExp) : 1e-5;
 
     const computedRows = baseRows.map(row => {
       const distance = data.spot ? Math.abs(data.spot - row.strike) : 0;
       const contribution = sumAbsGex === 0 ? 0 : Math.abs(row.gex) / sumAbsGex;
-      
+
       let vanna = 0;
-      let vega = 0;
-      let d1 = 0, d2 = 0, pdf = 0, vex = 0;
-      let sigma = row.iv;
-      
-      if (sigma > 1) {
-        sigma = sigma / 100;
-      }
-      let ivNormalized = sigma;
+      let vex = 0;
+      const sigma = (row.iv >= 0.03 && row.iv <= 4.0) ? row.iv : 0;
+      const ivNormalized = sigma;
 
       if (sigma > 0 && data.spot > 0) {
-        d1 = (Math.log(data.spot / row.strike) + (r + Math.pow(sigma, 2) / 2) * T) / (sigma * Math.sqrt(T));
-        d2 = d1 - sigma * Math.sqrt(T);
-        pdf = Math.exp(-0.5 * Math.pow(d1, 2)) / Math.sqrt(2 * Math.PI);
-        vega = data.spot * pdf * Math.sqrt(T);
-        vanna = -(vega * d2) / (data.spot * sigma);
-        if (!Number.isFinite(vanna)) vanna = 0;
-        
-        const vexPreScale = vanna * row.oi * data.spot;
-        vex = vexPreScale;
+        vanna = calcVanna(data.spot, row.strike, T, sigma);
+        vex = vanna * row.oi * data.spot;
         
         return {
           ...row,
@@ -574,35 +589,21 @@ export default function Home() {
   const { netVex, vannaFlip, medianVanna } = React.useMemo(() => {
     if (!data || !selectedExp) return { netVex: 0, vannaFlip: null, medianVanna: 0 };
     
-    const now = new Date().getTime();
-    const msPerDay = 1000 * 60 * 60 * 24;
-    const DTE = selectedExp ? (new Date(selectedExp).getTime() - now) / msPerDay : 0.5;
-    const T = Math.max(DTE, 0.5) / 365;
-    const r = 0.05;
+    const T = calcT(selectedExp);
 
     const allOptions = [...data.calls.map(c => ({...c, type: 'CALL'})), ...data.puts.map(p => ({...p, type: 'PUT'}))];
-    
+
     let totalVex = 0;
     const strikeVexMap = new Map<number, number>();
     const vannaValues: number[] = [];
 
     allOptions.forEach(opt => {
-      let sigma = opt.impliedVolatility;
-      if (sigma > 1) {
-        sigma = sigma / 100;
-      }
-      
+      const sigma = (opt.impliedVolatility >= 0.03 && opt.impliedVolatility <= 4.0) ? opt.impliedVolatility : 0;
+
       let vex = 0;
       if (sigma > 0 && data.spot > 0) {
-        const d1 = (Math.log(data.spot / opt.strike) + (r + Math.pow(sigma, 2) / 2) * T) / (sigma * Math.sqrt(T));
-        const d2 = d1 - sigma * Math.sqrt(T);
-        const pdf = Math.exp(-0.5 * Math.pow(d1, 2)) / Math.sqrt(2 * Math.PI);
-        const vega = data.spot * pdf * Math.sqrt(T);
-        let vanna = -(vega * d2) / (data.spot * sigma);
-        if (!Number.isFinite(vanna)) vanna = 0;
-        
-        const vexPreScale = vanna * opt.openInterest * data.spot;
-        vex = vexPreScale;
+        const vanna = calcVanna(data.spot, opt.strike, T, sigma);
+        vex = vanna * opt.openInterest * data.spot;
         vannaValues.push(Math.abs(vanna));
       }
       totalVex += vex;
@@ -638,13 +639,12 @@ export default function Home() {
     if (displayExpirations.length > 0) {
       result = result.filter(chain => displayExpirations.includes(chain.expiration));
     }
-    const r = 0.05;
-    const now = new Date().getTime();
-
     const getExposureValue = (contract: any, baseValue: number) => {
       if (matrixAggregation === "RAW") return baseValue;
       if (matrixAggregation === "DEALER") {
-        let dealerBiasVal = 1;
+        // AUDIT C2+C3 FIX: dealer = OPUESTO al cliente → multiplicar por -clientBias
+        // Default SqueezeMetrics: cliente largo puts (+1), corto calls (-1)
+        let clientBias = contract.type === "CALL" ? -1 : 1;
         const occId = (() => {
           const dateStr = contract.expiration.replace(/-/g, "").slice(2);
           const typeStr = contract.type === "CALL" ? "C" : "P";
@@ -653,12 +653,10 @@ export default function Home() {
         })();
 
         if (dealerCache && dealerCache[occId]) {
-          dealerBiasVal = dealerCache[occId].bias;
-        } else if (symbol === "SPY" && contract.strike === 745 && contract.expiration.includes("2026-06-08")) {
-          if (contract.type === "CALL") dealerBiasVal = (117 - 146) / 263;
-          else if (contract.type === "PUT") dealerBiasVal = (1286 - 4257) / 5543;
+          clientBias = dealerCache[occId].bias; // bias = posicionamiento del CLIENTE
         }
-        return baseValue * dealerBiasVal;
+        // dealer = -clientBias → signo correcto para calls Y puts
+        return -clientBias * Math.abs(baseValue);
       }
       return baseValue;
     };
@@ -666,25 +664,18 @@ export default function Home() {
     // Map result to inject computed VEX and apply Dealer Bias
     if (data?.spot) {
       result = result.map(chain => {
-        let T = (new Date(chain.expiration).getTime() - now) / (1000 * 60 * 60 * 24 * 365);
-        if (T <= 0) T = 0.0001;
+        const T = calcT(chain.expiration);
 
         const processOpts = (opts: any[], type: "CALL" | "PUT") => opts.map(opt => {
           let vexVal = 0;
-          let sigma = opt.impliedVolatility;
-          if (sigma > 1) sigma /= 100;
+          const sigma = (opt.impliedVolatility >= 0.03 && opt.impliedVolatility <= 4.0) ? opt.impliedVolatility : 0;
           if (sigma > 0 && data.spot > 0) {
-            const d1 = (Math.log(data.spot / opt.strike) + (r + Math.pow(sigma, 2) / 2) * T) / (sigma * Math.sqrt(T));
-            const d2 = d1 - sigma * Math.sqrt(T);
-            const pdf = Math.exp(-0.5 * Math.pow(d1, 2)) / Math.sqrt(2 * Math.PI);
-            const vega = data.spot * pdf * Math.sqrt(T);
-            let rawVanna = -(vega * d2) / (data.spot * sigma);
-            if (!Number.isFinite(rawVanna)) rawVanna = 0;
+            const rawVanna = calcVanna(data.spot, opt.strike, T, sigma);
             vexVal = rawVanna * opt.openInterest * data.spot;
           }
           const optWithType = { ...opt, type, expiration: chain.expiration };
-          return { 
-            ...optWithType, 
+          return {
+            ...optWithType,
             gex: getExposureValue(optWithType, opt.gex || 0),
             vanna: getExposureValue(optWithType, vexVal)
           };
@@ -798,12 +789,9 @@ export default function Home() {
     
     let king = { strike: 0, val: 0 };
     const allOpts: any[] = [];
-    const r = 0.05;
-    const now = new Date().getTime();
 
     filteredMatrixData.forEach(chain => {
-      let T = (new Date(chain.expiration).getTime() - now) / (1000 * 60 * 60 * 24 * 365);
-      if (T <= 0) T = 0.0001;
+      const T = calcT(chain.expiration);
       chain.calls.forEach((c: any) => {
         allOpts.push({...c, type: 'CALL', T});
       });
@@ -854,51 +842,8 @@ export default function Home() {
     if (matrixAggregation === 'RAW') tGex = rawTotal;
     else if (matrixAggregation === 'DEALER') tGex = netTotal;
 
-    const get_net_gex_at_S = (S_test: number) => {
-      let gex_sum = 0;
-      allOpts.forEach(opt => {
-        const sigma = Math.max(opt.impliedVolatility, 0.01);
-        const d1 = (Math.log(S_test / opt.strike) + (r + 0.5 * sigma**2) * opt.T) / (sigma * Math.sqrt(opt.T));
-        const pdf = Math.exp(-0.5 * d1**2) / Math.sqrt(2.0 * Math.PI);
-        const gamma = pdf / (S_test * sigma * Math.sqrt(opt.T));
-        let val = 0;
-        if(opt.type === 'CALL') val = gamma * opt.openInterest * (S_test ** 2);
-        else val = -gamma * opt.openInterest * (S_test ** 2);
-        
-        gex_sum += val;
-      });
-      return gex_sum;
-    };
-
-    let gamma_flip = null;
     const spot = data.spot;
-    const spot_min = spot * 0.8;
-    const spot_max = spot * 1.2;
-    const steps = 40;
-    const step_size = (spot_max - spot_min) / steps;
-    
-    let s_prev = spot_min;
-    let gex_prev = get_net_gex_at_S(s_prev);
-    
-    for (let i = 1; i <= steps; i++) {
-      const s_curr = spot_min + i * step_size;
-      const gex_curr = get_net_gex_at_S(s_curr);
-      if ((gex_prev < 0 && gex_curr >= 0) || (gex_prev > 0 && gex_curr <= 0)) {
-        let low_s = s_prev;
-        let high_s = s_curr;
-        for (let j = 0; j < 8; j++) {
-          const mid_s = (low_s + high_s) / 2.0;
-          const gex_mid = get_net_gex_at_S(mid_s);
-          if (gex_mid === 0) { low_s = mid_s; break; }
-          else if ((gex_prev < 0 && gex_mid < 0) || (gex_prev > 0 && gex_mid > 0)) low_s = mid_s;
-          else high_s = mid_s;
-        }
-        gamma_flip = (low_s + high_s) / 2.0;
-        break;
-      }
-      s_prev = s_curr;
-gex_prev = gex_curr;
-    }
+    const gamma_flip = findGammaFlip(spot, allOpts);
 
     return { totalNetGex: tGex, kingNode: king.strike > 0 ? king.strike : null, gammaFlip: gamma_flip, rawTotal, netTotal, positiveCells, negativeCells, neutralCells };
   }, [filteredMatrixData, viewMode, matrixAggregation, data?.spot]);
@@ -919,11 +864,23 @@ gex_prev = gex_curr;
     const strikesSorted = Array.from(strikesSet).sort((a, b) => a - b);
     
     if (strikesSorted.length === 0) return null;
-    
+
+    // Grid step: median of consecutive strike differences — base for all relative thresholds
+    const gridStep = (() => {
+      if (strikesSorted.length < 2) return 1;
+      const diffs = strikesSorted.slice(1).map((s, i) => s - strikesSorted[i]);
+      diffs.sort((a, b) => a - b);
+      return diffs[Math.floor(diffs.length / 2)] || 1;
+    })();
+    const nearSpotRange = spot * 0.015;       // ~1.5% del spot en lugar de ±5 pts fijos
+    const absorptionMaxGap = 2 * gridStep;    // máx separación en cadena de absorción
+
     // Helper to calculate dealer exposure value
+    // AUDIT C2+C3 FIX: dealer = OPUESTO al cliente → multiplicar por -clientBias
     const getExposureValue = (contract: any, baseValue: number) => {
       if (exposureMode === "RAW") return baseValue;
-      let dealerBiasVal = 1;
+      // Default SqueezeMetrics: cliente largo puts (+1), corto calls (-1)
+      let clientBias = contract.type === "CALL" ? -1 : 1;
       const occId = (() => {
         const dateStr = activeExp.replace(/-/g, "").slice(2);
         const typeStr = contract.type === "CALL" ? "C" : "P";
@@ -932,31 +889,20 @@ gex_prev = gex_curr;
       })();
 
       if (dealerCache && dealerCache[occId]) {
-        dealerBiasVal = dealerCache[occId].bias;
-      } else if (symbol === "SPY" && contract.strike === 745 && activeExp.includes("2026-06-08")) {
-        if (contract.type === "CALL") dealerBiasVal = (117 - 146) / 263;
-        else if (contract.type === "PUT") dealerBiasVal = (1286 - 4257) / 5543;
+        clientBias = dealerCache[occId].bias; // bias = posicionamiento del CLIENTE
       }
-      return baseValue * dealerBiasVal;
+      // dealer = -clientBias → signo correcto para calls Y puts
+      return -clientBias * Math.abs(baseValue);
     };
 
-    const r = 0.05;
-    const now = new Date().getTime();
-    let T = (new Date(activeExp).getTime() - now) / (1000 * 60 * 60 * 24 * 365);
-    if (T <= 0) T = 0.0001;
+    const T = calcT(activeExp);
 
     // Calculate VEX exposure
     const calculateVex = (opt: any, type: "CALL" | "PUT") => {
       let vexVal = 0;
-      let sigma = opt.impliedVolatility;
-      if (sigma > 1) sigma /= 100;
-      if (sigma > 0 && spot > 0) {
-        const d1 = (Math.log(spot / opt.strike) + (r + Math.pow(sigma, 2) / 2) * T) / (sigma * Math.sqrt(T));
-        const d2 = d1 - sigma * Math.sqrt(T);
-        const pdf = Math.exp(-0.5 * Math.pow(d1, 2)) / Math.sqrt(2 * Math.PI);
-        const vega = spot * pdf * Math.sqrt(T);
-        let vanna = -(vega * d2) / (spot * sigma);
-        if (!Number.isFinite(vanna)) vanna = 0;
+      const sigma = opt.impliedVolatility;
+      if (sigma >= 0.03 && sigma <= 4.0 && spot > 0) {
+        const vanna = calcVanna(spot, opt.strike, T, sigma);
         vexVal = vanna * opt.openInterest * spot;
       }
       return getExposureValue({ ...opt, type, expiration: activeExp }, vexVal);
@@ -1020,20 +966,34 @@ gex_prev = gex_curr;
 
     // Visibility
     const threshold = maxAbsGex * 0.10;
-    const visibleNodes = strikeData.filter(sd => Math.abs(sd.gex) >= threshold || Math.abs(sd.strike - spot) <= 5);
+    const visibleNodes = strikeData.filter(sd => Math.abs(sd.gex) >= threshold || Math.abs(sd.strike - spot) <= nearSpotRange);
     const visibleStrikesSorted = [...visibleNodes].sort((a, b) => a.strike - b.strike);
 
-    // GEX & VEX aggregates
+    // GEX & VEX aggregates — cadena completa (AUDIT 6.1 FIX: base para métricas invariantes)
     let totalNetGex = 0;
     let totalNetVex = 0;
+    let sumAbsAllGex = 0;
     strikeData.forEach(sd => {
       totalNetGex += sd.gex;
       totalNetVex += sd.vex;
+      sumAbsAllGex += Math.abs(sd.gex);
     });
 
-    // 1. Dominancia (V3: <20% -> Difuso, 20-40% -> Normal, 40-60% -> Concentrado, >60% -> Frágil)
+    // ATM straddle — normalizes spot-King distance and compression width (AUDIT 6.9)
+    // ≈ S × σ_ATM × √T × √(2/π). Computed once, reused in Risk V2 and Compression.
+    const atmStrike = strikesSorted.reduce((closest, s) =>
+      Math.abs(s - spot) < Math.abs(closest - spot) ? s : closest
+    );
+    const atmCallIV = activeChain.calls.find((c: any) => c.strike === atmStrike)?.impliedVolatility ?? 0;
+    const atmPutIV  = activeChain.puts.find((p: any) => p.strike === atmStrike)?.impliedVolatility ?? 0;
+    const atmIV     = (atmCallIV >= 0.03 ? atmCallIV : 0) || (atmPutIV >= 0.03 ? atmPutIV : 0);
+    const straddleATM = atmIV > 0
+      ? spot * atmIV * Math.sqrt(T) * Math.sqrt(2 / Math.PI)
+      : gridStep * 3;
+
+    // 1. Dominancia — AUDIT 6.1 FIX: cadena completa, no solo visibles
     const sumAbsVisibleGex = visibleNodes.reduce((sum, vn) => sum + Math.abs(vn.gex), 0);
-    const dominanceScore = sumAbsVisibleGex > 0 ? (Math.abs(kingNode.gex) / sumAbsVisibleGex) * 100 : 0;
+    const dominanceScore = sumAbsAllGex > 0 ? (Math.abs(kingNode.gex) / sumAbsAllGex) * 100 : 0;
     let dominanceLabel = "Normal";
     if (dominanceScore < 20) dominanceLabel = "Difuso";
     else if (dominanceScore <= 40) dominanceLabel = "Normal";
@@ -1059,7 +1019,7 @@ gex_prev = gex_curr;
         if (validUpNodes.length >= 3) break;
         const current = positiveStrikesAbove[i];
         const prev = validUpNodes[validUpNodes.length - 1];
-        if (current.strike - prev.strike <= 3) {
+        if (current.strike - prev.strike <= absorptionMaxGap) {
           validUpNodes.push(current);
         } else {
           break;
@@ -1078,17 +1038,17 @@ gex_prev = gex_curr;
     // Lower scenario: Si pierde triggerDown -> vacío, con interacción en nextVisible
     const triggerDown = visibleDown[0]?.strike || Math.floor(spot);
     let targetRangeDown = ""; // vacío
-    let interactionDown = triggerDown - 5;
-    
-    // Find the first gap > 1 strike between consecutive visible nodes below spot
+    let interactionDown = triggerDown - Math.round(nearSpotRange);
+
+    // Find the first gap > gridStep between consecutive visible nodes below spot
     let foundGap = false;
     for (let i = 0; i < visibleDown.length - 1; i++) {
       const currentVisible = visibleDown[i].strike;
       const nextVisible = visibleDown[i + 1].strike;
-      if (currentVisible - nextVisible > 1) {
+      if (currentVisible - nextVisible > gridStep) {
         interactionDown = nextVisible;
-        const gapStart = nextVisible + 1;
-        const gapEnd = currentVisible - 1;
+        const gapStart = nextVisible + gridStep;
+        const gapEnd = currentVisible - gridStep;
         if (gapStart === gapEnd) {
           targetRangeDown = `${gapStart}`;
         } else {
@@ -1101,9 +1061,9 @@ gex_prev = gex_curr;
     
     if (!foundGap) {
       const lastVisible = visibleDown[visibleDown.length - 1]?.strike || triggerDown;
-      interactionDown = lastVisible - 5;
-      const gapStart = interactionDown + 1;
-      const gapEnd = lastVisible - 1;
+      interactionDown = lastVisible - Math.round(nearSpotRange);
+      const gapStart = interactionDown + gridStep;
+      const gapEnd = lastVisible - gridStep;
       if (gapStart === gapEnd) {
         targetRangeDown = `${gapStart}`;
       } else {
@@ -1112,10 +1072,13 @@ gex_prev = gex_curr;
     }
 
     // 4. Fuerza Relativa (VEX Pressure)
-    const vexPressureVal = Math.abs(totalNetVex) / Math.max(1, Math.abs(totalNetGex)) * 100;
+    // AUDIT C8 FIX: normalize to same units — gex_1pct = |netGex|×0.01, vex_1volpt = |netVex|×0.01
+    // Both 0.01 factors cancel → ratio = |netVex|/|netGex| (no ×100 inflation)
+    // Thresholds calibrated to natural scale: <0.05 spot-dominated, >0.20 vol-dominated
+    const vexPressureVal = Math.abs(totalNetVex) / Math.max(1e-10, Math.abs(totalNetGex));
     let vexPressureInterpret = "Precio domina";
-    if (vexPressureVal < 10) vexPressureInterpret = "Precio domina";
-    else if (vexPressureVal <= 30) vexPressureInterpret = "Mixto";
+    if (vexPressureVal < 0.05) vexPressureInterpret = "Precio domina";
+    else if (vexPressureVal <= 0.20) vexPressureInterpret = "Mixto";
     else vexPressureInterpret = "Vol domina";
 
     // 5. Mapa estructural
@@ -1124,15 +1087,18 @@ gex_prev = gex_curr;
     const widthPts = upperBound - lowerBound;
     const spotPositionPercent = Math.round(((spot - lowerBound) / Math.max(1, widthPts)) * 100);
 
-    // V4.3 Densidad: 81% -> Compacta, 60-80 -> Balanceada, <60 -> Dispersa
-    const strikesInRangeCount = strikesSorted.filter(st => st >= lowerBound && st <= upperBound).length;
-    const visibleInRangeCount = visibleNodes.filter(vn => vn.strike >= lowerBound && vn.strike <= upperBound).length;
-    const densityPercent = strikesInRangeCount > 0 ? (visibleInRangeCount / strikesInRangeCount) * 100 : 0;
+    // Densidad — AUDIT 6.9 FIX: Herfindahl Index sobre |GEX| de cadena completa
+    // HHI = Σ(share_i²); HHI_norm = (HHI - 1/N) / (1 - 1/N) → [0=uniforme, 1=concentrado]
+    const N = strikeData.length;
+    const hhi = N > 0 && sumAbsAllGex > 0
+      ? strikeData.reduce((sum, sd) => { const s = Math.abs(sd.gex) / sumAbsAllGex; return sum + s * s; }, 0)
+      : 0;
+    const hhiNorm = N > 1 ? Math.max(0, (hhi - 1 / N) / (1 - 1 / N)) : 1;
     let densityClass = "Dispersa";
-    if (densityPercent >= 80) densityClass = "Compacta";
-    else if (densityPercent >= 60) densityClass = "Balanceada";
+    if (hhiNorm >= 0.6) densityClass = "Compacta";
+    else if (hhiNorm >= 0.3) densityClass = "Balanceada";
     else densityClass = "Dispersa";
-    const densityText = `${visibleInRangeCount}/${strikesInRangeCount} (${densityPercent.toFixed(1)}%) [${densityClass}]`;
+    const densityText = `HHI=${hhiNorm.toFixed(2)} [${densityClass}]`;
 
     // 6. Absorción — Peso efectivo: top-3 nodos (excluyendo King) vs King
     // absorptionScore = sumAbs(top3SupportResistance) / (abs(king) + sumAbs(top3SupportResistance))
@@ -1151,119 +1117,41 @@ gex_prev = gex_curr;
     else if (absorptionScore >= 0.20) absorptionLabel = "Baja";
     else absorptionLabel = "Ausente";
 
-    // Spot Drift and Snapshot Compare
-    const getSpotDriftAndPersist = () => {
-      if (typeof window === "undefined") {
-        return {
-          driftInfo: { text: `${spot.toFixed(1)} to ${spot.toFixed(1)} \u0394+0.0`, value: 0, classLabel: "Estable" },
-          persistenceInfo: { text: "King estable 1 snapshots 1m (Reciente)", count: 1 }
-        };
-      }
-      const key = `snapshots_v3_${symbol}_${activeExp}`;
-      let saved = [];
-      try {
-        saved = JSON.parse(localStorage.getItem(key) || "[]");
-      } catch(e) {}
-      
-      let prevSpot = spot;
-      if (saved.length > 0) {
-        prevSpot = saved[saved.length - 1].spot;
-      }
-      
-      const drift = spot - prevSpot;
-      const driftFormattedVal = drift >= 0 ? `+${drift.toFixed(1)}` : `${drift.toFixed(1)}`;
-      const driftText = `${prevSpot.toFixed(1)} to ${spot.toFixed(1)} \u0394${driftFormattedVal}`;
-      
-      const absDrift = Math.abs(drift);
-      let driftClass = "Estable";
-      if (absDrift < 0.5) {
-        driftClass = "Estable";
-      } else if (absDrift >= 0.5 && absDrift <= 2) {
-        driftClass = "Activo";
-      } else {
-        driftClass = "Expansivo";
-      }
-      
-      // Persist Stats
-      const currentSnapshot = {
-        timestamp: Date.now(),
-        spot: spot,
-        king: kingNode.strike,
-        net: totalNetGex
-      };
-      
-      let updated = [...saved];
-      if (saved.length === 0) {
-        updated.push(currentSnapshot);
-      } else {
-        const last = saved[saved.length - 1];
-        const ageMs = Date.now() - last.timestamp;
-        if (last.king !== currentSnapshot.king || Math.abs(last.spot - currentSnapshot.spot) > 0.2 || ageMs > 60000) {
-          updated.push(currentSnapshot);
-        }
-      }
-      
-      if (updated.length > 5) {
-        updated = updated.slice(updated.length - 5);
-      }
-      
-      try {
-        localStorage.setItem(key, JSON.stringify(updated));
-      } catch(e) {}
-      
-      let consecutiveKingCount = 1;
-      let prevKing = null;
-      const lastKing = currentSnapshot.king;
-      let durationMs = 0;
-      
-      for (let i = updated.length - 2; i >= 0; i--) {
-        if (updated[i].king === lastKing) {
-          consecutiveKingCount++;
-          durationMs = Date.now() - updated[i].timestamp;
-        } else {
-          prevKing = updated[i].king;
-          break;
-        }
-      }
-      
-      const durationMin = Math.max(1, Math.round(durationMs / 60000));
-      
-      let persistClass = "Reciente";
-      if (consecutiveKingCount < 3) {
-        persistClass = "Reciente";
-      } else if (consecutiveKingCount <= 10) {
-        persistClass = "Estable";
-      } else {
-        persistClass = "Persistente";
-      }
+    // AUDIT 6.6 FIX: Spot Drift + EMA Persistence \u2014 pure reads from serverPersistence state.
+    // No localStorage writes inside useMemo (that caused double-execution in StrictMode).
+    const prevSpot = serverPersistence?.prevSpot ?? spot;
+    const drift = spot - prevSpot;
+    const driftFormattedVal = drift >= 0 ? `+${drift.toFixed(1)}` : `${drift.toFixed(1)}`;
+    const driftText = `${prevSpot.toFixed(1)} to ${spot.toFixed(1)} \u0394${driftFormattedVal}`;
+    const absDrift = Math.abs(drift);
+    const driftClass = absDrift < 0.5 ? "Estable" : absDrift <= 2 ? "Activo" : "Expansivo";
+    const driftInfo = { text: driftText, value: drift, classLabel: driftClass };
 
-      let persistText = "";
-      if (prevKing !== null) {
-        const delta = lastKing - prevKing;
-        const deltaSign = delta >= 0 ? "+" : "";
-        persistText = `King: ${lastKing} from ${prevKing} (\u0394${deltaSign}${delta}) ${consecutiveKingCount} snapshots ${durationMin}m (${persistClass})`;
-      } else {
-        persistText = `King estable ${consecutiveKingCount} snapshots ${durationMin}m (${persistClass})`;
-      }
-      
-      return {
-        driftInfo: { text: driftText, value: drift, classLabel: driftClass },
-        persistenceInfo: { text: persistText, count: consecutiveKingCount }
-      };
-    };
+    const ema = serverPersistence?.ema ?? 0.5;
+    const persistCount = serverPersistence?.count ?? 1;
+    const prevKingSnap = serverPersistence?.prevKing ?? null;
+    const persistClass = ema >= 0.7 ? "Persistente" : ema >= 0.4 ? "Estable" : "Reciente";
+    let persistText = "";
+    if (prevKingSnap !== null) {
+      const delta = kingNode.strike - prevKingSnap;
+      const deltaSign = delta >= 0 ? "+" : "";
+      persistText = `King: ${kingNode.strike} from ${prevKingSnap} (\u0394${deltaSign}${delta}) EMA=${ema.toFixed(2)} (${persistClass})`;
+    } else {
+      persistText = `King estable EMA=${ema.toFixed(2)} (${persistClass})`;
+    }
+    const persistenceInfo = { text: persistText, count: persistCount, ema };
 
-    const driftAndPersist = getSpotDriftAndPersist();
-    const driftInfo = driftAndPersist.driftInfo;
-    const persistenceInfo = driftAndPersist.persistenceInfo;
-
-    // Compresión logic
+    // Compresión — AUDIT 6.9 FIX: distancia en unidades de straddle ATM (no pts absolutos)
     const strongBeforeSpot = visibleDown[0]?.strike || Math.floor(spot - 2);
     const strongAfterSpot = visibleUp[0]?.strike || Math.ceil(spot + 2);
     const compressWidth = strongAfterSpot - strongBeforeSpot;
     const idxBefore = strikesSorted.indexOf(strongBeforeSpot);
     const idxAfter = strikesSorted.indexOf(strongAfterSpot);
     const compressWidthStrikes = (idxBefore !== -1 && idxAfter !== -1) ? (idxAfter - idxBefore) : compressWidth;
-    const compressionRange = (compressWidthStrikes < 3 || compressWidth < 3) ? "Sin compresión relevante (0)" : `${strongBeforeSpot}–${strongAfterSpot}`;
+    const compressWidthStraddles = (straddleATM > 0 ? compressWidth / straddleATM : 0).toFixed(2);
+    const compressionRange = (compressWidthStrikes < 2 || compressWidth < 2 * gridStep)
+      ? "Sin compresión relevante (0)"
+      : `${strongBeforeSpot}–${strongAfterSpot} (${compressWidthStraddles}×σ)`;
 
     // V4 Distancia al King
     const kingDist = spot - kingNode.strike;
@@ -1271,100 +1159,107 @@ gex_prev = gex_curr;
     const kingDistValText = `${kingDistSign}${kingDist.toFixed(1)}`;
     const absKingDist = Math.abs(kingDist);
     let kingDistClass = "Lejos";
-    if (absKingDist <= 3) kingDistClass = "Cerca";
-    else if (absKingDist <= 8) kingDistClass = "Media";
+    if (absKingDist <= 3 * gridStep) kingDistClass = "Cerca";
+    else if (absKingDist <= 8 * gridStep) kingDistClass = "Media";
     else kingDistClass = "Lejos";
     
     const kingDistText = `Spot ${spot.toFixed(1)} | King ${kingNode.strike} | Distancia ${kingDistValText} (${kingDistClass})`;
 
-    // V5.2 Zonas GEX — King excluido sin fallback. Vacío = estado explícito.
+    // V5.1 Zonas GEX — King excluido (tiene panel propio). Mostrar estructura secundaria.
     const kingGexAbs = Math.abs(kingNode.gex);
     const minWeightThreshold = kingGexAbs * 0.01;
 
-    // Resistances: nodos superiores al spot, excluyendo King
+    // Resistances: nodos superiores al spot, excluyendo King, ordenados por magnitud desc → cercanía asc
     const filteredResNodes = strikeData
-      .filter(sd => sd.strike > spot && sd.strike !== kingNode.strike && sd.gex > 0 && Math.abs(sd.gex) >= minWeightThreshold)
+      .filter(sd => sd.strike > spot && sd.strike !== kingNode.strike && Math.abs(sd.gex) >= minWeightThreshold)
       .sort((a, b) => Math.abs(b.gex) - Math.abs(a.gex) || a.strike - b.strike);
 
-    const resistances = filteredResNodes.slice(0, 3).map((sd, index) => {
+    // Fallback: si no hay nodos secundarios arriba, incluir King etiquetado
+    const resSource = filteredResNodes.length > 0
+      ? filteredResNodes.slice(0, 3)
+      : (kingNode.strike > spot ? [kingNode] : []);
+
+    const resistances = resSource.map((sd, index) => {
+      const isKingFallback = filteredResNodes.length === 0 && sd.strike === kingNode.strike;
       const weight = (Math.abs(sd.gex) / Math.max(1, kingGexAbs)) * 100;
       return {
         label: `R${index + 1}`,
         strike: sd.strike,
         formatted: formatSignVal(sd.gex),
-        weight: parseFloat(weight.toFixed(1))
+        weight: parseFloat(weight.toFixed(1)),
+        isKing: isKingFallback
       };
     });
 
-    // Supports: nodos inferiores al spot, excluyendo King
+    // Supports: nodos inferiores al spot, excluyendo King, ordenados por magnitud desc → cercanía desc
     const filteredSuppNodes = strikeData
-      .filter(sd => sd.strike < spot && sd.strike !== kingNode.strike && sd.gex > 0 && Math.abs(sd.gex) >= minWeightThreshold)
+      .filter(sd => sd.strike < spot && sd.strike !== kingNode.strike && Math.abs(sd.gex) >= minWeightThreshold)
       .sort((a, b) => Math.abs(b.gex) - Math.abs(a.gex) || b.strike - a.strike);
 
-    const supports = filteredSuppNodes.slice(0, 3).map((sd, index) => {
+    // Fallback: si no hay nodos secundarios abajo, incluir King etiquetado
+    const suppSource = filteredSuppNodes.length > 0
+      ? filteredSuppNodes.slice(0, 3)
+      : (kingNode.strike < spot ? [kingNode] : []);
+
+    const supports = suppSource.map((sd, index) => {
+      const isKingFallback = filteredSuppNodes.length === 0 && sd.strike === kingNode.strike;
       const weight = (Math.abs(sd.gex) / Math.max(1, kingGexAbs)) * 100;
       return {
         label: `S${index + 1}`,
         strike: sd.strike,
         formatted: formatSignVal(sd.gex),
-        weight: parseFloat(weight.toFixed(1))
+        weight: parseFloat(weight.toFixed(1)),
+        isKing: isKingFallback
       };
     });
 
-    // Risk V5.0 — Composición ponderada sin VEX/GEX ratio
-    // Componentes normalizados 0–1:
-    // Dominancia (0-1): kingAbs / sumVisibleAbs
-    const riskDominance = sumAbsVisibleGex > 0 ? Math.abs(kingNode.gex) / sumAbsVisibleGex : 0;
-    // Sesgo (0-1): abs(netGex) / sumVisibleAbs
-    const riskBias = sumAbsVisibleGex > 0 ? Math.abs(totalNetGex) / sumAbsVisibleGex : 0;
-    // Proximidad (0-1): 1 - min(distSpotKing / windowSize, 1)
-    const windowSize = Math.max(1, widthPts);
-    const distSpotKing = Math.abs(spot - kingNode.strike);
-    const riskProximity = 1 - Math.min(distSpotKing / windowSize, 1);
-    // Persistencia (0-1)
-    const riskPersistence = persistenceInfo.count >= 5 ? 1 : persistenceInfo.count >= 3 ? 0.6 : 0.3;
-    // Score final ponderado
+    // Risk V2 — AUDIT 6.5 FIX: fórmula multiplicativa con signo de netGEX
+    // Evita sobreestimar riesgo cuando spot ≈ King POSITIVO (pin = menor movimiento)
+    // straddleATM already computed in aggregates section above.
+
+    // fragilidad: dominancia sobre cadena completa (no solo visibles)
+    const fragilidad    = sumAbsAllGex > 0 ? Math.abs(kingNode.gex) / sumAbsAllGex : 0;
+    // reactividad: 0 si netGEX ≥ 0 (régimen positivo = pin, riesgo bajo)
+    const reactividad   = sumAbsAllGex > 0 ? Math.max(0, -totalNetGex) / sumAbsAllGex : 0;
+    // proximidad: decaimiento gaussiano normalizado al straddle ATM
+    const distSpotKing  = Math.abs(spot - kingNode.strike);
+    const proximidad    = Math.exp(-distSpotKing / Math.max(straddleATM, gridStep));
+    // inestabilidad: complemento del EMA de persistencia
+    const inestabilidad = 1 - persistenceInfo.ema;
+    // Score multiplicativo: independencia entre canal spot y canal vol
     const riskScore = Math.min(1, Math.max(0,
-      riskDominance * 0.45 +
-      riskBias      * 0.30 +
-      riskProximity * 0.20 +
-      riskPersistence * 0.05
+      1 - (1 - fragilidad * reactividad) * (1 - inestabilidad * proximidad)
     ));
     let riskLabel = "Bajo";
     if (riskScore >= 0.75) riskLabel = "Crítico";
     else if (riskScore >= 0.50) riskLabel = "Alto";
     else if (riskScore >= 0.25) riskLabel = "Moderado";
     else riskLabel = "Bajo";
-    const riskDesc = `Dom: ${(riskDominance*100).toFixed(1)}% · Sesgo: ${(riskBias*100).toFixed(1)}% · Prox: ${(riskProximity*100).toFixed(1)}% · Persist: ${(riskPersistence*100).toFixed(0)}%`;
+    const riskDesc = `Frag: ${(fragilidad*100).toFixed(1)}% · React: ${(reactividad*100).toFixed(1)}% · Prox: ${(proximidad*100).toFixed(1)}% · Inest: ${(inestabilidad*100).toFixed(0)}%`;
 
-    // 6. Sesgo estructural
-    const visiblePositives = visibleNodes.filter(n => n.gex > 0);
-    const visibleNegatives = visibleNodes.filter(n => n.gex < 0);
-    const sumPos = visiblePositives.reduce((sum, n) => sum + n.gex, 0);
-    const sumNeg = visibleNegatives.reduce((sum, n) => sum + Math.abs(n.gex), 0);
-    const sumAbsVis = visibleNodes.reduce((sum, n) => sum + Math.abs(n.gex), 0);
-    const bias = sumAbsVis > 0 ? (sumPos - sumNeg) / sumAbsVis : 0;
+    // 6. Sesgo estructural — AUDIT 6.3 FIX: cadena completa, etiqueta preserva signo
+    const allPositives = strikeData.filter(n => n.gex > 0);
+    const allNegatives = strikeData.filter(n => n.gex < 0);
+    const sumPos = allPositives.reduce((sum, n) => sum + n.gex, 0);
+    const sumNeg = allNegatives.reduce((sum, n) => sum + Math.abs(n.gex), 0);
+    // bias = netGEX / sumAbs (signed: >0 calls dominan, <0 puts dominan)
+    const bias = sumAbsAllGex > 0 ? (sumPos - sumNeg) / sumAbsAllGex : 0;
     const biasPercent = bias * 100;
-    
+
     let biasLabel = "Neutral";
-    const absBiasPercent = Math.abs(biasPercent);
-    if (absBiasPercent > 50) {
-      biasLabel = "Dominante";
-    } else if (biasPercent >= 20 && biasPercent <= 50) {
-      biasLabel = "Positivo";
-    } else if (biasPercent >= -50 && biasPercent <= -20) {
-      biasLabel = "Negativo";
-    } else {
-      biasLabel = "Neutral";
-    }
+    if (biasPercent > 50) biasLabel = "Positivo Dominante";
+    else if (biasPercent > 20) biasLabel = "Positivo";
+    else if (biasPercent < -50) biasLabel = "Negativo Dominante";
+    else if (biasPercent < -20) biasLabel = "Negativo";
+    else biasLabel = "Neutral";
 
     // 9. Layout nuevo V4.3
     const blockHeader = `${symbol} • Spot ${spot.toFixed(1)} • Exp ${activeExp}`;
 
     const blockEstado = `Dominancia: ${dominanceScore.toFixed(0)}% (${dominanceLabel})
 Relación: Spot ${spot.toFixed(1)} | King ${kingNode.strike} | Dist ${kingDistValText}
-Presión: ${vexPressureVal.toFixed(1)}% ${vexPressureInterpret}
-Persistencia: ${persistenceInfo.text.replace(/snapshots?\s/, "snaps ")}`;
+Presión: ${vexPressureVal.toFixed(3)}× ${vexPressureInterpret}
+Persistencia: ${persistenceInfo.text}`;
 
     const blockSesgo = `Sesgo: ${biasPercent.toFixed(1)}% (${biasLabel})`;
 
@@ -1379,7 +1274,7 @@ ${triggerDown} → ${targetRangeDown} → ${interactionDown}`;
 
     const blockMapa = `Estructura: ${lowerBound}–${upperBound}
 Spot: ${spotTranslation}
-Densidad: ${densityPercent.toFixed(0)}% ${densityClass}
+Densidad: ${densityText}
 Compresión: ${compTranslation}`;
 
     const blockSoportesResistencias = `ZONAS SUPERIORES
@@ -1447,7 +1342,6 @@ ${blockSoportesResistencias}`;
         upperBound,
         widthPts,
         spotPositionPercent,
-        densityPercent,
         densityText,
         densityClass
       },
@@ -1479,7 +1373,7 @@ ${blockSoportesResistencias}`;
         value: driftInfo.value
       }
     };
-  }, [filteredMatrixData, data, selectedExp, displayExpirations, exposureMode, dealerCache, symbol]);
+  }, [filteredMatrixData, data, selectedExp, displayExpirations, exposureMode, dealerCache, symbol, serverPersistence]);
 
   const dealerAnalysis = analysisSnapshot;
 
@@ -1503,7 +1397,7 @@ ${blockSoportesResistencias}`;
     }
     
     // Validate Presión
-    const visualPres = `${analysisSnapshot.pressure.val.toFixed(1)}%`;
+    const visualPres = `${analysisSnapshot.pressure.val.toFixed(3)}×`;
     if (!textOutput.includes(`Presión: ${visualPres}`)) {
       errors.push(`Presión mismatch: Visual ${visualPres} vs Text`);
     }
@@ -1666,7 +1560,7 @@ ${blockSoportesResistencias}`;
             <div style={{ background: 'rgba(10, 16, 35, 0.6)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', overflow: 'hidden' }}>
               <div style={{ padding: '1rem', borderBottom: '1px solid rgba(255,255,255,0.15)' }}>
                 <h3 style={{ margin: 0, color: '#fbbf24', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Zap size={16} /> GEX Matrix Data Table</h3>
-                <p style={{ margin: 0, fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.2rem' }}>Price Hedging Exposure (GEX) by strikes (rows) vs expirations (columns)</p>
+                <p style={{ margin: 0, fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.2rem' }}>Price Hedging Exposure (GEX) · values in $ per 1% spot move · strikes (rows) vs expirations (cols)</p>
               </div>
               <div style={{ overflowX: 'auto', maxHeight: '600px' }} className="custom-scrollbar">
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.75rem', color: '#e2e8f0', border: '1px solid rgba(255,255,255,0.15)' }}>
@@ -1778,7 +1672,7 @@ ${blockSoportesResistencias}`;
             <div className={styles.panelHeader}>
               <div>
                 <div className={styles.panelTitle}>⚡ GEX Matrix</div>
-                <div className={styles.panelSubtitle}>Price Hedging Exposure</div>
+                <div className={styles.panelSubtitle}>Price Hedging Exposure ($ / 1% spot)</div>
               </div>
               {gexStats && (
                 <div className={styles.panelStats}>
@@ -1977,14 +1871,14 @@ ${blockSoportesResistencias}`;
                       <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.7rem" }}>
                         <span style={{ color: "#94a3b8", textTransform: "uppercase", fontWeight: 600 }}>Presión VEX/GEX</span>
                         <span style={{ color: "#fff", fontWeight: 700, fontFamily: "monospace" }}>
-                          {dealerAnalysis.pressure.val.toFixed(1)}% ({dealerAnalysis.pressure.interpret})
+                          {dealerAnalysis.pressure.val.toFixed(3)}× ({dealerAnalysis.pressure.interpret})
                         </span>
                       </div>
                       <div style={{ height: "4px", background: "rgba(255,255,255,0.05)", borderRadius: "2px", overflow: "hidden" }}>
-                        <div style={{ 
-                          width: `${Math.min(100, dealerAnalysis.pressure.val)}%`, 
-                          background: dealerAnalysis.pressure.interpret === "Precio domina" ? "#34d399" : 
-                                      dealerAnalysis.pressure.interpret === "Mixto" ? "#fbbf24" : "#a855f7" 
+                        <div style={{
+                          width: `${Math.min(100, dealerAnalysis.pressure.val * 500)}%`,
+                          background: dealerAnalysis.pressure.interpret === "Precio domina" ? "#34d399" :
+                                      dealerAnalysis.pressure.interpret === "Mixto" ? "#fbbf24" : "#a855f7"
                         }} />
                       </div>
                     </div>
@@ -2083,12 +1977,12 @@ ${blockSoportesResistencias}`;
                         <span style={{ fontSize: "0.6rem", color: "#f87171", textTransform: "uppercase", fontWeight: 600 }}>Zonas superiores</span>
                         {dealerAnalysis.levels.resistances.map((r: any, idx: number) => (
                           <div key={idx} style={{ background: "rgba(248, 113, 113, 0.03)", border: "1px solid rgba(248, 113, 113, 0.08)", padding: "0.3rem", borderRadius: "4px", display: "flex", justifyContent: "space-between", fontSize: "0.7rem", fontFamily: "monospace" }}>
-                            <span style={{ color: "#f87171", fontWeight: 600 }}>{r.label}: {r.strike}</span>
-                            <span style={{ color: "#cbd5e1" }}>{r.formatted} ({r.weight.toFixed(1)}% King)</span>
+                            <span style={{ color: r.isKing ? "#f59e0b" : "#f87171", fontWeight: 600 }}>{r.label}: {r.strike}{r.isKing ? " (King)" : ""}</span>
+                            <span style={{ color: "#cbd5e1" }}>{r.formatted}{!r.isKing ? ` (${r.weight.toFixed(1)}% King)` : ""}</span>
                           </div>
                         ))}
                         {dealerAnalysis.levels.resistances.length === 0 && (
-                          <span style={{ fontSize: "0.65rem", color: "#475569", fontStyle: "italic", opacity: 0.7 }}>Sin niveles superiores relevantes</span>
+                          <span style={{ fontSize: "0.65rem", color: "#64748b", fontStyle: "italic" }}>Ninguna</span>
                         )}
                       </div>
                       {/* Zonas inferiores */}
@@ -2096,12 +1990,12 @@ ${blockSoportesResistencias}`;
                         <span style={{ fontSize: "0.6rem", color: "#34d399", textTransform: "uppercase", fontWeight: 600 }}>Zonas inferiores</span>
                         {dealerAnalysis.levels.supports.map((s: any, idx: number) => (
                           <div key={idx} style={{ background: "rgba(52, 211, 153, 0.03)", border: "1px solid rgba(52, 211, 153, 0.08)", padding: "0.3rem", borderRadius: "4px", display: "flex", justifyContent: "space-between", fontSize: "0.7rem", fontFamily: "monospace" }}>
-                            <span style={{ color: "#34d399", fontWeight: 600 }}>{s.label}: {s.strike}</span>
-                            <span style={{ color: "#cbd5e1" }}>{s.formatted} ({s.weight.toFixed(1)}% King)</span>
+                            <span style={{ color: s.isKing ? "#f59e0b" : "#34d399", fontWeight: 600 }}>{s.label}: {s.strike}{s.isKing ? " (King)" : ""}</span>
+                            <span style={{ color: "#cbd5e1" }}>{s.formatted}{!s.isKing ? ` (${s.weight.toFixed(1)}% King)` : ""}</span>
                           </div>
                         ))}
                         {dealerAnalysis.levels.supports.length === 0 && (
-                          <span style={{ fontSize: "0.65rem", color: "#475569", fontStyle: "italic", opacity: 0.7 }}>Sin niveles inferiores relevantes</span>
+                          <span style={{ fontSize: "0.65rem", color: "#64748b", fontStyle: "italic" }}>Ninguno</span>
                         )}
                       </div>
                     </div>
@@ -2217,11 +2111,11 @@ ${blockSoportesResistencias}`;
                         </div>
                         <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
                           <span style={{ color: "#94a3b8", fontSize: "0.9em" }}>Presión:</span>
-                          <span style={{ color: "#f8fafc", fontWeight: 500 }}>{dealerAnalysis.pressure.val.toFixed(1)}% {dealerAnalysis.pressure.interpret}</span>
+                          <span style={{ color: "#f8fafc", fontWeight: 500 }}>{dealerAnalysis.pressure.val.toFixed(3)}× {dealerAnalysis.pressure.interpret}</span>
                         </div>
                         <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
                           <span style={{ color: "#94a3b8", fontSize: "0.9em" }}>Persistencia:</span>
-                          <span style={{ color: "#f8fafc", fontWeight: 500 }}>{dealerAnalysis.persistence.text.replace(/snapshots?\s/, "snaps ")}</span>
+                          <span style={{ color: "#f8fafc", fontWeight: 500 }}>{dealerAnalysis.persistence.text}</span>
                         </div>
                       </div>
                     </div>
@@ -2265,7 +2159,7 @@ ${blockSoportesResistencias}`;
                         </div>
                         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                           <span style={{ color: "#94a3b8", fontSize: "0.9em", minWidth: "90px" }}>Densidad:</span>
-                          <span style={{ color: "#f8fafc", fontWeight: 500 }}>{`${dealerAnalysis.map.densityPercent.toFixed(0)}% ${dealerAnalysis.map.densityClass}`}</span>
+                          <span style={{ color: "#f8fafc", fontWeight: 500 }}>{dealerAnalysis.map.densityText}</span>
                         </div>
                         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                           <span style={{ color: "#94a3b8", fontSize: "0.9em", minWidth: "90px" }}>Compresión:</span>
@@ -2323,7 +2217,7 @@ ${blockSoportesResistencias}`;
           {displayExpirations.length > 0 && (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem', background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: '8px' }}>
               <div style={{ width: '100%', marginBottom: '0.5rem', color: '#94a3b8', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                Select Expiration Date ({displayExpirations.length} Available)
+                Select Expiration Date ({displayExpirations.length === totalExpirations ? `${totalExpirations} available` : `${displayExpirations.length} of ${totalExpirations} shown`})
               </div>
               {displayExpirations.map((exp) => (
                 <button
@@ -2416,11 +2310,13 @@ ${blockSoportesResistencias}`;
               <tbody>
                 {rows.map((row, index) => {
                   const isKingNode = data?.kingNode === row.strike;
-                  let dealerBiasVal = 1;
-                  let biasDisplay = "";
-                  let biasTooltip = "";
+                  // AUDIT C2+C3 FIX: dealer = OPUESTO al cliente
+                  // Default SqueezeMetrics: cliente largo puts (+1), corto calls (-1)
+                  let clientBias = row.type === "CALL" ? -1 : 1;
+                  let biasDisplay = row.type === "CALL" ? "prior −" : "prior +";
+                  let biasTooltip = "Sin dato UW — usando prior SqueezeMetrics";
                   let isTestMode = false;
-                  let dealerSource = "";
+                  let dealerSource = "PRIOR";
 
                   const occId = (() => {
                     const dateStr = selectedExp.replace(/-/g, "").slice(2);
@@ -2431,27 +2327,15 @@ ${blockSoportesResistencias}`;
 
                   if (dealerCache && dealerCache[occId]) {
                     isTestMode = true;
-                    dealerSource = dealerCache[occId].source;
-                    dealerBiasVal = dealerCache[occId].bias;
-                    biasDisplay = `${(dealerBiasVal * 100).toFixed(1)}%`;
-                    biasTooltip = `${symbol} ${row.strike}${row.type === 'CALL' ? 'C' : 'P'} ${selectedExp.slice(5)}\nContract Reconstruction\n\n${dealerCache[occId].buy} BUY\n${dealerCache[occId].sell} SELL\nOI ${dealerCache[occId].lastOI}`;
-                  } else if (symbol === "SPY" && row.strike === 745 && selectedExp.includes("2026-06-08")) {
-                    dealerSource = "HARDCODE";
-                    if (row.type === "CALL") {
-                      isTestMode = true;
-                      dealerBiasVal = (117 - 146) / 263;
-                      biasDisplay = "-11.0%";
-                      biasTooltip = "SPY 745C 06/08\nContract Reconstruction\n\n117 BUY\n146 SELL\nOI 263";
-                    } else if (row.type === "PUT") {
-                      isTestMode = true;
-                      dealerBiasVal = (1286 - 4257) / 5543;
-                      biasDisplay = "-53.6%";
-                      biasTooltip = "SPY 745P 06/08\nContract Reconstruction\n\n1286 BUY\n4257 SELL\nOI 5543";
-                    }
+                    dealerSource = dealerCache[occId].source || "UW";
+                    clientBias = dealerCache[occId].bias; // bias = posicionamiento del CLIENTE
+                    biasDisplay = `${(clientBias * 100).toFixed(1)}% UW`;
+                    biasTooltip = `${symbol} ${row.strike}${row.type === 'CALL' ? 'C' : 'P'} ${selectedExp.slice(5)}\nContract Reconstruction\n\n${dealerCache[occId].buy} BUY\n${dealerCache[occId].sell} SELL\nOI ${dealerCache[occId].lastOI} (as-of: ${dealerCache[occId].lastDate || 'N/A'})`;
                   }
 
-                  const displayGex = exposureMode === 'DEALER' ? row.gex * dealerBiasVal : row.gex;
-                  const displayVex = exposureMode === 'DEALER' ? row.vex * dealerBiasVal : row.vex;
+                  // dealer = -clientBias → signo correcto para calls Y puts
+                  const displayGex = exposureMode === 'DEALER' ? -clientBias * Math.abs(row.gex) : row.gex;
+                  const displayVex = exposureMode === 'DEALER' ? -clientBias * Math.abs(row.vex) : row.vex;
 
                   return (
                     <tr 
@@ -2508,7 +2392,7 @@ ${blockSoportesResistencias}`;
                               title={biasTooltip}
                               style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.2rem' }}
                             >
-                              <span style={{ color: dealerBiasVal > 0 ? '#34d399' : dealerBiasVal < 0 ? '#f472b6' : '#94a3b8', fontWeight: 'bold' }}>{biasDisplay}</span>
+                              <span style={{ color: clientBias > 0 ? '#34d399' : clientBias < 0 ? '#f472b6' : '#94a3b8', fontWeight: 'bold' }}>{biasDisplay}</span>
                             </div>
                           ) : (
                             <span style={{ color: '#94a3b8' }}>100%</span>

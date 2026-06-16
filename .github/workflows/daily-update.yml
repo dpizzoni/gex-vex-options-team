@@ -1,8 +1,5 @@
 name: Daily Market Update & UW Capture
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 # Este workflow se ejecutará automáticamente de lunes a viernes.
 # Nota: La hora en el cron se define en UTC. 
 # 09:30 UTC = 05:30 AM EST (Nueva York) / 06:30 AM (Argentina/Chile).
@@ -22,7 +19,7 @@ jobs:
 
     steps:
       - name: ⬇️ Checkout del código
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0 # Necesario para que el bot pueda hacer push sin conflictos
 
@@ -48,9 +45,9 @@ jobs:
 
       - name: 🟢 Setup Node.js
         if: steps.check_today.outputs.skip == 'false'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: 📦 Instalar dependencias Node
@@ -65,7 +62,7 @@ jobs:
       - name: 🐍 Setup Python (Opcional)
         # Por si test_yf.py o alguna otra herramienta usa Python
         if: steps.check_today.outputs.skip == 'false'
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.10'
 
@@ -86,7 +83,7 @@ jobs:
           npm run uw:daily
 
       - name: 📤 Subir capturas de pantalla de diagnóstico (en caso de error)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: always() && steps.check_today.outputs.skip == 'false'
         with:
           name: debug-screenshots
@@ -95,7 +92,7 @@ jobs:
 
       - name: 💾 Commit & Push de los nuevos datos
         if: steps.check_today.outputs.skip == 'false'
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v6
         with:
           commit_message: "chore(data): daily UW capture & dealer update [skip ci]"
           file_pattern: "cache/ capture_state.json errors.json"

@@ -27,20 +27,25 @@ jobs:
         id: check_today
         run: |
           TODAY=$(date +%Y-%m-%d)
-          DEALER_DIR="cache/dealer/SPY/$TODAY"
           EVENT_NAME="${{ github.event_name }}"
-          echo "Buscando data para: $DEALER_DIR"
+          echo "Fecha de hoy (UTC): $TODAY"
           echo "Trigger event: $EVENT_NAME"
+          
+          LAST_RUN=""
+          if [ -f "capture_state.json" ]; then
+            LAST_RUN=$(date -r capture_state.json +%Y-%m-%d)
+            echo "Última ejecución detectada: $LAST_RUN"
+          fi
           
           if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
             echo "skip=false" >> $GITHUB_OUTPUT
             echo "🚀 Ejecución manual detectada. Forzando actualización de los datos."
-          elif [ -d "$DEALER_DIR" ] && [ -n "$(ls -A "$DEALER_DIR" 2>/dev/null)" ]; then
+          elif [ "$LAST_RUN" = "$TODAY" ]; then
             echo "skip=true" >> $GITHUB_OUTPUT
-            echo "✅ Ya existe data para $TODAY. Saltando ejecución automática."
+            echo "✅ Ya se ejecutó la captura exitosamente hoy ($TODAY). Saltando ejecución automática."
           else
             echo "skip=false" >> $GITHUB_OUTPUT
-            echo "🚀 No hay data para $TODAY — ejecutando update automático normal."
+            echo "🚀 No se ha ejecutado hoy o no hay registro. Ejecutando update automático normal."
           fi
 
       - name: 🟢 Setup Node.js

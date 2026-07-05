@@ -373,7 +373,7 @@ export default function GammaMatrix({
                 <td className={styles.stickyStrikeCell}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <span>{Number.isInteger(st) ? st : Number(st.toFixed(2))}</span>
-                    {Math.abs(st - spot) < (strikes[0] - strikes[1]) && (
+                    {st === closestStrike && (
                       <span className={styles.spotIndicator}>SPOT</span>
                     )}
                   </div>

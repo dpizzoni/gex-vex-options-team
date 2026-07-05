@@ -1,0 +1,26 @@
+{
+  "ticker": "HON",
+  "date": "2026-07-05",
+  "spot": 229.86,
+  "expirations": [
+    {
+      "expiration": "2026-07-10",
+      "dte": 8,
+      "call_gex": 0,
+      "put_gex": null,
+      "net_gex": null,
+      "p_c_ratio": null
+    },
+    {
+      "expiration": "2026-07-17",
+      "dte": 15,
+      "call_gex": 510,
+      "put_gex": -818,
+      "net_gex": -309,
+      "p_c_ratio": 1.6058
+    }
+  ],
+  "putWall": 220,
+  "callWall": 230,
+  "limitedData": true
+}

@@ -1,0 +1,50 @@
+{
+  "ticker": "NEE",
+  "date": "2026-07-05",
+  "spot": 88.34,
+  "expirations": [
+    {
+      "expiration": "2026-07-10",
+      "dte": 8,
+      "call_gex": 29227,
+      "put_gex": -26339,
+      "net_gex": 2889,
+      "p_c_ratio": 0.9012
+    },
+    {
+      "expiration": "2026-07-17",
+      "dte": 15,
+      "call_gex": 129096,
+      "put_gex": -128554,
+      "net_gex": 542,
+      "p_c_ratio": 0.9958
+    },
+    {
+      "expiration": "2026-07-24",
+      "dte": 22,
+      "call_gex": 14618,
+      "put_gex": -5958,
+      "net_gex": 8661,
+      "p_c_ratio": 0.4075
+    },
+    {
+      "expiration": "2026-07-31",
+      "dte": 29,
+      "call_gex": 7185,
+      "put_gex": -3542,
+      "net_gex": 3643,
+      "p_c_ratio": 0.4929
+    },
+    {
+      "expiration": "2026-08-07",
+      "dte": 36,
+      "call_gex": 840,
+      "put_gex": -680,
+      "net_gex": 160,
+      "p_c_ratio": 0.8093
+    }
+  ],
+  "putWall": 85,
+  "callWall": 90,
+  "limitedData": false
+}

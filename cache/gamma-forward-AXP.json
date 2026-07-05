@@ -1,0 +1,50 @@
+{
+  "ticker": "AXP",
+  "date": "2026-07-05",
+  "spot": 351.96,
+  "expirations": [
+    {
+      "expiration": "2026-07-10",
+      "dte": 8,
+      "call_gex": 7392,
+      "put_gex": -3222,
+      "net_gex": 4170,
+      "p_c_ratio": 0.4359
+    },
+    {
+      "expiration": "2026-07-17",
+      "dte": 15,
+      "call_gex": 15549,
+      "put_gex": -6895,
+      "net_gex": 8655,
+      "p_c_ratio": 0.4434
+    },
+    {
+      "expiration": "2026-07-24",
+      "dte": 22,
+      "call_gex": 2040,
+      "put_gex": -901,
+      "net_gex": 1139,
+      "p_c_ratio": 0.4417
+    },
+    {
+      "expiration": "2026-07-31",
+      "dte": 29,
+      "call_gex": 703,
+      "put_gex": -312,
+      "net_gex": 391,
+      "p_c_ratio": 0.4443
+    },
+    {
+      "expiration": "2026-08-07",
+      "dte": 36,
+      "call_gex": 68,
+      "put_gex": -84,
+      "net_gex": -16,
+      "p_c_ratio": 1.2304
+    }
+  ],
+  "putWall": 340,
+  "callWall": 480,
+  "limitedData": false
+}

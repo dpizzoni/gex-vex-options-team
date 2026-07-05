@@ -17,11 +17,16 @@ import {
   Copy,
   Check,
   FileText,
-  Eye
+  Eye,
+  Search
 } from "lucide-react";
 import styles from "./page.module.css";
 import GammaMatrix, { MatrixRawData } from "./components/GammaMatrix";
 import { calcT, calcGamma, calcVanna, sanitizeIV, findGammaFlip } from "@/lib/gex-engine";
+import GammaRegimePanel from "./components/GammaRegimePanel";
+import GammaRegimeChart from "./components/GammaRegimeChart";
+import NotificationBell from "./components/NotificationBell";
+import { computeGammaRegime } from "@/lib/gamma-regime-engine";
 
 interface OptionContract {
   strike: number;
@@ -59,9 +64,36 @@ interface OptionsResponse {
   };
 }
 
+const BASE_TICKERS = ["SPY", "QQQ", "AAPL", "AMZN", "GOOGL", "META", "MSFT", "NVDA", "TSLA"];
+const RECENT_TICKERS_KEY = "recentSearchedTickers";
+const MAX_RECENT_TICKERS = 10;
+
 export default function Home() {
   const [symbol, setSymbol] = useState<string>("SPY");
   const [customTicker, setCustomTicker] = useState<string>("");
+  const [recentTickers, setRecentTickers] = useState<string[]>([]);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(RECENT_TICKERS_KEY);
+      if (stored) setRecentTickers(JSON.parse(stored));
+    } catch (e) {
+      // ignore malformed localStorage state
+    }
+  }, []);
+
+  const addRecentTicker = useCallback((ticker: string) => {
+    if (BASE_TICKERS.includes(ticker)) return;
+    setRecentTickers(prev => {
+      const next = [ticker, ...prev.filter(t => t !== ticker)].slice(0, MAX_RECENT_TICKERS);
+      try {
+        localStorage.setItem(RECENT_TICKERS_KEY, JSON.stringify(next));
+      } catch (e) {
+        // ignore write failures (e.g. storage disabled)
+      }
+      return next;
+    });
+  }, []);
   const [data, setData] = useState<OptionsResponse | null>(null);
   const [selectedExp, setSelectedExp] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
@@ -94,6 +126,34 @@ export default function Home() {
   const [serverPersistence, setServerPersistence] = useState<{
     ema: number; prevSpot: number | null; count: number; prevKing: number | null;
   } | null>(null);
+
+  // Gamma Regime Engine State
+  const [regimeHistory, setRegimeHistory] = useState<any[]>([]);
+  const [regimeForward, setRegimeForward] = useState<any[]>([]);
+  const [regimeForwardWalls, setRegimeForwardWalls] = useState<{ putWall: number | null; callWall: number | null; limitedData: boolean }>({ putWall: null, callWall: null, limitedData: false });
+  const [regimeLoading, setRegimeLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (!symbol) return;
+    setRegimeLoading(true);
+
+    Promise.all([
+      fetch(`/api/regime-history?symbol=${symbol}`).then(res => res.json()),
+      fetch(`/api/regime-forward?symbol=${symbol}`).then(res => res.json())
+    ]).then(([historyJson, forwardJson]) => {
+      setRegimeHistory(historyJson.history || []);
+      setRegimeForward(forwardJson.expirations || []);
+      setRegimeForwardWalls({
+        putWall: forwardJson.putWall ?? null,
+        callWall: forwardJson.callWall ?? null,
+        limitedData: !!forwardJson.limitedData
+      });
+    }).catch(err => {
+      console.error("Failed to fetch regime data", err);
+    }).finally(() => {
+      setRegimeLoading(false);
+    });
+  }, [symbol]);
 
   useEffect(() => {
     fetch(`/api/dealer?t=${Date.now()}`).then(res => res.json()).then(data => {
@@ -1378,6 +1438,30 @@ ${blockSoportesResistencias}`;
 
   const dealerAnalysis = analysisSnapshot;
 
+  const regimeData = useMemo(() => {
+    if (!data || !data.spot || regimeHistory.length === 0) return null;
+
+    // "Today" is the most recent real UW day already present in regimeHistory, not the
+    // live Dealer Analysis (Yahoo + dealer-bias) engine — those are different metrics on
+    // different scales, mixing them broke the rolling GEX calculations (see conversation).
+    const activeExp = selectedExp || (displayExpirations.length > 0 ? displayExpirations[0] : "");
+    const activeChain = filteredMatrixData.find(chain => chain.expiration === activeExp);
+    let gridStep = 1.0;
+    if (activeChain) {
+      const strikesSet = new Set<number>();
+      activeChain.calls.forEach((c: any) => strikesSet.add(c.strike));
+      activeChain.puts.forEach((p: any) => strikesSet.add(p.strike));
+      const strikesSorted = Array.from(strikesSet).sort((a, b) => a - b);
+      if (strikesSorted.length >= 2) {
+        const diffs = strikesSorted.slice(1).map((s, i) => s - strikesSorted[i]);
+        diffs.sort((a, b) => a - b);
+        gridStep = diffs[Math.floor(diffs.length / 2)] || 1;
+      }
+    }
+
+    return computeGammaRegime(regimeHistory, regimeForward, data.spot, gridStep);
+  }, [data, regimeHistory, regimeForward, selectedExp, filteredMatrixData]);
+
   // Validation: Visual = Texto. Si difieren ↓ mostrar warning en consola.
   useEffect(() => {
     if (!analysisSnapshot) return;
@@ -1466,6 +1550,7 @@ ${blockSoportesResistencias}`;
               <b style={{ color: error ? "#ff2a6d" : "#00e676" }}>{error ? "Offline" : "Live"}</b>
             </div>
             {lastUpdated && <span style={{ fontSize: '0.7rem', color: '#94a3b8', whiteSpace: 'nowrap' }}>{lastUpdated.toLocaleTimeString()}</span>}
+            <NotificationBell />
           </div>
         </div>
 
@@ -1476,17 +1561,55 @@ ${blockSoportesResistencias}`;
           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
             <div className={styles.selectWrapper}>
               <select value={symbol} onChange={(e) => { setSymbol(e.target.value); setSelectedExp(""); setMatrixRawData([]); }} className={styles.select} style={{ padding: "0.3rem 1.6rem 0.3rem 0.6rem", fontSize: "0.8rem", minHeight: "auto", fontWeight: 700 }}>
-                <option value="SPY">SPY</option>
-                <option value="QQQ">QQQ</option>
-                <option value="AAPL">AAPL</option>
-                <option value="AMZN">AMZN</option>
-                <option value="GOOGL">GOOGL</option>
-                <option value="META">META</option>
-                <option value="MSFT">MSFT</option>
-                <option value="NVDA">NVDA</option>
-                <option value="TSLA">TSLA</option>
+                {recentTickers.length > 0 && (
+                  <optgroup label="Recientes">
+                    {recentTickers.map(t => <option key={t} value={t}>{t}</option>)}
+                  </optgroup>
+                )}
+                <optgroup label="Principales">
+                  <option value="SPY">SPY</option>
+                  <option value="QQQ">QQQ</option>
+                  <option value="AAPL">AAPL</option>
+                  <option value="AMZN">AMZN</option>
+                  <option value="GOOGL">GOOGL</option>
+                  <option value="META">META</option>
+                  <option value="MSFT">MSFT</option>
+                  <option value="NVDA">NVDA</option>
+                  <option value="TSLA">TSLA</option>
+                </optgroup>
               </select>
               <ChevronDown size={14} className={styles.selectIcon} style={{ right: '0.4rem' }} />
+            </div>
+
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <Search size={13} style={{ position: 'absolute', left: '0.5rem', color: '#94a3b8', pointerEvents: 'none' }} />
+              <input
+                type="text"
+                value={customTicker}
+                onChange={(e) => setCustomTicker(e.target.value.toUpperCase())}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && customTicker.trim()) {
+                    const ticker = customTicker.trim();
+                    setSymbol(ticker);
+                    setSelectedExp("");
+                    setMatrixRawData([]);
+                    setCustomTicker("");
+                    addRecentTicker(ticker);
+                  }
+                }}
+                placeholder="Buscar ticker..."
+                style={{
+                  padding: '0.3rem 0.5rem 0.3rem 1.6rem',
+                  fontSize: '0.8rem',
+                  fontWeight: 700,
+                  borderRadius: '6px',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: 'rgba(255,255,255,0.05)',
+                  color: '#fff',
+                  width: '120px',
+                  outline: 'none'
+                }}
+              />
             </div>
           </div>
 
@@ -1778,6 +1901,19 @@ ${blockSoportesResistencias}`;
               }}
               dealerCache={dealerCache}
             />
+          </div>
+
+          {/* Regime Engine & Chart Stack */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', height: '100%' }}>
+            <GammaRegimeChart
+              history={regimeHistory}
+              forwardExpirations={regimeForward}
+              symbol={symbol}
+              putWall={regimeForwardWalls.putWall}
+              callWall={regimeForwardWalls.callWall}
+              limitedForwardData={regimeForwardWalls.limitedData}
+            />
+            <GammaRegimePanel regimeData={regimeData} loading={regimeLoading} minHistoryCount={regimeHistory.length} />
           </div>
 
           {/* Third Interpretive Panel */}
@@ -2094,7 +2230,7 @@ ${blockSoportesResistencias}`;
                     display: "flex", flexDirection: "column", gap: "12px", lineHeight: "1.4"
                   }}>
                     {/* Nivel 1 */}
-                    <div style={{ fontSize: "1.3em", fontWeight: 800, color: "#fff", borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "8px", letterSpacing: "-0.5px" }}>
+                    <div style={{ fontSize: "1.3em", fontWeight: 800, color: "#fff", borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "8px", paddingRight: "90px", letterSpacing: "-0.5px" }}>
                       {dealerAnalysis.context.symbol} • Spot {dealerAnalysis.context.spot.toFixed(1)} • Exp {dealerAnalysis.context.exp}
                     </div>
 

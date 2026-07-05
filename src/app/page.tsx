@@ -117,6 +117,9 @@ export default function Home() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [refreshStats, setRefreshStats] = useState<{ uw: number, dealer: number, duration: number } | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [gammaCapturedAt, setGammaCapturedAt] = useState<Date | null>(null);
+  const [gammaCaptureDurationSec, setGammaCaptureDurationSec] = useState<number | null>(null);
+  const [gammaCaptureFailed, setGammaCaptureFailed] = useState(false);
 
   // Analysis Panel State
   const [analysisTab, setAnalysisTab] = useState<"visual" | "text">("visual");
@@ -160,6 +163,16 @@ export default function Home() {
       setDealerCache(data);
     }).catch(err => {
       console.error("Dealer cache fetch failed", err);
+    });
+  }, []);
+
+  useEffect(() => {
+    fetch(`/api/gamma-capture-meta?t=${Date.now()}`).then(res => res.json()).then(data => {
+      if (data.ranAt) setGammaCapturedAt(new Date(data.ranAt));
+      if (typeof data.durationSeconds === 'number') setGammaCaptureDurationSec(data.durationSeconds);
+      setGammaCaptureFailed(data.conclusion === 'failure');
+    }).catch(err => {
+      console.error("Gamma capture meta fetch failed", err);
     });
   }, []);
 
@@ -1504,6 +1517,15 @@ ${blockSoportesResistencias}`;
     }
   }, [analysisSnapshot]);
 
+  const formatDuration = (totalSeconds: number) => {
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = Math.floor(totalSeconds % 60);
+    if (h > 0) return `${h}h ${m}m ${s}s`;
+    if (m > 0) return `${m}m ${s}s`;
+    return `${s}s`;
+  };
+
   const toggleMatrixExp = (exp: string) => {
     if (matrixExpMode === "SINGLE") {
       setMatrixSelectedExps([exp]);
@@ -1539,6 +1561,16 @@ ${blockSoportesResistencias}`;
 
           {/* Status / Active Exps aligned Right */}
           <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+            {gammaCapturedAt && (
+              <span
+                style={{ fontSize: '0.7rem', color: gammaCaptureFailed ? '#ff2a6d' : '#64748b', whiteSpace: 'nowrap' }}
+                title="Última ejecución del workflow de scraping UW (GitHub Actions)"
+              >
+                Última Act.: {gammaCapturedAt.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' })}
+                {gammaCaptureDurationSec != null && ` (${formatDuration(gammaCaptureDurationSec)})`}
+                {gammaCaptureFailed && ' ⚠️'}
+              </span>
+            )}
             {((viewMode === 'chain' && selectedExp) || (viewMode === 'matrix' && matrixSelectedExps.length > 0)) && (
               <div className={styles.connectionStatus} style={{ color: "#c084fc", background: "rgba(192, 132, 252, 0.08)", padding: "0.2rem 0.6rem", borderRadius: "6px", border: "1px solid rgba(192, 132, 252, 0.2)", fontSize: "0.75rem", display: 'flex', alignItems: 'center' }}>
                 <Calendar size={14} style={{ marginRight: 6 }} />

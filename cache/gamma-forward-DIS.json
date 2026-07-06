@@ -1,58 +1,9 @@
 {
   "ticker": "DIS",
   "date": "2026-07-06",
-  "spot": 99.0001,
-  "expirations": [
-    {
-      "expiration": "2026-07-10",
-      "dte": 4,
-      "call_gex": 53061,
-      "put_gex": -52347,
-      "net_gex": 714,
-      "p_c_ratio": 0.9865
-    },
-    {
-      "expiration": "2026-07-17",
-      "dte": 11,
-      "call_gex": 124178,
-      "put_gex": -144802,
-      "net_gex": -20624,
-      "p_c_ratio": 1.1661
-    },
-    {
-      "expiration": "2026-07-24",
-      "dte": 18,
-      "call_gex": 14066,
-      "put_gex": -9757,
-      "net_gex": 4309,
-      "p_c_ratio": 0.6937
-    },
-    {
-      "expiration": "2026-07-31",
-      "dte": 25,
-      "call_gex": 20753,
-      "put_gex": -6052,
-      "net_gex": 14702,
-      "p_c_ratio": 0.2916
-    },
-    {
-      "expiration": "2026-08-07",
-      "dte": 32,
-      "call_gex": 2934,
-      "put_gex": -3095,
-      "net_gex": -161,
-      "p_c_ratio": 1.0547
-    },
-    {
-      "expiration": "2026-08-14",
-      "dte": 39,
-      "call_gex": 1015,
-      "put_gex": 0,
-      "net_gex": 1015,
-      "p_c_ratio": 0
-    }
-  ],
-  "putWall": 90,
-  "callWall": 100,
-  "limitedData": false
+  "spot": null,
+  "expirations": [],
+  "putWall": null,
+  "callWall": null,
+  "limitedData": true
 }

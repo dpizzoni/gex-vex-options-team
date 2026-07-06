@@ -1,0 +1,62 @@
+name: Gamma Regime Intraday Refresh
+
+# UW recalcula su GEX agregado durante el día (no solo al cierre), así que la
+# única captura diaria de daily-update.yml (madrugada) queda desactualizada
+# para la tarde. Este workflow corre SOLO la Etapa 1 (Gamma Regime, liviana,
+# ~5min para 127 tickers) dos veces más por día, sin tocar la captura de OI
+# (esa sigue siendo una vez al día en daily-update.yml).
+on:
+  schedule:
+    - cron: '0 15 * * 1-5'
+    - cron: '0 20 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  gamma-refresh:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Checkout del código
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: 📦 Instalar dependencias Node
+        run: npm install
+
+      - name: 🌐 Instalar navegadores Playwright (para UW)
+        run: npx playwright install chromium --with-deps
+
+      - name: 📊 Actualizar Gamma Regime Data
+        env:
+          UW_EMAIL: ${{ secrets.UW_EMAIL }}
+          UW_PASSWORD: ${{ secrets.UW_PASSWORD }}
+        run: npm run uw:daily:gamma
+
+      # Mismo motivo que en daily-update.yml: si algo más se pusheó a main
+      # mientras este job corría, evita el "fetch first" en el push siguiente.
+      - name: 🔄 Sincronizar con main antes de commitear
+        if: always()
+        run: |
+          git fetch origin main
+          if ! git rebase --autostash origin/main; then
+            git rebase --abort 2>/dev/null || true
+            echo "::warning::No se pudo rebasear sobre main (posible conflicto real de contenido). El commit puede fallar."
+          fi
+
+      - name: 💾 Commit & Push - Gamma Regime Data (intraday)
+        if: always()
+        uses: stefanzweifel/git-auto-commit-action@v6
+        with:
+          commit_message: "chore(data): intraday gamma regime refresh [skip ci]"
+          file_pattern: "cache/"
+          skip_fetch: false

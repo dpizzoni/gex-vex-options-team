@@ -148,7 +148,12 @@ async function run() {
   // auth_state.json is gitignored, so it won't exist on a fresh CI checkout;
   // ensureLoggedIn() below performs a full fresh login via UW_EMAIL/UW_PASSWORD
   // in that case, mirroring uw-window-fetch.js's proven pattern.
-  const contextOptions = { viewport: null };
+  // Explicit viewport (matching uw-window-fetch.js, the proven-on-CI script)
+  // instead of `viewport: null`: with no real window in headless mode, `null`
+  // disables viewport emulation entirely, which likely left UW's lazy-loaded
+  // Gamma Exposure widgets thinking they had no visible area to render into,
+  // so every ticker's endpoints responded with empty data instead of erroring.
+  const contextOptions = { viewport: { width: 1366, height: 768 } };
   if (fs.existsSync(STATE_FILE)) contextOptions.storageState = STATE_FILE;
   const context = await browser.newContext(contextOptions);
   const page = await context.newPage();

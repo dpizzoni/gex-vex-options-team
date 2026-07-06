@@ -149,7 +149,7 @@ async function run() {
     process.exit(1);
   }
 
-  const browser = await chromium.launch({ headless: false, args: ['--start-maximized', '--disable-features=Translate'] });
+  const browser = await chromium.launch({ headless: process.env.CI ? true : false, args: ['--start-maximized', '--disable-features=Translate'] });
   const context = await browser.newContext({ viewport: null, storageState: STATE_FILE });
   const page = await context.newPage();
 

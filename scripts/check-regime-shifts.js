@@ -25,8 +25,11 @@ function saveAlerts(alerts) {
   fs.writeFileSync(alertsPath, JSON.stringify(alerts, null, 2), 'utf8');
 }
 
-// Mirrors the regimeShift condition in src/lib/gamma-regime-engine.ts:
-// regime flips (by EMA3 sign) AND the move clears 10% of the 30d rolling avg |net_gex|.
+// EXPERIMENTAL: regime flip based on the raw single-day net_gex sign (matches
+// what the chart bars actually show), instead of the smoothed EMA3 used by
+// src/lib/gamma-regime-engine.ts. Trades false-positive risk (one noisy day
+// can flip it) for alerting the same day the bar color changes, instead of
+// waiting for EMA3 to catch up a day or two later.
 // backfill=true scans every day in history instead of just the last one (one-off seeding).
 function checkTicker(ticker, existingAlerts, backfill) {
   const historyPath = path.join(cacheDir, `regime-history-${ticker}.json`);
@@ -44,14 +47,14 @@ function checkTicker(ticker, existingAlerts, backfill) {
     const today = sorted[i];
     const yesterday = sorted[i - 1];
 
-    const regimeToday = today.ema3_net_gex >= 0 ? 'LONG_GAMMA' : 'SHORT_GAMMA';
-    const regimeYesterday = yesterday.ema3_net_gex >= 0 ? 'LONG_GAMMA' : 'SHORT_GAMMA';
+    const regimeToday = today.net_gex >= 0 ? 'LONG_GAMMA' : 'SHORT_GAMMA';
+    const regimeYesterday = yesterday.net_gex >= 0 ? 'LONG_GAMMA' : 'SHORT_GAMMA';
     if (regimeToday === regimeYesterday) continue;
 
     const window30d = sorted.slice(Math.max(0, i - 29), i + 1);
     const avgAbs30d = window30d.reduce((sum, h) => sum + Math.abs(h.net_gex), 0) / window30d.length;
     const threshold = 0.10 * avgAbs30d;
-    if (Math.abs(today.ema3_net_gex) <= threshold) continue;
+    if (Math.abs(today.net_gex) <= threshold) continue;
 
     const id = `${ticker}_${today.date}`;
     if (existingAlerts.some(a => a.id === id)) continue;

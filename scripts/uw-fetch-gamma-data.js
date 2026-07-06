@@ -151,11 +151,26 @@ async function run() {
   // Explicit viewport (matching uw-window-fetch.js, the proven-on-CI script)
   // instead of `viewport: null`: with no real window in headless mode, `null`
   // disables viewport emulation entirely, which likely left UW's lazy-loaded
-  // Gamma Exposure widgets thinking they had no visible area to render into,
-  // so every ticker's endpoints responded with empty data instead of erroring.
-  const contextOptions = { viewport: { width: 1366, height: 768 } };
+  // Gamma Exposure widgets thinking they had no visible area to render into.
+  const contextOptions = {
+    viewport: { width: 1366, height: 768 },
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+    locale: 'es-AR'
+  };
   if (fs.existsSync(STATE_FILE)) contextOptions.storageState = STATE_FILE;
   const context = await browser.newContext(contextOptions);
+
+  // Stealth: bypass navigator.webdriver detection, same as uw-window-fetch.js.
+  // The real root cause of every ticker returning empty data on CI: without
+  // this, headless Chromium's default UA ("HeadlessChrome...") and the
+  // navigator.webdriver flag are trivially detectable, and UW appears to
+  // silently serve a degraded/empty response instead of erroring.
+  await context.addInitScript(() => {
+    Object.defineProperty(navigator, 'webdriver', {
+      get: () => undefined,
+    });
+  });
+
   const page = await context.newPage();
 
   await ensureLoggedIn(page, context);

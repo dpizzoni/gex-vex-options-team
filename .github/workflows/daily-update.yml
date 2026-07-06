@@ -82,6 +82,20 @@ jobs:
           UW_PASSWORD: ${{ secrets.UW_PASSWORD }}
         run: npm run uw:daily:gamma
 
+      # Un push directo a main mientras este job corre (puede tardar ~1h en total)
+      # deja el checkout local desactualizado y el push del siguiente step se
+      # rechaza con "fetch first". Rebaseamos primero; si hay un conflicto real
+      # de contenido lo abortamos limpio y dejamos que el commit falle visible,
+      # en vez de dejar el repo en un estado de rebase a medio terminar.
+      - name: 🔄 Sincronizar con main antes de commitear (Gamma)
+        if: always() && steps.check_today.outputs.skip == 'false'
+        run: |
+          git fetch origin main
+          if ! git rebase --autostash origin/main; then
+            git rebase --abort 2>/dev/null || true
+            echo "::warning::No se pudo rebasear sobre main (posible conflicto real de contenido). El commit de Gamma puede fallar."
+          fi
+
       - name: 💾 Commit & Push - Gamma Regime Data
         if: always() && steps.check_today.outputs.skip == 'false'
         uses: stefanzweifel/git-auto-commit-action@v6
@@ -114,6 +128,15 @@ jobs:
           name: debug-screenshots
           path: debug/
           if-no-files-found: ignore
+
+      - name: 🔄 Sincronizar con main antes de commitear (OI)
+        if: always() && steps.check_today.outputs.skip == 'false'
+        run: |
+          git fetch origin main
+          if ! git rebase --autostash origin/main; then
+            git rebase --abort 2>/dev/null || true
+            echo "::warning::No se pudo rebasear sobre main (posible conflicto real de contenido). El commit de OI puede fallar."
+          fi
 
       - name: 💾 Commit & Push - OI y Dealer Build
         if: always() && steps.check_today.outputs.skip == 'false'

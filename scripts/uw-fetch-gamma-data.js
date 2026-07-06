@@ -144,13 +144,13 @@ async function run() {
     console.error('Usage: node scripts/uw-fetch-gamma-data.js TICKER [TICKER2 ...]');
     process.exit(1);
   }
-  if (!fs.existsSync(STATE_FILE)) {
-    console.error('No auth_state.json found. Run uw-open.js first to log in.');
-    process.exit(1);
-  }
-
   const browser = await chromium.launch({ headless: process.env.CI ? true : false, args: ['--start-maximized', '--disable-features=Translate'] });
-  const context = await browser.newContext({ viewport: null, storageState: STATE_FILE });
+  // auth_state.json is gitignored, so it won't exist on a fresh CI checkout;
+  // ensureLoggedIn() below performs a full fresh login via UW_EMAIL/UW_PASSWORD
+  // in that case, mirroring uw-window-fetch.js's proven pattern.
+  const contextOptions = { viewport: null };
+  if (fs.existsSync(STATE_FILE)) contextOptions.storageState = STATE_FILE;
+  const context = await browser.newContext(contextOptions);
   const page = await context.newPage();
 
   await ensureLoggedIn(page, context);

@@ -138,12 +138,19 @@ export default function Home() {
 
   useEffect(() => {
     if (!symbol) return;
+    let cancelled = false;
     setRegimeLoading(true);
 
     Promise.all([
       fetch(`/api/regime-history?symbol=${symbol}`).then(res => res.json()),
       fetch(`/api/regime-forward?symbol=${symbol}`).then(res => res.json())
     ]).then(([historyJson, forwardJson]) => {
+      // Guard against out-of-order responses: if the symbol changed again
+      // before this fetch resolved, the cleanup below already flipped
+      // `cancelled`, so a slower response for a stale ticker (e.g. SPY
+      // resolving after the user already switched to TSLA) can't overwrite
+      // the current ticker's data.
+      if (cancelled) return;
       setRegimeHistory(historyJson.history || []);
       setRegimeForward(forwardJson.expirations || []);
       setRegimeForwardWalls({
@@ -152,10 +159,12 @@ export default function Home() {
         limitedData: !!forwardJson.limitedData
       });
     }).catch(err => {
-      console.error("Failed to fetch regime data", err);
+      if (!cancelled) console.error("Failed to fetch regime data", err);
     }).finally(() => {
-      setRegimeLoading(false);
+      if (!cancelled) setRegimeLoading(false);
     });
+
+    return () => { cancelled = true; };
   }, [symbol]);
 
   useEffect(() => {

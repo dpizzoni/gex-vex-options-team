@@ -3,6 +3,14 @@
     {
       "path": "/api/cron/trigger-daily",
       "schedule": "15 10 * * 1-5"
+    },
+    {
+      "path": "/api/cron/trigger-gamma-intraday",
+      "schedule": "0 15 * * 1-5"
+    },
+    {
+      "path": "/api/cron/trigger-gamma-intraday",
+      "schedule": "0 20 * * 1-5"
     }
   ]
 }

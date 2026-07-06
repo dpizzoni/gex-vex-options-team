@@ -1,8 +1,15 @@
 const fs = require('fs');
 const path = require('path');
 
-const TICKERS = ['SPY', 'QQQ', 'TSLA', 'GOOGL'];
 const cacheDir = path.join(__dirname, '..', 'cache');
+
+// Derived from whatever regime-history files actually exist, instead of a
+// hardcoded list, so this stays in sync automatically as gamma:data's ticker
+// list grows/shrinks (a hardcoded list here previously went stale and silently
+// missed shifts on every ticker added after the initial SPY/QQQ/TSLA/GOOGL set).
+const TICKERS = fs.readdirSync(cacheDir)
+  .filter(f => f.startsWith('regime-history-') && f.endsWith('.json'))
+  .map(f => f.slice('regime-history-'.length, -'.json'.length));
 const alertsPath = path.join(cacheDir, 'regime-alerts.json');
 
 function loadAlerts() {

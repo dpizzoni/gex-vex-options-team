@@ -86,7 +86,7 @@ export default function NotificationBell() {
                     {a.ticker} → {a.type === 'LONG_GAMMA_ENTRY' ? 'LONG GAMMA' : 'SHORT GAMMA'}
                   </div>
                   <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)', marginTop: '2px' }}>
-                    {a.date} · Spot ${a.spot.toFixed(2)}
+                    {a.date}{typeof a.spot === 'number' && !isNaN(a.spot) ? ` · Spot $${a.spot.toFixed(2)}` : ''}
                   </div>
                 </div>
               ))

@@ -72,21 +72,40 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: 🚀 Ejecutar Captura y Dealer Build
-        # Inyectamos los secretos y corremos el servidor local de Next.js en el fondo
+      # ETAPA 1: Gamma Regime (127 tickers, liviano ~5min, no necesita el server de Next.js
+      # porque scrapea UW directo). Va primero y en un step separado con su propio commit,
+      # para que un fallo acá no se lleve puesta la captura pesada de OI de la Etapa 2.
+      - name: 📊 Etapa 1/2 - Actualizar Gamma Regime Data
         if: steps.check_today.outputs.skip == 'false'
+        env:
+          UW_EMAIL: ${{ secrets.UW_EMAIL }}
+          UW_PASSWORD: ${{ secrets.UW_PASSWORD }}
+        run: npm run uw:daily:gamma
+
+      - name: 💾 Commit & Push - Gamma Regime Data
+        if: always() && steps.check_today.outputs.skip == 'false'
+        uses: stefanzweifel/git-auto-commit-action@v6
+        with:
+          commit_message: "chore(data): daily gamma regime capture [skip ci]"
+          file_pattern: "cache/"
+          skip_fetch: false
+
+      # ETAPA 2: OI + Dealer Build (pesado, ~1h). Corre aunque la Etapa 1 haya fallado
+      # (por eso "always()"), ya que sabemos que este pipeline es el más confiable.
+      - name: 🚀 Etapa 2/2 - Ejecutar Captura OI y Dealer Build
+        if: always() && steps.check_today.outputs.skip == 'false'
         env:
           UW_EMAIL: ${{ secrets.UW_EMAIL }}
           UW_PASSWORD: ${{ secrets.UW_PASSWORD }}
         run: |
           # 1. Levantamos Next.js en el puerto 3002 en el fondo (background)
           npx next dev -p 3002 &
-          
+
           # 2. Esperamos dinámicamente hasta que la API responda (max 60 segs)
           npx wait-on http://127.0.0.1:3002/api/options?symbol=SPY -t 60000
-          
+
           # 3. Corremos la recolección
-          npm run uw:daily
+          npm run uw:daily:oi
 
       - name: 📤 Subir capturas de pantalla de diagnóstico (en caso de error)
         uses: actions/upload-artifact@v6
@@ -96,8 +115,8 @@ jobs:
           path: debug/
           if-no-files-found: ignore
 
-      - name: 💾 Commit & Push de los nuevos datos
-        if: steps.check_today.outputs.skip == 'false'
+      - name: 💾 Commit & Push - OI y Dealer Build
+        if: always() && steps.check_today.outputs.skip == 'false'
         uses: stefanzweifel/git-auto-commit-action@v6
         with:
           commit_message: "chore(data): daily UW capture & dealer update [skip ci]"

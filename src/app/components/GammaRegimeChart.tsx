@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Maximize2, Minimize2 } from 'lucide-react';
 import { RegimeHistoryEntry, ForwardExpirationEntry } from '@/lib/gamma-regime-engine';
 
 interface GammaRegimeChartProps {
@@ -21,6 +22,7 @@ export default function GammaRegimeChart({ history, forwardExpirations, symbol, 
     extraLines?: string[];
   } | null>(null);
   const [showStabilityInfo, setShowStabilityInfo] = useState(false);
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   if (!history || history.length === 0) {
     return (
@@ -37,7 +39,7 @@ export default function GammaRegimeChart({ history, forwardExpirations, symbol, 
   const paddingLeft = 65;
   // Widened to fit the forward-only price axis (callWall/spot/putWall) alongside
   // the existing past-only spot axis without the two overlapping.
-  const paddingRight = 95;
+  const paddingRight = 125;
   const paddingTop = 30;
   const paddingBottom = 40;
 
@@ -80,25 +82,23 @@ export default function GammaRegimeChart({ history, forwardExpirations, symbol, 
     return centerY - val * scale;
   };
 
-  // Calculate scales for Spot (Right Y Axis - history only)
+  // Calculate unified price scale for Spot and Forward Walls (Right Y Axis)
   const spotValues = displayHistory.map(h => h.spot);
-  const minSpot = Math.min(...spotValues) * 0.99;
-  const maxSpot = Math.max(...spotValues) * 1.01;
+  const allPricePoints = [...spotValues];
+  if (callWall != null) allPricePoints.push(callWall);
+  if (putWall != null) allPricePoints.push(putWall);
+
+  const minSpot = Math.min(...allPricePoints) * 0.99;
+  const maxSpot = Math.max(...allPricePoints) * 1.01;
   const getSpotY = (val: number) => {
     const height = mainChartHeight;
     const scale = height / (maxSpot - minSpot);
     return paddingTop + height - (val - minSpot) * scale;
   };
 
-  // Forward-only price axis: 3 fixed ticks (callWall / spot / putWall) instead of a
-  // continuous line, since forward bars are per-expiration structure, not a price series.
   const hasForwardPriceRange = putWall != null && callWall != null && callWall > putWall;
   const forwardSpot = displayHistory.length > 0 ? displayHistory[displayHistory.length - 1].spot : null;
-  const getForwardPriceY = (price: number) => {
-    if (!hasForwardPriceRange) return paddingTop + mainChartHeight / 2;
-    const range = (callWall as number) - (putWall as number);
-    return paddingTop + mainChartHeight - ((price - (putWall as number)) / range) * mainChartHeight;
-  };
+
 
   // Stability Score rolling 20d, computed over the full history (so early displayed
   // days still have correct lookback), then sliced down to the display window.
@@ -159,7 +159,7 @@ export default function GammaRegimeChart({ history, forwardExpirations, symbol, 
   // Find regime shifts for vertical marker lines (within the displayed window).
   // Uses the same sign as the bar coloring (raw net_gex, not EMA3) so the dotted
   // line lands exactly where the bar color changes.
-  const shifts: { x: number; label: string; date: string }[] = [];
+  const shifts: { x: number; label: string; date: string; val: number }[] = [];
   for (let i = 1; i < displayHistory.length; i++) {
     const prevRegime = displayHistory[i - 1].net_gex >= 0 ? "LONG" : "SHORT";
     const currRegime = displayHistory[i].net_gex >= 0 ? "LONG" : "SHORT";
@@ -169,17 +169,46 @@ export default function GammaRegimeChart({ history, forwardExpirations, symbol, 
       shifts.push({
         x,
         label: currRegime === "LONG" ? "Shift → LONG" : "Shift → SHORT",
-        date: displayHistory[i].date
+        date: displayHistory[i].date,
+        val: displayHistory[i].net_gex
       });
     }
   }
 
+  const activeContainerStyle: React.CSSProperties = isFullScreen
+    ? {
+        ...containerStyle,
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        zIndex: 9999,
+        borderRadius: 0,
+        backgroundColor: '#0a1023', // Solid background for full screen so nothing bleeds through
+      }
+    : containerStyle;
+
   return (
-    <div style={containerStyle}>
-      <div style={titleStyle}>GAMMA REGIME CHART ({symbol})</div>
+    <div style={activeContainerStyle}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '10px' }}>
+        <div style={{ ...titleStyle, borderBottom: 'none', paddingBottom: 0 }}>GAMMA REGIME CHART ({symbol})</div>
+        <button
+          onClick={() => setIsFullScreen(!isFullScreen)}
+          style={{ background: 'none', border: 'none', color: '#a78bfa', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          title={isFullScreen ? "Salir de pantalla completa" : "Pantalla completa"}
+        >
+          {isFullScreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
+        </button>
+      </div>
       
-      <div style={{ position: 'relative' }}>
-        <svg width="100%" height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`} style={svgStyle}>
+      <div style={{ position: 'relative', flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <svg 
+          width="100%" 
+          height={isFullScreen ? "100%" : svgHeight} 
+          viewBox={`0 0 ${svgWidth} ${svgHeight}`} 
+          style={{ ...svgStyle, maxHeight: '100%' }}
+        >
           {/* Patterns for Forward Stripes */}
           <defs>
             <pattern id="stripe-green" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
@@ -259,26 +288,27 @@ export default function GammaRegimeChart({ history, forwardExpirations, symbol, 
           {/* FORWARD-ONLY PRICE AXIS: callWall / spot / putWall (3 fixed ticks) */}
           {hasForwardPriceRange && forwardCount > 0 && (
             <g>
+              {/* Dashed line extending the current spot price into the forward structure */}
               <line
                 x1={paddingLeft + pastCount * colWidth}
-                y1={getForwardPriceY(forwardSpot ?? (callWall as number))}
+                y1={getSpotY(forwardSpot ?? (callWall as number))}
                 x2={svgWidth - paddingRight}
-                y2={getForwardPriceY(forwardSpot ?? (callWall as number))}
+                y2={getSpotY(forwardSpot ?? (callWall as number))}
                 stroke="#fbbf24"
                 strokeWidth="1"
                 strokeDasharray="3,3"
                 opacity={0.7}
               />
-              <text x={svgWidth - 4} y={getForwardPriceY(callWall as number) + 4} fill="#fbbf24" fontSize="9" textAnchor="end" fontFamily="monospace">
-                ${(callWall as number).toFixed(0)}
+              <text x={svgWidth - 4} y={getSpotY(callWall as number) + 4} fill="#fbbf24" fontSize="9" textAnchor="end" fontFamily="monospace">
+                ${(callWall as number).toFixed(0)} (CW)
               </text>
               {forwardSpot != null && (
-                <text x={svgWidth - 4} y={getForwardPriceY(forwardSpot) + 4} fill="#fbbf24" fontSize="9" textAnchor="end" fontFamily="monospace">
+                <text x={svgWidth - paddingRight + 8} y={getSpotY(forwardSpot) + 4} fill="#fbbf24" fontSize="9" textAnchor="start" fontFamily="monospace">
                   ${forwardSpot.toFixed(0)}
                 </text>
               )}
-              <text x={svgWidth - 4} y={getForwardPriceY(putWall as number) + 4} fill="#fbbf24" fontSize="9" textAnchor="end" fontFamily="monospace">
-                ${(putWall as number).toFixed(0)}
+              <text x={svgWidth - 4} y={getSpotY(putWall as number) + 4} fill="#fbbf24" fontSize="9" textAnchor="end" fontFamily="monospace">
+                ${(putWall as number).toFixed(0)} (PW)
               </text>
             </g>
           )}
@@ -417,7 +447,7 @@ export default function GammaRegimeChart({ history, forwardExpirations, symbol, 
               />
               <text 
                 x={shift.x + 4} 
-                y={paddingTop + 15 + (idx % 2) * 15} 
+                y={shift.label.includes("SHORT") ? paddingTop + mainChartHeight - 15 - (idx % 2) * 12 : paddingTop + 15 + (idx % 2) * 12} 
                 fill="#fff" 
                 fontSize="8" 
                 fontWeight="bold"
@@ -500,75 +530,100 @@ export default function GammaRegimeChart({ history, forwardExpirations, symbol, 
               );
             });
           })()}
-        </svg>
-        
-        {/* Tooltip Overlay */}
-        {hoveredData && (
-          <div style={{
-            position: 'absolute',
-            left: `${hoveredData.x}px`,
-            top: `${hoveredData.y - 75}px`,
-            transform: 'translateX(-50%)',
-            backgroundColor: 'rgba(10, 16, 35, 0.95)',
-            border: '1px solid #a78bfa',
-            padding: '8px 12px',
-            borderRadius: '6px',
-            pointerEvents: 'none',
-            zIndex: 100,
-            boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
-            fontFamily: 'monospace',
-            fontSize: '11px',
-            lineHeight: 1.4
-          }}>
-            <div style={{ fontWeight: 'bold', color: '#fff', marginBottom: '4px' }}>{hoveredData.label}</div>
-            <div style={{ color: hoveredData.value1Color || '#00e676' }}>{hoveredData.value1}</div>
-            {hoveredData.value2 && <div style={{ color: '#fbbf24' }}>{hoveredData.value2}</div>}
-            {hoveredData.extraLines && hoveredData.extraLines.map((line, i) => (
-              <div key={i} style={{ color: 'rgba(255,255,255,0.6)' }}>{line}</div>
-            ))}
-          </div>
-        )}
-
-        {/* Gamma Stability info popover */}
-        {showStabilityInfo && (
-          <>
-            <div 
-              onClick={() => setShowStabilityInfo(false)} 
-              style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 199 }} 
-            />
-            <div
-              style={{
-                position: 'absolute',
-                left: '9%',
-                top: `${svgHeight - paddingBottom - stabilityHeight + 18}px`,
-                width: '320px',
-                maxWidth: '80%',
-                backgroundColor: 'rgba(10, 16, 35, 0.97)',
-                border: '1px solid #a78bfa',
-                borderRadius: '8px',
-                padding: '12px 14px',
-                zIndex: 200,
-                boxShadow: '0 6px 18px rgba(0,0,0,0.6)',
-                fontSize: '11px',
-                lineHeight: 1.5,
-                color: '#e2e8f0',
-                whiteSpace: 'pre-line'
-              }}
+          
+          {/* Tooltip Overlay (Now inside SVG for perfect scaling) */}
+          {hoveredData && (
+            <foreignObject
+              x={hoveredData.x - 125}
+              y={hoveredData.y - 130}
+              width={250}
+              height={120}
+              style={{ pointerEvents: 'none', overflow: 'visible' }}
             >
-              <div style={{ marginBottom: '6px' }}>
-                <span style={{ fontWeight: 'bold', color: '#a78bfa' }}>Gamma Stability</span>
+              <div style={{
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                alignItems: 'flex-end',
+                justifyContent: 'center',
+                paddingBottom: '10px'
+              }}>
+                <div style={{
+                  backgroundColor: 'rgba(10, 16, 35, 0.95)',
+                  border: '1px solid #a78bfa',
+                  padding: '8px 12px',
+                  borderRadius: '6px',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+                  fontFamily: 'monospace',
+                  fontSize: '11px',
+                  lineHeight: 1.4,
+                  width: 'max-content'
+                }}>
+                  <div style={{ fontWeight: 'bold', color: '#fff', marginBottom: '4px' }}>{hoveredData.label}</div>
+                  <div style={{ color: hoveredData.value1Color || '#00e676' }}>{hoveredData.value1}</div>
+                  {hoveredData.value2 && <div style={{ color: '#fbbf24' }}>{hoveredData.value2}</div>}
+                  {hoveredData.extraLines && hoveredData.extraLines.map((line, i) => (
+                    <div key={i} style={{ color: 'rgba(255,255,255,0.6)' }}>{line}</div>
+                  ))}
+                </div>
               </div>
-              {`Gamma Stability mide qué % de los últimos 20 días de trading el activo se mantuvo en el mismo régimen (long o short gamma) que tiene hoy.
+            </foreignObject>
+          )}
 
-stabilityScore = (sesiones en el régimen actual) / 20
-
-100% (o cerca) → el régimen actual lleva ya varias semanas sin cambiar. El mercado está "asentado" en ese comportamiento (si es long gamma: dealers comprando dips/vendiendo rallies, movimientos amortiguados; si es short gamma: dealers amplificando el movimiento, más volátil).
-
-0-20% ("Muy inestable") → el régimen viene cambiando de signo muy seguido dentro de esos 20 días — el mercado está indeciso, difícil de leer, y cualquier señal de régimen actual es poco confiable porque puede voltear de nuevo pronto.`}
-          </div>
-          </>
-        )}
+        </svg>
       </div>
+
+      {/* Gamma Stability Info Modal (Responsive & Centered outside SVG) */}
+      {showStabilityInfo && (
+        <div 
+          style={{ 
+            position: 'fixed', 
+            top: 0, 
+            left: 0, 
+            right: 0, 
+            bottom: 0, 
+            zIndex: 99999, 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            backgroundColor: 'rgba(0,0,0,0.6)',
+            backdropFilter: 'blur(3px)'
+          }}
+          onClick={() => setShowStabilityInfo(false)}
+        >
+          <div
+            style={{
+              backgroundColor: 'rgba(10, 16, 35, 0.97)',
+              border: '1px solid #a78bfa',
+              borderRadius: '8px',
+              padding: '24px',
+              boxShadow: '0 10px 40px rgba(0,0,0,0.8)',
+              fontSize: '13px',
+              lineHeight: 1.6,
+              color: '#e2e8f0',
+              whiteSpace: 'pre-line',
+              pointerEvents: 'auto',
+              width: '90%',
+              maxWidth: '480px',
+              maxHeight: '85vh',
+              overflowY: 'auto'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontWeight: 'bold', color: '#a78bfa', fontSize: '15px' }}>Gamma Stability</span>
+              <button 
+                onClick={() => setShowStabilityInfo(false)}
+                style={{ background: 'none', border: 'none', color: '#a1a1aa', cursor: 'pointer', fontSize: '18px', padding: 0 }}
+              >
+                ✕
+              </button>
+            </div>
+            {`Gamma Stability mide qué % de los últimos 20 días de trading el activo se mantuvo en el mismo régimen (long o short gamma) que tiene hoy.\n\nstabilityScore = (sesiones en el régimen actual) / 20\n\n100% (o cerca) → el régimen actual lleva ya varias semanas sin cambiar. El mercado está "asentado" en ese comportamiento (si es long gamma: dealers comprando dips/vendiendo rallies, movimientos amortiguados; si es short gamma: dealers amplificando el movimiento, más volátil).\n\n0-20% ("Muy inestable") → el régimen viene cambiando de signo muy seguido dentro de esos 20 días — el mercado está indeciso, difícil de leer, y cualquier señal de régimen actual es poco confiable porque puede voltear de nuevo pronto.`}
+          </div>
+        </div>
+      )}
+      
       
       {/* Legend */}
       <div style={legendStyle}>

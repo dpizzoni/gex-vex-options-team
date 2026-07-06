@@ -15,7 +15,11 @@ interface RegimeAlert {
 
 const READ_KEY = 'regimeAlerts_readIds';
 
-export default function NotificationBell() {
+interface NotificationBellProps {
+  onSelectTicker?: (ticker: string) => void;
+}
+
+export default function NotificationBell({ onSelectTicker }: NotificationBellProps) {
   const [alerts, setAlerts] = useState<RegimeAlert[]>([]);
   const [readIds, setReadIds] = useState<Set<string>>(new Set());
   const [open, setOpen] = useState(false);
@@ -81,7 +85,18 @@ export default function NotificationBell() {
               <div style={emptyStyle}>Sin alertas por ahora.</div>
             ) : (
               alerts.map(a => (
-                <div key={a.id} style={alertItemStyle}>
+                <div
+                  key={a.id}
+                  style={{ ...alertItemStyle, cursor: onSelectTicker ? 'pointer' : 'default' }}
+                  onClick={() => {
+                    if (onSelectTicker) {
+                      onSelectTicker(a.ticker);
+                      setOpen(false);
+                    }
+                  }}
+                  onMouseEnter={(e) => { if (onSelectTicker) e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+                >
                   <div style={{ fontWeight: 700, fontSize: '0.8rem', color: a.type === 'LONG_GAMMA_ENTRY' ? '#00e676' : '#ff2a6d' }}>
                     {a.ticker} → {a.type === 'LONG_GAMMA_ENTRY' ? 'LONG GAMMA' : 'SHORT GAMMA'}
                   </div>

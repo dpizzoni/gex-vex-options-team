@@ -94,6 +94,15 @@ export default function Home() {
       return next;
     });
   }, []);
+
+  // Shared by the ticker search box and the notification bell's alert list,
+  // so clicking an alert loads that ticker exactly like searching for it.
+  const loadTicker = useCallback((ticker: string) => {
+    setSymbol(ticker);
+    setSelectedExp("");
+    setMatrixRawData([]);
+    addRecentTicker(ticker);
+  }, [addRecentTicker]);
   const [data, setData] = useState<OptionsResponse | null>(null);
   const [selectedExp, setSelectedExp] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
@@ -1591,7 +1600,7 @@ ${blockSoportesResistencias}`;
               <b style={{ color: error ? "#ff2a6d" : "#00e676" }}>{error ? "Offline" : "Live"}</b>
             </div>
             {lastUpdated && <span style={{ fontSize: '0.7rem', color: '#94a3b8', whiteSpace: 'nowrap' }}>{lastUpdated.toLocaleTimeString()}</span>}
-            <NotificationBell />
+            <NotificationBell onSelectTicker={loadTicker} />
           </div>
         </div>
 
@@ -1631,11 +1640,8 @@ ${blockSoportesResistencias}`;
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && customTicker.trim()) {
                     const ticker = customTicker.trim();
-                    setSymbol(ticker);
-                    setSelectedExp("");
-                    setMatrixRawData([]);
+                    loadTicker(ticker);
                     setCustomTicker("");
-                    addRecentTicker(ticker);
                   }
                 }}
                 placeholder="Buscar ticker..."

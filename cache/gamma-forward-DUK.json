@@ -1,9 +1,18 @@
 {
   "ticker": "DUK",
   "date": "2026-07-06",
-  "spot": null,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
+  "spot": 125.94,
+  "expirations": [
+    {
+      "expiration": "2026-07-17",
+      "dte": 11,
+      "call_gex": 89619,
+      "put_gex": -25876,
+      "net_gex": 63743,
+      "p_c_ratio": 0.2887
+    }
+  ],
+  "putWall": 120,
+  "callWall": 130,
   "limitedData": true
 }

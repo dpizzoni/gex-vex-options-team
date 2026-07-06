@@ -1,9 +1,58 @@
 {
   "ticker": "NFLX",
   "date": "2026-07-06",
-  "spot": null,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 76.05,
+  "expirations": [
+    {
+      "expiration": "2026-07-10",
+      "dte": 4,
+      "call_gex": 725784,
+      "put_gex": -286002,
+      "net_gex": 439782,
+      "p_c_ratio": 0.3941
+    },
+    {
+      "expiration": "2026-07-17",
+      "dte": 11,
+      "call_gex": 670187,
+      "put_gex": -687153,
+      "net_gex": -16966,
+      "p_c_ratio": 1.0253
+    },
+    {
+      "expiration": "2026-07-24",
+      "dte": 18,
+      "call_gex": 122827,
+      "put_gex": -50612,
+      "net_gex": 72215,
+      "p_c_ratio": 0.4121
+    },
+    {
+      "expiration": "2026-07-31",
+      "dte": 25,
+      "call_gex": 93408,
+      "put_gex": -69165,
+      "net_gex": 24243,
+      "p_c_ratio": 0.7405
+    },
+    {
+      "expiration": "2026-08-07",
+      "dte": 32,
+      "call_gex": 15195,
+      "put_gex": -7612,
+      "net_gex": 7582,
+      "p_c_ratio": 0.501
+    },
+    {
+      "expiration": "2026-08-14",
+      "dte": 39,
+      "call_gex": 522,
+      "put_gex": -586,
+      "net_gex": -65,
+      "p_c_ratio": 1.124
+    }
+  ],
+  "putWall": 75,
+  "callWall": 80,
+  "limitedData": false
 }

@@ -1,9 +1,58 @@
 {
   "ticker": "INTU",
   "date": "2026-07-06",
-  "spot": null,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 272.13,
+  "expirations": [
+    {
+      "expiration": "2026-07-10",
+      "dte": 4,
+      "call_gex": 5516,
+      "put_gex": -4995,
+      "net_gex": 520,
+      "p_c_ratio": 0.9056
+    },
+    {
+      "expiration": "2026-07-17",
+      "dte": 11,
+      "call_gex": 20145,
+      "put_gex": -9089,
+      "net_gex": 11056,
+      "p_c_ratio": 0.4512
+    },
+    {
+      "expiration": "2026-07-24",
+      "dte": 18,
+      "call_gex": 1122,
+      "put_gex": -1246,
+      "net_gex": -124,
+      "p_c_ratio": 1.1102
+    },
+    {
+      "expiration": "2026-07-31",
+      "dte": 25,
+      "call_gex": 620,
+      "put_gex": -685,
+      "net_gex": -65,
+      "p_c_ratio": 1.1046
+    },
+    {
+      "expiration": "2026-08-07",
+      "dte": 32,
+      "call_gex": 259,
+      "put_gex": -256,
+      "net_gex": 2,
+      "p_c_ratio": 0.9916
+    },
+    {
+      "expiration": "2026-08-14",
+      "dte": 39,
+      "call_gex": 11,
+      "put_gex": -7,
+      "net_gex": 4,
+      "p_c_ratio": 0.6627
+    }
+  ],
+  "putWall": 270,
+  "callWall": 280,
+  "limitedData": false
 }

@@ -1,9 +1,58 @@
 {
   "ticker": "SBUX",
   "date": "2026-07-06",
-  "spot": null,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 102.12,
+  "expirations": [
+    {
+      "expiration": "2026-07-10",
+      "dte": 4,
+      "call_gex": 21489,
+      "put_gex": -49907,
+      "net_gex": -28418,
+      "p_c_ratio": 2.3225
+    },
+    {
+      "expiration": "2026-07-17",
+      "dte": 11,
+      "call_gex": 101172,
+      "put_gex": -168114,
+      "net_gex": -66942,
+      "p_c_ratio": 1.6617
+    },
+    {
+      "expiration": "2026-07-24",
+      "dte": 18,
+      "call_gex": 24881,
+      "put_gex": -10895,
+      "net_gex": 13985,
+      "p_c_ratio": 0.4379
+    },
+    {
+      "expiration": "2026-07-31",
+      "dte": 25,
+      "call_gex": 4890,
+      "put_gex": -5610,
+      "net_gex": -720,
+      "p_c_ratio": 1.1474
+    },
+    {
+      "expiration": "2026-08-07",
+      "dte": 32,
+      "call_gex": 1063,
+      "put_gex": -977,
+      "net_gex": 87,
+      "p_c_ratio": 0.9183
+    },
+    {
+      "expiration": "2026-08-14",
+      "dte": 39,
+      "call_gex": 34,
+      "put_gex": -779,
+      "net_gex": -745,
+      "p_c_ratio": 22.9046
+    }
+  ],
+  "putWall": 100,
+  "callWall": 110,
+  "limitedData": false
 }

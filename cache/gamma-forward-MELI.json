@@ -1,9 +1,58 @@
 {
   "ticker": "MELI",
   "date": "2026-07-06",
-  "spot": null,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 1806.99,
+  "expirations": [
+    {
+      "expiration": "2026-07-10",
+      "dte": 4,
+      "call_gex": 438,
+      "put_gex": -329,
+      "net_gex": 109,
+      "p_c_ratio": 0.7511
+    },
+    {
+      "expiration": "2026-07-17",
+      "dte": 11,
+      "call_gex": 644,
+      "put_gex": -372,
+      "net_gex": 272,
+      "p_c_ratio": 0.5774
+    },
+    {
+      "expiration": "2026-07-24",
+      "dte": 18,
+      "call_gex": 174,
+      "put_gex": -51,
+      "net_gex": 122,
+      "p_c_ratio": 0.2946
+    },
+    {
+      "expiration": "2026-07-31",
+      "dte": 25,
+      "call_gex": 105,
+      "put_gex": -64,
+      "net_gex": 41,
+      "p_c_ratio": 0.6102
+    },
+    {
+      "expiration": "2026-08-07",
+      "dte": 32,
+      "call_gex": 20,
+      "put_gex": -18,
+      "net_gex": 1,
+      "p_c_ratio": 0.9322
+    },
+    {
+      "expiration": "2026-08-14",
+      "dte": 39,
+      "call_gex": 1,
+      "put_gex": 0,
+      "net_gex": 0,
+      "p_c_ratio": 0.641
+    }
+  ],
+  "putWall": 1680,
+  "callWall": 1820,
+  "limitedData": false
 }

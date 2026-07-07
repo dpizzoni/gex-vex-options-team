@@ -72,12 +72,60 @@ function checkTicker(ticker, existingAlerts, backfill) {
   return found;
 }
 
+// NEW, additive alert type: net_gex roughly doubles (or more) vs. the previous
+// day while keeping the same sign. "Roughly" = 2x with a 10% downward
+// tolerance (ratio >= 1.8), so it doesn't need to be an exact double.
+// Does not touch checkTicker/regime-shift logic at all - separate function,
+// separate id suffix, appended to the same alerts list.
+const DOUBLE_GEX_RATIO = 1.8;
+
+function checkDoubleGex(ticker, existingAlerts, backfill) {
+  const historyPath = path.join(cacheDir, `regime-history-${ticker}.json`);
+  if (!fs.existsSync(historyPath)) return [];
+
+  const history = JSON.parse(fs.readFileSync(historyPath, 'utf8'));
+  if (history.length < 2) return [];
+
+  const sorted = [...history].sort((a, b) => a.date.localeCompare(b.date));
+  const n = sorted.length;
+  const startIdx = backfill ? 1 : n - 1;
+  const found = [];
+
+  for (let i = startIdx; i < n; i++) {
+    const today = sorted[i];
+    const yesterday = sorted[i - 1];
+
+    if (yesterday.net_gex === 0) continue;
+    const sameSign = (today.net_gex >= 0) === (yesterday.net_gex >= 0);
+    if (!sameSign) continue;
+
+    const ratio = Math.abs(today.net_gex) / Math.abs(yesterday.net_gex);
+    if (ratio < DOUBLE_GEX_RATIO) continue;
+
+    const id = `${ticker}_${today.date}_DOUBLE_GEX`;
+    if (existingAlerts.some(a => a.id === id)) continue;
+
+    found.push({
+      id,
+      ticker,
+      date: today.date,
+      type: 'DOUBLE_GEX',
+      net_gex: today.net_gex,
+      previous_net_gex: yesterday.net_gex,
+      ema3_net_gex: today.ema3_net_gex,
+      spot: today.spot
+    });
+  }
+  return found;
+}
+
 function run() {
   const backfill = process.argv.includes('--backfill');
   const existing = loadAlerts();
   let newAlerts = [];
   for (const ticker of TICKERS) {
     newAlerts = newAlerts.concat(checkTicker(ticker, existing, backfill));
+    newAlerts = newAlerts.concat(checkDoubleGex(ticker, existing.concat(newAlerts), backfill));
   }
 
   if (newAlerts.length > 0) {

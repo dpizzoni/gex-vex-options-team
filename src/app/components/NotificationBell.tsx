@@ -7,8 +7,9 @@ interface RegimeAlert {
   id: string;
   ticker: string;
   date: string;
-  type: 'LONG_GAMMA_ENTRY' | 'SHORT_GAMMA_ENTRY';
+  type: 'LONG_GAMMA_ENTRY' | 'SHORT_GAMMA_ENTRY' | 'DOUBLE_GEX';
   net_gex: number;
+  previous_net_gex?: number;
   ema3_net_gex: number;
   spot: number;
 }
@@ -97,8 +98,10 @@ export default function NotificationBell({ onSelectTicker }: NotificationBellPro
                   onMouseEnter={(e) => { if (onSelectTicker) e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'; }}
                   onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
                 >
-                  <div style={{ fontWeight: 700, fontSize: '0.8rem', color: a.type === 'LONG_GAMMA_ENTRY' ? '#00e676' : '#ff2a6d' }}>
-                    {a.ticker} → {a.type === 'LONG_GAMMA_ENTRY' ? 'LONG GAMMA' : 'SHORT GAMMA'}
+                  <div style={{ fontWeight: 700, fontSize: '0.8rem', color: a.type === 'LONG_GAMMA_ENTRY' ? '#00e676' : a.type === 'SHORT_GAMMA_ENTRY' ? '#ff2a6d' : '#fbbf24' }}>
+                    {a.type === 'DOUBLE_GEX'
+                      ? `+2x GEX ${a.ticker}`
+                      : `${a.ticker} → ${a.type === 'LONG_GAMMA_ENTRY' ? 'LONG GAMMA' : 'SHORT GAMMA'}`}
                   </div>
                   <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)', marginTop: '2px' }}>
                     {a.date}{typeof a.spot === 'number' && !isNaN(a.spot) ? ` · Spot $${a.spot.toFixed(2)}` : ''}

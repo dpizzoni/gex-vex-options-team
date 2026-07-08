@@ -64,21 +64,21 @@ export default function GammaRegimeChart({ history, forwardExpirations, symbol, 
 
   // Calculate scales for GEX (Left Y Axis).
   // Past (UW daily aggregate GEX across all open contracts) and forward (UW per-expiry
-  // GEX for that expiration only) are both real UW data now, but different aggregation
-  // granularities that aren't guaranteed to share a magnitude, so each still gets its
-  // own independent vertical scale within the shared chart height.
+  // GEX for that expiration only) share a single scale so bar heights stay visually
+  // comparable in absolute terms across the past/forward boundary - e.g. a 75K forward
+  // bar must look smaller than a 157K past bar, not bigger.
   const maxAbsGexPast = Math.max(...displayHistory.map(h => Math.abs(h.net_gex)), 100000);
   const maxAbsGexForward = Math.max(...forwardExpirations.map(f => Math.abs(f.net_gex)), 100000);
-  const maxAbsGex = maxAbsGexPast; // left axis labels reflect the past scale
+  const maxAbsGex = Math.max(maxAbsGexPast, maxAbsGexForward);
 
   const getGexY = (val: number) => {
     const centerY = paddingTop + mainChartHeight / 2;
-    const scale = (mainChartHeight / 2) / maxAbsGexPast;
+    const scale = (mainChartHeight / 2) / maxAbsGex;
     return centerY - val * scale;
   };
   const getGexYForward = (val: number) => {
     const centerY = paddingTop + mainChartHeight / 2;
-    const scale = (mainChartHeight / 2) / maxAbsGexForward;
+    const scale = (mainChartHeight / 2) / maxAbsGex;
     return centerY - val * scale;
   };
 

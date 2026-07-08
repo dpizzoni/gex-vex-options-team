@@ -362,6 +362,12 @@ export default function Home() {
         setLastUpdated(new Date());
         if (results.length > 0 && matrixSelectedExps.length === 0) {
           setMatrixSelectedExps([results[0].expiration]);
+          // filteredMatrixData filters by selectedExp, not matrixSelectedExps -
+          // without this, selectedExp stays "" after a ticker switch and the
+          // Matrix grid falls back to showing every expiration unfiltered
+          // (barely noticeable for SPY/QQQ/TSLA/GOOGL's short lists, very
+          // visible for any other ticker with dozens of expirations, like CAT).
+          setSelectedExp(prev => prev || results[0].expiration);
         }
       }
     } catch (err: any) {

@@ -97,11 +97,17 @@ export default function Home() {
 
   // Shared by the ticker search box and the notification bell's alert list,
   // so clicking an alert loads that ticker exactly like searching for it.
+  // Also forces the full heatmap layout (Matrix + Gamma Regime Chart + Dealer
+  // Analysis together): if the dashboard was left in "View Table" mode
+  // (matrixDisplayFormat "TABLE"), that layout never renders the Gamma Regime
+  // Chart at all, so an alert click would silently land on a view without it.
   const loadTicker = useCallback((ticker: string) => {
     setSymbol(ticker);
     setSelectedExp("");
     setMatrixRawData([]);
     addRecentTicker(ticker);
+    setViewMode("matrix");
+    setMatrixDisplayFormat("HEATMAP");
   }, [addRecentTicker]);
   const [data, setData] = useState<OptionsResponse | null>(null);
   const [selectedExp, setSelectedExp] = useState<string>("");

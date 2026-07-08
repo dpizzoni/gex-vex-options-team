@@ -108,6 +108,13 @@ export default function Home() {
     addRecentTicker(ticker);
     setViewMode("matrix");
     setMatrixDisplayFormat("HEATMAP");
+    // Also reset a leftover MULTI expiration selection from a previous ticker
+    // (persisted in localStorage) - otherwise the new ticker's Matrix grid
+    // renders with every one of those old expirations as columns instead of
+    // just the nearest one. Clearing matrixSelectedExps lets the existing
+    // "auto-select first expiration when empty" effect re-populate it fresh.
+    setMatrixExpMode("SINGLE");
+    setMatrixSelectedExps([]);
   }, [addRecentTicker]);
   const [data, setData] = useState<OptionsResponse | null>(null);
   const [selectedExp, setSelectedExp] = useState<string>("");

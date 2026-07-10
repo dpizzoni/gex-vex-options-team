@@ -1,50 +1,50 @@
 {
   "ticker": "ADI",
   "date": "2026-07-10",
-  "spot": 387.96,
+  "spot": 394.3895,
   "expirations": [
     {
       "expiration": "2026-07-17",
       "dte": 7,
-      "call_gex": 4008,
-      "put_gex": -5952,
-      "net_gex": -1944,
-      "p_c_ratio": 1.485
+      "call_gex": 4260,
+      "put_gex": -5991,
+      "net_gex": -1730,
+      "p_c_ratio": 1.4062
     },
     {
       "expiration": "2026-07-24",
       "dte": 14,
-      "call_gex": 352,
-      "put_gex": -924,
-      "net_gex": -572,
-      "p_c_ratio": 2.6231
+      "call_gex": 369,
+      "put_gex": -903,
+      "net_gex": -534,
+      "p_c_ratio": 2.4484
     },
     {
       "expiration": "2026-07-31",
       "dte": 21,
-      "call_gex": 467,
-      "put_gex": -312,
-      "net_gex": 155,
-      "p_c_ratio": 0.6676
+      "call_gex": 485,
+      "put_gex": -308,
+      "net_gex": 177,
+      "p_c_ratio": 0.6345
     },
     {
       "expiration": "2026-08-07",
       "dte": 28,
-      "call_gex": 256,
-      "put_gex": -117,
-      "net_gex": 139,
-      "p_c_ratio": 0.4584
+      "call_gex": 262,
+      "put_gex": -116,
+      "net_gex": 147,
+      "p_c_ratio": 0.4402
     },
     {
       "expiration": "2026-08-14",
       "dte": 35,
-      "call_gex": 62,
+      "call_gex": 63,
       "put_gex": -18,
-      "net_gex": 44,
-      "p_c_ratio": 0.2925
+      "net_gex": 46,
+      "p_c_ratio": 0.2817
     }
   ],
-  "putWall": 380,
+  "putWall": 385,
   "callWall": 400,
   "limitedData": false
 }

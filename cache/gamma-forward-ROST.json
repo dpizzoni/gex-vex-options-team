@@ -1,50 +1,50 @@
 {
   "ticker": "ROST",
   "date": "2026-07-10",
-  "spot": null,
+  "spot": 222.885,
   "expirations": [
     {
       "expiration": "2026-07-17",
       "dte": 7,
-      "call_gex": 4085,
-      "put_gex": -24007,
-      "net_gex": -19923,
-      "p_c_ratio": 5.8775
+      "call_gex": 4367,
+      "put_gex": -20592,
+      "net_gex": -16226,
+      "p_c_ratio": 4.7157
     },
     {
       "expiration": "2026-07-24",
       "dte": 14,
-      "call_gex": 1387,
-      "put_gex": -499,
-      "net_gex": 888,
-      "p_c_ratio": 0.3599
+      "call_gex": 1529,
+      "put_gex": -497,
+      "net_gex": 1033,
+      "p_c_ratio": 0.3248
     },
     {
       "expiration": "2026-07-31",
       "dte": 21,
-      "call_gex": 660,
-      "put_gex": -190,
-      "net_gex": 470,
-      "p_c_ratio": 0.2885
+      "call_gex": 777,
+      "put_gex": -183,
+      "net_gex": 593,
+      "p_c_ratio": 0.2361
     },
     {
       "expiration": "2026-08-07",
       "dte": 28,
-      "call_gex": 187,
-      "put_gex": -4811,
-      "net_gex": -4623,
-      "p_c_ratio": 25.6989
+      "call_gex": 212,
+      "put_gex": -4131,
+      "net_gex": -3920,
+      "p_c_ratio": 19.5282
     },
     {
       "expiration": "2026-08-14",
       "dte": 35,
-      "call_gex": 29,
-      "put_gex": -226,
-      "net_gex": -198,
-      "p_c_ratio": 7.9197
+      "call_gex": 26,
+      "put_gex": -190,
+      "net_gex": -165,
+      "p_c_ratio": 7.4537
     }
   ],
-  "putWall": null,
-  "callWall": null,
+  "putWall": 210,
+  "callWall": 225,
   "limitedData": false
 }

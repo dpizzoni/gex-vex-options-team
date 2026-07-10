@@ -1,58 +1,9 @@
 {
   "ticker": "MDLZ",
-  "date": "2026-07-09",
+  "date": "2026-07-10",
   "spot": 58.3,
-  "expirations": [
-    {
-      "expiration": "2026-07-10",
-      "dte": 1,
-      "call_gex": 9005,
-      "put_gex": -3367,
-      "net_gex": 5639,
-      "p_c_ratio": 0.3738
-    },
-    {
-      "expiration": "2026-07-17",
-      "dte": 8,
-      "call_gex": 22772,
-      "put_gex": -46300,
-      "net_gex": -23529,
-      "p_c_ratio": 2.0332
-    },
-    {
-      "expiration": "2026-07-24",
-      "dte": 15,
-      "call_gex": 4536,
-      "put_gex": -1386,
-      "net_gex": 3150,
-      "p_c_ratio": 0.3056
-    },
-    {
-      "expiration": "2026-07-31",
-      "dte": 22,
-      "call_gex": 3162,
-      "put_gex": -1908,
-      "net_gex": 1254,
-      "p_c_ratio": 0.6033
-    },
-    {
-      "expiration": "2026-08-07",
-      "dte": 29,
-      "call_gex": 151,
-      "put_gex": -329,
-      "net_gex": -178,
-      "p_c_ratio": 2.1779
-    },
-    {
-      "expiration": "2026-08-14",
-      "dte": 36,
-      "call_gex": 107,
-      "put_gex": -25,
-      "net_gex": 83,
-      "p_c_ratio": 0.2294
-    }
-  ],
-  "putWall": 55,
-  "callWall": 65,
-  "limitedData": false
+  "expirations": [],
+  "putWall": null,
+  "callWall": null,
+  "limitedData": true
 }

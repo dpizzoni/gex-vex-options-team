@@ -1,9 +1,50 @@
 {
   "ticker": "DIS",
   "date": "2026-07-10",
-  "spot": 96.17,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 96.6591,
+  "expirations": [
+    {
+      "expiration": "2026-07-17",
+      "dte": 7,
+      "call_gex": 111793,
+      "put_gex": -203426,
+      "net_gex": -91633,
+      "p_c_ratio": 1.8197
+    },
+    {
+      "expiration": "2026-07-24",
+      "dte": 14,
+      "call_gex": 18832,
+      "put_gex": -16647,
+      "net_gex": 2185,
+      "p_c_ratio": 0.884
+    },
+    {
+      "expiration": "2026-07-31",
+      "dte": 21,
+      "call_gex": 26312,
+      "put_gex": -14103,
+      "net_gex": 12209,
+      "p_c_ratio": 0.536
+    },
+    {
+      "expiration": "2026-08-07",
+      "dte": 28,
+      "call_gex": 6060,
+      "put_gex": -6438,
+      "net_gex": -378,
+      "p_c_ratio": 1.0624
+    },
+    {
+      "expiration": "2026-08-14",
+      "dte": 35,
+      "call_gex": 1834,
+      "put_gex": -947,
+      "net_gex": 887,
+      "p_c_ratio": 0.5165
+    }
+  ],
+  "putWall": 95,
+  "callWall": 100,
+  "limitedData": false
 }

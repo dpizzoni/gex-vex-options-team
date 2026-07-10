@@ -1,9 +1,50 @@
 {
   "ticker": "MCD",
   "date": "2026-07-10",
-  "spot": 276.49,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 278.24,
+  "expirations": [
+    {
+      "expiration": "2026-07-17",
+      "dte": 7,
+      "call_gex": 38005,
+      "put_gex": -33135,
+      "net_gex": 4870,
+      "p_c_ratio": 0.8719
+    },
+    {
+      "expiration": "2026-07-24",
+      "dte": 14,
+      "call_gex": 9241,
+      "put_gex": -4060,
+      "net_gex": 5182,
+      "p_c_ratio": 0.4393
+    },
+    {
+      "expiration": "2026-07-31",
+      "dte": 21,
+      "call_gex": 5184,
+      "put_gex": -4712,
+      "net_gex": 472,
+      "p_c_ratio": 0.9089
+    },
+    {
+      "expiration": "2026-08-07",
+      "dte": 28,
+      "call_gex": 1418,
+      "put_gex": -1037,
+      "net_gex": 381,
+      "p_c_ratio": 0.731
+    },
+    {
+      "expiration": "2026-08-14",
+      "dte": 35,
+      "call_gex": 276,
+      "put_gex": -259,
+      "net_gex": 17,
+      "p_c_ratio": 0.9383
+    }
+  ],
+  "putWall": 270,
+  "callWall": 280,
+  "limitedData": false
 }

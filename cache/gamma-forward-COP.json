@@ -1,9 +1,50 @@
 {
   "ticker": "COP",
   "date": "2026-07-10",
-  "spot": 108.02,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 108.45,
+  "expirations": [
+    {
+      "expiration": "2026-07-17",
+      "dte": 7,
+      "call_gex": 63836,
+      "put_gex": -55062,
+      "net_gex": 8774,
+      "p_c_ratio": 0.8626
+    },
+    {
+      "expiration": "2026-07-24",
+      "dte": 14,
+      "call_gex": 12222,
+      "put_gex": -5780,
+      "net_gex": 6442,
+      "p_c_ratio": 0.4729
+    },
+    {
+      "expiration": "2026-07-31",
+      "dte": 21,
+      "call_gex": 12783,
+      "put_gex": -3242,
+      "net_gex": 9541,
+      "p_c_ratio": 0.2536
+    },
+    {
+      "expiration": "2026-08-07",
+      "dte": 28,
+      "call_gex": 6902,
+      "put_gex": -3221,
+      "net_gex": 3681,
+      "p_c_ratio": 0.4667
+    },
+    {
+      "expiration": "2026-08-14",
+      "dte": 35,
+      "call_gex": 3340,
+      "put_gex": -155,
+      "net_gex": 3185,
+      "p_c_ratio": 0.0464
+    }
+  ],
+  "putWall": 105,
+  "callWall": 115,
+  "limitedData": false
 }

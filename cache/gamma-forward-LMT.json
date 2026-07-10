@@ -1,9 +1,50 @@
 {
   "ticker": "LMT",
   "date": "2026-07-10",
-  "spot": 518.26,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 520.63,
+  "expirations": [
+    {
+      "expiration": "2026-07-17",
+      "dte": 7,
+      "call_gex": 5256,
+      "put_gex": -4696,
+      "net_gex": 560,
+      "p_c_ratio": 0.8934
+    },
+    {
+      "expiration": "2026-07-24",
+      "dte": 14,
+      "call_gex": 957,
+      "put_gex": -904,
+      "net_gex": 54,
+      "p_c_ratio": 0.9441
+    },
+    {
+      "expiration": "2026-07-31",
+      "dte": 21,
+      "call_gex": 1141,
+      "put_gex": -1088,
+      "net_gex": 53,
+      "p_c_ratio": 0.9536
+    },
+    {
+      "expiration": "2026-08-07",
+      "dte": 28,
+      "call_gex": 315,
+      "put_gex": -679,
+      "net_gex": -363,
+      "p_c_ratio": 2.1529
+    },
+    {
+      "expiration": "2026-08-14",
+      "dte": 35,
+      "call_gex": 103,
+      "put_gex": -434,
+      "net_gex": -331,
+      "p_c_ratio": 4.2093
+    }
+  ],
+  "putWall": 500,
+  "callWall": 530,
+  "limitedData": false
 }

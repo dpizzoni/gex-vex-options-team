@@ -1,9 +1,50 @@
 {
   "ticker": "GE",
   "date": "2026-07-10",
-  "spot": 359.04,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 359,
+  "expirations": [
+    {
+      "expiration": "2026-07-17",
+      "dte": 7,
+      "call_gex": 21743,
+      "put_gex": -11219,
+      "net_gex": 10524,
+      "p_c_ratio": 0.516
+    },
+    {
+      "expiration": "2026-07-24",
+      "dte": 14,
+      "call_gex": 1113,
+      "put_gex": -2449,
+      "net_gex": -1336,
+      "p_c_ratio": 2.2004
+    },
+    {
+      "expiration": "2026-07-31",
+      "dte": 21,
+      "call_gex": 1031,
+      "put_gex": -3082,
+      "net_gex": -2050,
+      "p_c_ratio": 2.9876
+    },
+    {
+      "expiration": "2026-08-07",
+      "dte": 28,
+      "call_gex": 304,
+      "put_gex": -2719,
+      "net_gex": -2415,
+      "p_c_ratio": 8.9381
+    },
+    {
+      "expiration": "2026-08-14",
+      "dte": 35,
+      "call_gex": 114,
+      "put_gex": -314,
+      "net_gex": -200,
+      "p_c_ratio": 2.7546
+    }
+  ],
+  "putWall": 350,
+  "callWall": 380,
+  "limitedData": false
 }

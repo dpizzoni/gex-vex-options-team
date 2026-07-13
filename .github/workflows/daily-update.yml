@@ -60,6 +60,22 @@ jobs:
         if: steps.check_today.outputs.skip == 'false'
         run: npm install
 
+      - name: 📦 Cache de navegadores y paquetes apt de Playwright
+        # ~/.cache/ms-playwright evita re-descargar el binario de Chromium; /var/cache/apt/archives
+        # evita que apt-get vuelva a bajar los .deb de fuentes/librerías del mirror de Ubuntu en
+        # cada corrida (esto es lo que se vio lento: 4 corridas/día bajando lo mismo desde cero).
+        # apt-get sigue corriendo siempre (el runner es una VM nueva y no puede "instalar" paquetes
+        # desde el cache), pero con los .deb ya en disco solo instala en vez de descargar.
+        if: steps.check_today.outputs.skip == 'false'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/ms-playwright
+            /var/cache/apt/archives
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
       - name: 🌐 Instalar navegadores Playwright (para UW)
         # Vi que tienes playwright en el package.json, esto es crucial para que el scraper funcione en GitHub.
         if: steps.check_today.outputs.skip == 'false'

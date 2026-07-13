@@ -33,6 +33,18 @@ jobs:
       - name: 📦 Instalar dependencias Node
         run: npm install
 
+      - name: 📦 Cache de navegadores y paquetes apt de Playwright
+        # Ver mismo step en daily-update.yml: evita re-descargar Chromium y los .deb
+        # de apt en cada una de las 3 corridas/día de este workflow.
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/ms-playwright
+            /var/cache/apt/archives
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
       - name: 🌐 Instalar navegadores Playwright (para UW)
         run: npx playwright install chromium --with-deps
 

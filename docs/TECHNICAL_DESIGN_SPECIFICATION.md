@@ -58,7 +58,7 @@ La persistencia principal de datos históricos **no es una base de datos**: son 
 │  /api/regime-forward     → lee cache/gamma-forward-{T}.json             │
 │  /api/regime-alerts      → lee cache/regime-alerts.json                 │
 │  /api/snapshots          → persistencia in-memory (EMA King Node)       │
-│  /api/gamma-capture-meta → estado del último workflow (GitHub API)      │
+│  /api/data-freshness     → última captura GEX-VEX y Gamma Reg (GitHub)  │
 │  /api/cron/trigger-*     → dispara workflows GitHub por Vercel Cron     │
 └────────────────────────────────────────────────────────────────────────┘
                                    │
@@ -809,7 +809,7 @@ p_c_ratio    = |put_gex| / max(call_gex, 10⁻⁴)
 
 ### 11.3. Módulos modificables con bajo riesgo (aislados)
 - `GammaRegimePanel.tsx`, `GammaRegimeChart.tsx`, `NotificationBell.tsx` — presentación pura.
-- `gamma-capture-meta`, `cron/trigger-*` — infraestructura, sin acoplamiento a cálculo.
+- `data-freshness`, `cron/trigger-*` — infraestructura, sin acoplamiento a cálculo.
 - `daily-snapshot.js` — legado, no cableado.
 
 ### 11.4. Duplicación de lógica (deuda técnica)

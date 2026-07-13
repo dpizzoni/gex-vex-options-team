@@ -5,7 +5,14 @@ const path = require('path');
 const { ensureLoggedIn, STATE_FILE } = require('./uw-session');
 
 const cacheDir = path.join(__dirname, '..', 'cache');
-const DISPLAY_DAYS = 30;
+// How many of the most recent trading days (from UW's timespan=1y payload) get
+// merged into the persisted regime-history-{ticker}.json on each run. UW's page
+// always returns the full 1y window regardless of what we do here — this only
+// controls how much of that payload we bother re-processing/re-writing, and it
+// doubles as the self-healing window for UW's own intraday GEX recalculations
+// (see gamma-intraday.yml) and for backfilling gaps left by a missed cron run.
+// Days older than this, once written, are never touched again.
+const MERGE_WINDOW_DAYS = 30;
 const MAX_DTE = 40;
 
 function todayStr() {
@@ -62,13 +69,43 @@ async function fetchTickerData(page, ticker) {
   return { historyData: historyCaptured.data, expiryData: expiryCaptured.data, strikeData: strikeCaptured.data };
 }
 
-function buildHistory(ticker, rawData) {
-  const sorted = [...rawData].sort((a, b) => a.date.localeCompare(b.date));
-  const trimmed = sorted.slice(-DISPLAY_DAYS);
-  const history = [];
-  let ema3 = null;
+function loadExistingHistory(ticker) {
+  const p = path.join(cacheDir, `regime-history-${ticker}.json`);
+  if (!fs.existsSync(p)) return [];
+  try {
+    const parsed = JSON.parse(fs.readFileSync(p, 'utf8'));
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (e) {
+    return [];
+  }
+}
 
-  for (const row of trimmed) {
+// Merges the most recent MERGE_WINDOW_DAYS of UW's payload into the persisted
+// archive, upserting by date (never a blind append) so that: (a) re-running
+// the same trading day 3x/day overwrites in place instead of duplicating, (b)
+// a gap left by a missed cron run gets backfilled automatically next time as
+// long as it's within the window, and (c) UW's own retroactive recalculation
+// of recent days' GEX is picked up. Days older than the window are left
+// exactly as previously written. --backfill widens the window to the entire
+// payload for the one-off initial seed of the archive.
+function mergeHistory(ticker, rawData, existing, backfill) {
+  const sortedRaw = [...rawData].sort((a, b) => a.date.localeCompare(b.date));
+  const windowRaw = backfill ? sortedRaw : sortedRaw.slice(-MERGE_WINDOW_DAYS);
+  if (windowRaw.length === 0) return existing;
+
+  const byDate = new Map(existing.map(h => [h.date, h]));
+  const firstWindowDate = windowRaw[0].date;
+
+  // Seed EMA3 continuity from the archived entry immediately preceding the
+  // merge window, so the smoothed series doesn't reset/jump on every merge.
+  const priorDate = existing
+    .map(h => h.date)
+    .filter(d => d < firstWindowDate)
+    .sort()
+    .pop();
+  let ema3 = priorDate !== undefined ? byDate.get(priorDate).ema3_net_gex : null;
+
+  for (const row of windowRaw) {
     const callGex = parseFloat(row.call_gex);
     const putGex = parseFloat(row.put_gex);
     const callVex = parseFloat(row.call_vanna);
@@ -76,23 +113,32 @@ function buildHistory(ticker, rawData) {
     const netGex = callGex + putGex;
     const netVex = callVex + putVex;
 
-    ema3 = ema3 === null ? netGex : 0.5 * netGex + 0.5 * ema3;
+    // UW occasionally returns a null call_gex/put_gex for a single historical
+    // date (seen on ON for 2026-06-29). parseFloat(null) -> NaN, and without
+    // this guard one bad day would poison ema3 for every day after it forever,
+    // since ema3 now persists across runs instead of being recomputed from
+    // scratch each time. If today's netGex isn't usable, keep ema3 unchanged
+    // (carry the last good value forward) instead of folding NaN into it.
+    if (Number.isFinite(netGex)) {
+      ema3 = (ema3 === null || !Number.isFinite(ema3)) ? netGex : 0.5 * netGex + 0.5 * ema3;
+    }
 
-    history.push({
+    byDate.set(row.date, {
       date: row.date,
       ticker,
       spot: parseFloat(row.close),
-      call_gex: Math.round(callGex),
-      put_gex: Math.round(putGex),
-      net_gex: Math.round(netGex),
-      call_vex: Math.round(callVex),
-      put_vex: Math.round(putVex),
-      net_vex: Math.round(netVex),
+      call_gex: Number.isFinite(callGex) ? Math.round(callGex) : null,
+      put_gex: Number.isFinite(putGex) ? Math.round(putGex) : null,
+      net_gex: Number.isFinite(netGex) ? Math.round(netGex) : null,
+      call_vex: Number.isFinite(callVex) ? Math.round(callVex) : null,
+      put_vex: Number.isFinite(putVex) ? Math.round(putVex) : null,
+      net_vex: Number.isFinite(netVex) ? Math.round(netVex) : null,
       king_node: null,
-      ema3_net_gex: Math.round(ema3)
+      ema3_net_gex: ema3 !== null && Number.isFinite(ema3) ? Math.round(ema3) : null
     });
   }
-  return history;
+
+  return [...byDate.values()].sort((a, b) => a.date.localeCompare(b.date));
 }
 
 function buildForwardBars(expiryData) {
@@ -140,8 +186,9 @@ function computeWalls(strikeData, spot) {
 
 async function run() {
   const tickers = process.argv.slice(2).filter(a => !a.startsWith('--'));
+  const backfill = process.argv.includes('--backfill');
   if (tickers.length === 0) {
-    console.error('Usage: node scripts/uw-fetch-gamma-data.js TICKER [TICKER2 ...]');
+    console.error('Usage: node scripts/uw-fetch-gamma-data.js TICKER [TICKER2 ...] [--backfill]');
     process.exit(1);
   }
   const browser = await chromium.launch({ headless: process.env.CI ? true : false, args: ['--start-maximized', '--disable-features=Translate'] });
@@ -184,7 +231,8 @@ async function run() {
       console.log(`Fetching gamma data for ${ticker}...`);
       const { historyData, expiryData, strikeData } = await fetchTickerData(page, ticker);
 
-      const history = buildHistory(ticker, historyData);
+      const existing = loadExistingHistory(ticker);
+      const history = mergeHistory(ticker, historyData, existing, backfill);
       fs.writeFileSync(path.join(cacheDir, `regime-history-${ticker}.json`), JSON.stringify(history, null, 2), 'utf8');
 
       const spot = history.length > 0 ? history[history.length - 1].spot : null;

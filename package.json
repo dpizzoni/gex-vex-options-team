@@ -17,6 +17,7 @@
     "uw:daily:oi": "node scripts/uw-window-fetch.js --daily && node scripts/dealer-builder.js && node scripts/clean-cache.js",
     "uw:expand": "node scripts/uw-expand.js",
     "gamma:data": "node scripts/uw-fetch-gamma-data.js",
+    "gamma:backfill": "node scripts/uw-fetch-gamma-data.js SPY QQQ TSLA GOOGL AAPL MSFT AMZN NVDA META AVGO ADBE CSCO NFLX AMD INTC QCOM TXN INTU CRM ORCL IBM NOW UBER PANW CRWD FTNT ZS DDOG TTD SNPS CDNS LRCX KLAC MU ON MRVL ASML ABNB PYPL MELI WDAY GEHC CDW UNH JNJ LLY PFE MRK ABBV TMO DHR AMGN GILD VRTX REGN BIIB IDXX ILMN DXCM JPM BAC WFC GS MS V MA C AXP BLK SCHW SPGI WMT COST PG KO PEP MDLZ KHC KDP DIS HD LOW NKE MCD SBUX ROST ORLY MAR BKNG CAT BA GE RTX LMT HON UPS CSX PCAR ODFL XOM CVX COP T VZ CMCSA CHTR SO DUK NEE AEP XEL EXC ADI ADP PAYX CTAS PM MO ANSS VRSK FAST CPRT DLTR WBD MNST EA CTSH --backfill",
     "gamma:check-shifts": "node scripts/check-regime-shifts.js",
     "cache:migrate": "node scripts/cache-migrate.js"
   },

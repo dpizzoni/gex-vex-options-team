@@ -1,26 +1,26 @@
 {
   "ticker": "CDW",
   "date": "2026-07-13",
-  "spot": 144,
+  "spot": 144.61,
   "expirations": [
     {
       "expiration": "2026-07-17",
       "dte": 4,
-      "call_gex": 4114,
-      "put_gex": -1495,
-      "net_gex": 2619,
-      "p_c_ratio": 0.3633
+      "call_gex": 4499,
+      "put_gex": -1554,
+      "net_gex": 2945,
+      "p_c_ratio": 0.3454
     },
     {
       "expiration": "2026-08-21",
       "dte": 39,
-      "call_gex": 2274,
-      "put_gex": -43,
-      "net_gex": 2231,
-      "p_c_ratio": 0.0189
+      "call_gex": 2464,
+      "put_gex": -41,
+      "net_gex": 2423,
+      "p_c_ratio": 0.0166
     }
   ],
   "putWall": 115,
-  "callWall": 160,
+  "callWall": 145,
   "limitedData": true
 }

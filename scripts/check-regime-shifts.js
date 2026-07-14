@@ -63,6 +63,11 @@ function checkTicker(ticker, existingAlerts, backfill) {
       id,
       ticker,
       date: today.date,
+      // Wall-clock time this run detected the shift, distinct from `date` (the
+      // UW trading day). Needed because gamma regime refreshes up to 3x/day,
+      // so a same-day alert's signal freshness depends on when it fired, not
+      // just which day it fired on.
+      detected_at: new Date().toISOString(),
       type: regimeToday === 'LONG_GAMMA' ? 'LONG_GAMMA_ENTRY' : 'SHORT_GAMMA_ENTRY',
       net_gex: today.net_gex,
       ema3_net_gex: today.ema3_net_gex,
@@ -109,6 +114,7 @@ function checkDoubleGex(ticker, existingAlerts, backfill) {
       id,
       ticker,
       date: today.date,
+      detected_at: new Date().toISOString(),
       type: 'DOUBLE_GEX',
       net_gex: today.net_gex,
       previous_net_gex: yesterday.net_gex,

@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 const GITHUB_OWNER = "dpizzoni";
 const GITHUB_REPO = "gex-vex-options-team";
 

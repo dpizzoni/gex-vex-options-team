@@ -7,11 +7,20 @@ interface RegimeAlert {
   id: string;
   ticker: string;
   date: string;
+  detected_at?: string;
   type: 'LONG_GAMMA_ENTRY' | 'SHORT_GAMMA_ENTRY' | 'DOUBLE_GEX';
   net_gex: number;
   previous_net_gex?: number;
   ema3_net_gex: number;
   spot: number;
+}
+
+// Alerts written before detected_at existed have no time component; fall back
+// to just the date in that case instead of showing "Invalid Date".
+function formatAlertTimestamp(a: RegimeAlert): string {
+  if (!a.detected_at) return a.date;
+  const time = new Date(a.detected_at).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+  return `${a.date} ${time}`;
 }
 
 const READ_KEY = 'regimeAlerts_readIds';
@@ -104,7 +113,7 @@ export default function NotificationBell({ onSelectTicker }: NotificationBellPro
                       : `${a.ticker} → ${a.type === 'LONG_GAMMA_ENTRY' ? 'LONG GAMMA' : 'SHORT GAMMA'}`}
                   </div>
                   <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)', marginTop: '2px' }}>
-                    {a.date}{typeof a.spot === 'number' && !isNaN(a.spot) ? ` · Spot $${a.spot.toFixed(2)}` : ''}
+                    {formatAlertTimestamp(a)}{typeof a.spot === 'number' && !isNaN(a.spot) ? ` · Spot $${a.spot.toFixed(2)}` : ''}
                   </div>
                 </div>
               ))

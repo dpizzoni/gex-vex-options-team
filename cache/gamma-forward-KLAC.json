@@ -1,26 +1,26 @@
 {
   "ticker": "KLAC",
-  "date": "2026-07-13",
-  "spot": 222.25,
+  "date": "2026-07-14",
+  "spot": 228.56,
   "expirations": [
     {
       "expiration": "2026-07-17",
-      "dte": 4,
-      "call_gex": 23400,
-      "put_gex": -23313,
-      "net_gex": 87,
-      "p_c_ratio": 0.9963
+      "dte": 3,
+      "call_gex": 23717,
+      "put_gex": -22300,
+      "net_gex": 1416,
+      "p_c_ratio": 0.9403
     },
     {
       "expiration": "2026-08-21",
-      "dte": 39,
-      "call_gex": 9774,
-      "put_gex": -14351,
-      "net_gex": -4577,
-      "p_c_ratio": 1.4683
+      "dte": 38,
+      "call_gex": 10424,
+      "put_gex": -15092,
+      "net_gex": -4669,
+      "p_c_ratio": 1.4479
     }
   ],
-  "putWall": 200,
+  "putWall": 224,
   "callWall": 260,
   "limitedData": true
 }

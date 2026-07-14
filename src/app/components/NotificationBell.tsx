@@ -23,6 +23,14 @@ function formatAlertTimestamp(a: RegimeAlert): string {
   return `${a.date} ${time}`;
 }
 
+// Sorts by the actual detection instant when known, so same-day alerts land
+// in the order they fired instead of all tying on `date` alone. Falls back to
+// midnight of `date` for pre-detected_at alerts, which sorts them after any
+// same-day alert that does have a real time (correctly, since those are older).
+function alertSortKey(a: RegimeAlert): string {
+  return a.detected_at ?? `${a.date}T00:00:00.000Z`;
+}
+
 const READ_KEY = 'regimeAlerts_readIds';
 
 interface NotificationBellProps {
@@ -39,7 +47,7 @@ export default function NotificationBell({ onSelectTicker }: NotificationBellPro
     fetch('/api/regime-alerts')
       .then(res => res.json())
       .then(data => {
-        const sorted = (data.alerts || []).slice().sort((a: RegimeAlert, b: RegimeAlert) => b.date.localeCompare(a.date));
+        const sorted = (data.alerts || []).slice().sort((a: RegimeAlert, b: RegimeAlert) => alertSortKey(b).localeCompare(alertSortKey(a)));
         setAlerts(sorted);
       })
       .catch(() => {});

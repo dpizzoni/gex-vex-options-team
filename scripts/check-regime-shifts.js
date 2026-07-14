@@ -125,6 +125,19 @@ function checkDoubleGex(ticker, existingAlerts, backfill) {
   return found;
 }
 
+// Alerts lose their value as signals after about a week (see NotificationBell's
+// time display), so the persisted file is trimmed to that window on every run
+// instead of growing forever - keeps it small and keeps the bell's list
+// actually useful rather than scrollable history.
+const RETENTION_DAYS = 7;
+
+function pruneOld(alerts) {
+  const cutoff = new Date();
+  cutoff.setUTCDate(cutoff.getUTCDate() - RETENTION_DAYS);
+  const cutoffStr = cutoff.toISOString().slice(0, 10);
+  return alerts.filter(a => a.date >= cutoffStr);
+}
+
 function run() {
   const backfill = process.argv.includes('--backfill');
   const existing = loadAlerts();
@@ -134,10 +147,18 @@ function run() {
     newAlerts = newAlerts.concat(checkDoubleGex(ticker, existing.concat(newAlerts), backfill));
   }
 
-  if (newAlerts.length > 0) {
-    const updated = [...existing, ...newAlerts].sort((a, b) => (a.date + a.ticker).localeCompare(b.date + b.ticker));
+  const retained = pruneOld([...existing, ...newAlerts]);
+  const prunedCount = existing.length + newAlerts.length - retained.length;
+
+  if (newAlerts.length > 0 || prunedCount > 0) {
+    const updated = retained.sort((a, b) => (a.date + a.ticker).localeCompare(b.date + b.ticker));
     saveAlerts(updated);
-    console.log(`Added ${newAlerts.length} new regime-shift alert(s): ${newAlerts.map(a => `${a.ticker} ${a.type} ${a.date}`).join(', ')}`);
+    if (newAlerts.length > 0) {
+      console.log(`Added ${newAlerts.length} new regime-shift alert(s): ${newAlerts.map(a => `${a.ticker} ${a.type} ${a.date}`).join(', ')}`);
+    }
+    if (prunedCount > 0) {
+      console.log(`Pruned ${prunedCount} alert(s) older than ${RETENTION_DAYS} days.`);
+    }
   } else {
     console.log('No new regime shifts detected.');
   }

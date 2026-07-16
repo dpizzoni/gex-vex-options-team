@@ -1,26 +1,26 @@
 {
   "ticker": "XEL",
-  "date": "2026-07-15",
-  "spot": 79.25,
+  "date": "2026-07-16",
+  "spot": null,
   "expirations": [
     {
       "expiration": "2026-07-17",
-      "dte": 2,
-      "call_gex": 5970,
-      "put_gex": -21883,
-      "net_gex": -15913,
-      "p_c_ratio": 3.6656
+      "dte": 1,
+      "call_gex": 5388,
+      "put_gex": -8635,
+      "net_gex": -3246,
+      "p_c_ratio": 1.6025
     },
     {
       "expiration": "2026-08-21",
-      "dte": 37,
-      "call_gex": 12916,
-      "put_gex": -10442,
-      "net_gex": 2474,
-      "p_c_ratio": 0.8084
+      "dte": 36,
+      "call_gex": 13138,
+      "put_gex": -9568,
+      "net_gex": 3570,
+      "p_c_ratio": 0.7282
     }
   ],
-  "putWall": 65,
-  "callWall": 90,
+  "putWall": null,
+  "callWall": null,
   "limitedData": true
 }

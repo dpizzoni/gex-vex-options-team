@@ -1,12 +1,16 @@
 name: Gamma Regime Intraday Refresh
 
-# UW recalcula su GEX agregado durante el día (no solo al cierre), así que la
-# única captura diaria de daily-update.yml (madrugada) queda desactualizada
-# para la tarde. Este workflow corre SOLO la Etapa 1 (Gamma Regime, liviana,
-# ~5min para 127 tickers) dos veces más por día, sin tocar la captura de OI
-# (esa sigue siendo una vez al día en daily-update.yml).
+# UW recalcula su GEX agregado durante el día (no solo al cierre), así que una
+# sola captura diaria quedaba desactualizada para la tarde. Este workflow corre
+# SOLO Gamma Regime (liviano, ~5min para 127 tickers) 3 veces por día -
+# mañana, tarde y cierre - totalmente desacoplado de la captura de OI (esa
+# sigue siendo una vez al día, sola, en daily-update.yml). Antes la corrida de
+# la mañana vivía como Etapa 1 dentro de daily-update.yml; se movió acá para
+# que un fallo en la captura pesada de OI (Etapa 2) ya no pueda arrastrar a
+# Gamma Regime, y viceversa.
 on:
   schedule:
+    - cron: '31 10 * * 1-5'
     - cron: '0 15 * * 1-5'
     - cron: '0 20 * * 1-5'
   workflow_dispatch:

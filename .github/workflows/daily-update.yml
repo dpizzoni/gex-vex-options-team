@@ -5,6 +5,11 @@ name: Daily Market Update & UW Capture
 # 10:31 UTC = 06:31 AM EST (Nueva York) / 07:31 AM (Argentina).
 # Es el respaldo del disparo puntual desde Vercel Cron (ver vercel.json); si ese
 # falla, este schedule nativo de GitHub corre igual (aunque con posible demora).
+#
+# Solo hace la captura de OI + dealer build (pesada, ~1h). Gamma Regime vivía
+# acá como una Etapa 1 previa, pero se movió a gamma-intraday.yml (que ahora
+# corre 3 veces/día, incluida la mañana) para que un fallo en cualquiera de
+# los dos pipelines no afecte al otro.
 on:
   schedule:
     - cron: '31 10 * * 1-5'
@@ -88,42 +93,8 @@ jobs:
         with:
           python-version: '3.10'
 
-      # ETAPA 1: Gamma Regime (127 tickers, liviano ~5min, no necesita el server de Next.js
-      # porque scrapea UW directo). Va primero y en un step separado con su propio commit,
-      # para que un fallo acá no se lleve puesta la captura pesada de OI de la Etapa 2.
-      - name: 📊 Etapa 1/2 - Actualizar Gamma Regime Data
+      - name: 🚀 Ejecutar Captura OI y Dealer Build
         if: steps.check_today.outputs.skip == 'false'
-        env:
-          UW_EMAIL: ${{ secrets.UW_EMAIL }}
-          UW_PASSWORD: ${{ secrets.UW_PASSWORD }}
-        run: npm run uw:daily:gamma
-
-      # Un push directo a main mientras este job corre (puede tardar ~1h en total)
-      # deja el checkout local desactualizado y el push del siguiente step se
-      # rechaza con "fetch first". Rebaseamos primero; si hay un conflicto real
-      # de contenido lo abortamos limpio y dejamos que el commit falle visible,
-      # en vez de dejar el repo en un estado de rebase a medio terminar.
-      - name: 🔄 Sincronizar con main antes de commitear (Gamma)
-        if: always() && steps.check_today.outputs.skip == 'false'
-        run: |
-          git fetch origin main
-          if ! git rebase --autostash origin/main; then
-            git rebase --abort 2>/dev/null || true
-            echo "::warning::No se pudo rebasear sobre main (posible conflicto real de contenido). El commit de Gamma puede fallar."
-          fi
-
-      - name: 💾 Commit & Push - Gamma Regime Data
-        if: always() && steps.check_today.outputs.skip == 'false'
-        uses: stefanzweifel/git-auto-commit-action@v6
-        with:
-          commit_message: "chore(data): daily gamma regime capture [skip ci]"
-          file_pattern: "cache/"
-          skip_fetch: false
-
-      # ETAPA 2: OI + Dealer Build (pesado, ~1h). Corre aunque la Etapa 1 haya fallado
-      # (por eso "always()"), ya que sabemos que este pipeline es el más confiable.
-      - name: 🚀 Etapa 2/2 - Ejecutar Captura OI y Dealer Build
-        if: always() && steps.check_today.outputs.skip == 'false'
         env:
           UW_EMAIL: ${{ secrets.UW_EMAIL }}
           UW_PASSWORD: ${{ secrets.UW_PASSWORD }}

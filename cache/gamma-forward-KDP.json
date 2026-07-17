@@ -1,26 +1,18 @@
 {
   "ticker": "KDP",
-  "date": "2026-07-16",
-  "spot": 31.38,
+  "date": "2026-07-17",
+  "spot": null,
   "expirations": [
     {
-      "expiration": "2026-07-17",
-      "dte": 1,
-      "call_gex": 158096,
-      "put_gex": -46763,
-      "net_gex": 111333,
-      "p_c_ratio": 0.2958
-    },
-    {
       "expiration": "2026-08-21",
-      "dte": 36,
-      "call_gex": 104410,
-      "put_gex": -5912,
-      "net_gex": 98499,
-      "p_c_ratio": 0.0566
+      "dte": 35,
+      "call_gex": 95792,
+      "put_gex": -6235,
+      "net_gex": 89557,
+      "p_c_ratio": 0.0651
     }
   ],
-  "putWall": 31,
-  "callWall": 33,
+  "putWall": null,
+  "callWall": null,
   "limitedData": true
 }

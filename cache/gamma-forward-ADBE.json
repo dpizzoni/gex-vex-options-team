@@ -1,58 +1,58 @@
 {
   "ticker": "ADBE",
   "date": "2026-07-20",
-  "spot": 235.14,
+  "spot": 231.705,
   "expirations": [
     {
       "expiration": "2026-07-24",
       "dte": 4,
-      "call_gex": 17248,
-      "put_gex": -9116,
-      "net_gex": 8133,
-      "p_c_ratio": 0.5285
+      "call_gex": 16061,
+      "put_gex": -11820,
+      "net_gex": 4240,
+      "p_c_ratio": 0.736
     },
     {
       "expiration": "2026-07-31",
       "dte": 11,
-      "call_gex": 8337,
-      "put_gex": -3681,
-      "net_gex": 4655,
-      "p_c_ratio": 0.4416
+      "call_gex": 7982,
+      "put_gex": -4557,
+      "net_gex": 3424,
+      "p_c_ratio": 0.571
     },
     {
       "expiration": "2026-08-07",
       "dte": 18,
-      "call_gex": 7595,
-      "put_gex": -1851,
-      "net_gex": 5744,
-      "p_c_ratio": 0.2438
+      "call_gex": 7418,
+      "put_gex": -2330,
+      "net_gex": 5087,
+      "p_c_ratio": 0.3142
     },
     {
       "expiration": "2026-08-14",
       "dte": 25,
-      "call_gex": 1696,
-      "put_gex": -1386,
-      "net_gex": 310,
-      "p_c_ratio": 0.8173
+      "call_gex": 1687,
+      "put_gex": -1706,
+      "net_gex": -19,
+      "p_c_ratio": 1.0113
     },
     {
       "expiration": "2026-08-21",
       "dte": 32,
-      "call_gex": 22505,
-      "put_gex": -15613,
-      "net_gex": 6891,
-      "p_c_ratio": 0.6938
+      "call_gex": 22046,
+      "put_gex": -17864,
+      "net_gex": 4182,
+      "p_c_ratio": 0.8103
     },
     {
       "expiration": "2026-08-28",
       "dte": 39,
-      "call_gex": 789,
-      "put_gex": -1503,
-      "net_gex": -713,
-      "p_c_ratio": 1.9034
+      "call_gex": 768,
+      "put_gex": -1798,
+      "net_gex": -1030,
+      "p_c_ratio": 2.3423
     }
   ],
   "putWall": 220,
-  "callWall": 250,
+  "callWall": 240,
   "limitedData": false
 }

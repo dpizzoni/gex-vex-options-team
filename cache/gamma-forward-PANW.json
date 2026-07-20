@@ -1,50 +1,58 @@
 {
   "ticker": "PANW",
-  "date": "2026-07-17",
-  "spot": 358.68,
+  "date": "2026-07-20",
+  "spot": 357.43,
   "expirations": [
     {
       "expiration": "2026-07-24",
-      "dte": 7,
-      "call_gex": 4798,
-      "put_gex": -1938,
-      "net_gex": 2860,
-      "p_c_ratio": 0.404
+      "dte": 4,
+      "call_gex": 6500,
+      "put_gex": -2847,
+      "net_gex": 3653,
+      "p_c_ratio": 0.438
     },
     {
       "expiration": "2026-07-31",
-      "dte": 14,
-      "call_gex": 3658,
-      "put_gex": -2468,
-      "net_gex": 1190,
-      "p_c_ratio": 0.6746
+      "dte": 11,
+      "call_gex": 3980,
+      "put_gex": -3019,
+      "net_gex": 960,
+      "p_c_ratio": 0.7587
     },
     {
       "expiration": "2026-08-07",
-      "dte": 21,
-      "call_gex": 3407,
-      "put_gex": -623,
-      "net_gex": 2784,
-      "p_c_ratio": 0.1828
+      "dte": 18,
+      "call_gex": 3580,
+      "put_gex": -631,
+      "net_gex": 2950,
+      "p_c_ratio": 0.1762
     },
     {
       "expiration": "2026-08-14",
-      "dte": 28,
-      "call_gex": 523,
-      "put_gex": -606,
-      "net_gex": -83,
-      "p_c_ratio": 1.1596
+      "dte": 25,
+      "call_gex": 661,
+      "put_gex": -664,
+      "net_gex": -3,
+      "p_c_ratio": 1.0047
     },
     {
       "expiration": "2026-08-21",
-      "dte": 35,
-      "call_gex": 6119,
-      "put_gex": -2763,
-      "net_gex": 3356,
-      "p_c_ratio": 0.4516
+      "dte": 32,
+      "call_gex": 6634,
+      "put_gex": -2757,
+      "net_gex": 3877,
+      "p_c_ratio": 0.4155
+    },
+    {
+      "expiration": "2026-08-28",
+      "dte": 39,
+      "call_gex": 155,
+      "put_gex": -51,
+      "net_gex": 104,
+      "p_c_ratio": 0.3272
     }
   ],
-  "putWall": 350,
+  "putWall": 300,
   "callWall": 360,
   "limitedData": false
 }

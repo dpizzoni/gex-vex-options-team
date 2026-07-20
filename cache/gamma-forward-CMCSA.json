@@ -1,50 +1,58 @@
 {
   "ticker": "CMCSA",
-  "date": "2026-07-17",
+  "date": "2026-07-20",
   "spot": 23.79,
   "expirations": [
     {
       "expiration": "2026-07-24",
-      "dte": 7,
-      "call_gex": 252570,
-      "put_gex": -74258,
-      "net_gex": 178312,
-      "p_c_ratio": 0.294
+      "dte": 4,
+      "call_gex": 264660,
+      "put_gex": -167511,
+      "net_gex": 97149,
+      "p_c_ratio": 0.6329
     },
     {
       "expiration": "2026-07-31",
-      "dte": 14,
-      "call_gex": 99908,
-      "put_gex": -22438,
-      "net_gex": 77470,
-      "p_c_ratio": 0.2246
+      "dte": 11,
+      "call_gex": 103367,
+      "put_gex": -28111,
+      "net_gex": 75256,
+      "p_c_ratio": 0.272
     },
     {
       "expiration": "2026-08-07",
-      "dte": 21,
-      "call_gex": 31812,
-      "put_gex": -11103,
-      "net_gex": 20709,
-      "p_c_ratio": 0.349
+      "dte": 18,
+      "call_gex": 29966,
+      "put_gex": -10974,
+      "net_gex": 18992,
+      "p_c_ratio": 0.3662
     },
     {
       "expiration": "2026-08-14",
-      "dte": 28,
-      "call_gex": 10304,
-      "put_gex": -7548,
-      "net_gex": 2756,
-      "p_c_ratio": 0.7325
+      "dte": 25,
+      "call_gex": 10073,
+      "put_gex": -9907,
+      "net_gex": 166,
+      "p_c_ratio": 0.9835
     },
     {
       "expiration": "2026-08-21",
-      "dte": 35,
-      "call_gex": 342794,
-      "put_gex": -544470,
-      "net_gex": -201676,
-      "p_c_ratio": 1.5883
+      "dte": 32,
+      "call_gex": 354754,
+      "put_gex": -637949,
+      "net_gex": -283195,
+      "p_c_ratio": 1.7983
+    },
+    {
+      "expiration": "2026-08-28",
+      "dte": 39,
+      "call_gex": 1830,
+      "put_gex": -1756,
+      "net_gex": 74,
+      "p_c_ratio": 0.9595
     }
   ],
   "putWall": 20,
-  "callWall": 25,
+  "callWall": 30,
   "limitedData": false
 }

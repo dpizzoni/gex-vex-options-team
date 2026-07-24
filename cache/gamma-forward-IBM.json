@@ -1,50 +1,50 @@
 {
   "ticker": "IBM",
   "date": "2026-07-24",
-  "spot": 207.5,
+  "spot": 213.7701,
   "expirations": [
     {
       "expiration": "2026-07-31",
       "dte": 7,
-      "call_gex": 30720,
-      "put_gex": -22050,
-      "net_gex": 8670,
-      "p_c_ratio": 0.7178
+      "call_gex": 32673,
+      "put_gex": -21116,
+      "net_gex": 11557,
+      "p_c_ratio": 0.6463
     },
     {
       "expiration": "2026-08-07",
       "dte": 14,
-      "call_gex": 7768,
-      "put_gex": -6239,
-      "net_gex": 1529,
-      "p_c_ratio": 0.8031
+      "call_gex": 8275,
+      "put_gex": -6010,
+      "net_gex": 2264,
+      "p_c_ratio": 0.7263
     },
     {
       "expiration": "2026-08-14",
       "dte": 21,
-      "call_gex": 6417,
-      "put_gex": -8454,
-      "net_gex": -2037,
-      "p_c_ratio": 1.3174
+      "call_gex": 6556,
+      "put_gex": -7943,
+      "net_gex": -1387,
+      "p_c_ratio": 1.2116
     },
     {
       "expiration": "2026-08-21",
       "dte": 28,
-      "call_gex": 48939,
-      "put_gex": -55179,
-      "net_gex": -6240,
-      "p_c_ratio": 1.1275
+      "call_gex": 50922,
+      "put_gex": -51629,
+      "net_gex": -707,
+      "p_c_ratio": 1.0139
     },
     {
       "expiration": "2026-08-28",
       "dte": 35,
-      "call_gex": 5389,
-      "put_gex": -5146,
-      "net_gex": 243,
-      "p_c_ratio": 0.955
+      "call_gex": 5665,
+      "put_gex": -4915,
+      "net_gex": 750,
+      "p_c_ratio": 0.8676
     }
   ],
   "putWall": 200,
-  "callWall": 210,
+  "callWall": 215,
   "limitedData": false
 }

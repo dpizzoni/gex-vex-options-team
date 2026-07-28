@@ -1,50 +1,58 @@
 {
   "ticker": "SNPS",
-  "date": "2026-07-24",
-  "spot": 373.47,
+  "date": "2026-07-28",
+  "spot": 383.82,
   "expirations": [
     {
       "expiration": "2026-07-31",
-      "dte": 7,
-      "call_gex": 623,
-      "put_gex": -4401,
-      "net_gex": -3779,
-      "p_c_ratio": 7.0698
+      "dte": 3,
+      "call_gex": 3926,
+      "put_gex": -3612,
+      "net_gex": 313,
+      "p_c_ratio": 0.9202
     },
     {
       "expiration": "2026-08-07",
-      "dte": 14,
-      "call_gex": 234,
-      "put_gex": -403,
-      "net_gex": -169,
-      "p_c_ratio": 1.7196
+      "dte": 10,
+      "call_gex": 498,
+      "put_gex": -377,
+      "net_gex": 121,
+      "p_c_ratio": 0.7574
     },
     {
       "expiration": "2026-08-14",
-      "dte": 21,
-      "call_gex": 79,
-      "put_gex": -377,
-      "net_gex": -298,
-      "p_c_ratio": 4.7846
+      "dte": 17,
+      "call_gex": 106,
+      "put_gex": -302,
+      "net_gex": -195,
+      "p_c_ratio": 2.8382
     },
     {
       "expiration": "2026-08-21",
-      "dte": 28,
-      "call_gex": 1620,
-      "put_gex": -2059,
-      "net_gex": -439,
-      "p_c_ratio": 1.271
+      "dte": 24,
+      "call_gex": 2434,
+      "put_gex": -2283,
+      "net_gex": 151,
+      "p_c_ratio": 0.9379
     },
     {
       "expiration": "2026-08-28",
-      "dte": 35,
-      "call_gex": 350,
-      "put_gex": -385,
-      "net_gex": -35,
-      "p_c_ratio": 1.101
+      "dte": 31,
+      "call_gex": 385,
+      "put_gex": -367,
+      "net_gex": 18,
+      "p_c_ratio": 0.9533
+    },
+    {
+      "expiration": "2026-09-04",
+      "dte": 38,
+      "call_gex": 16,
+      "put_gex": -9,
+      "net_gex": 8,
+      "p_c_ratio": 0.5305
     }
   ],
   "putWall": 370,
-  "callWall": 385,
+  "callWall": 400,
   "limitedData": false
 }

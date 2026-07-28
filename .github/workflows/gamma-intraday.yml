@@ -8,11 +8,16 @@ name: Gamma Regime Intraday Refresh
 # la mañana vivía como Etapa 1 dentro de daily-update.yml; se movió acá para
 # que un fallo en la captura pesada de OI (Etapa 2) ya no pueda arrastrar a
 # Gamma Regime, y viceversa.
+# Schedule nativo desactivado: este workflow se está probando migrado a
+# CircleCI (ver .circleci/config.yml) porque se agotaron los minutos gratis
+# de GitHub Actions. Queda workflow_dispatch para poder forzarlo a mano si
+# hace falta volver atrás. Reactivar el `schedule:` de abajo si se decide
+# volver a GitHub Actions.
 on:
-  schedule:
-    - cron: '31 10 * * 1-5'
-    - cron: '0 15 * * 1-5'
-    - cron: '0 20 * * 1-5'
+  # schedule:
+  #   - cron: '31 10 * * 1-5'
+  #   - cron: '0 15 * * 1-5'
+  #   - cron: '0 20 * * 1-5'
   workflow_dispatch:
 
 permissions:

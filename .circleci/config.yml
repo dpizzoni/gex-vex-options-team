@@ -1,0 +1,87 @@
+version: 2.1
+
+# Piloto de migración: solo Gamma Regime intraday (antes en
+# .github/workflows/gamma-intraday.yml, ahora con el `schedule:` comentado
+# ahí). Se agotaron los minutos gratis de GitHub Actions; si esto funciona
+# bien se migra también daily-update.yml y fund-flow-daily.yml.
+#
+# El disparo NO va acá adentro (los "triggers" por cron en config.yml están
+# deprecados). Hay que crear 3 Scheduled Pipelines desde el dashboard de
+# CircleCI (Project Settings > Triggers), apuntando a la rama `main`, en los
+# mismos horarios UTC que tenía el workflow original:
+#   - 31 10 * * 1-5  (mañana)
+#   - 0  15 * * 1-5  (tarde)
+#   - 0  20 * * 1-5  (cierre)
+#
+# Variables de entorno a configurar en Project Settings > Environment Variables:
+#   UW_EMAIL, UW_PASSWORD  - credenciales de Unusual Whales
+#   GH_PUSH_TOKEN          - GitHub PAT (repo scope) para poder hacer commit/push
+#   GIT_AUTHOR_NAME / GIT_AUTHOR_EMAIL - opcional, si no se usa el default de abajo
+
+jobs:
+  gamma-refresh:
+    docker:
+      - image: cimg/node:22.11
+    resource_class: medium
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - v1-playwright-{{ checksum "package-lock.json" }}
+            - v1-playwright-
+
+      - run:
+          name: 📦 Instalar dependencias Node
+          command: npm install
+
+      - run:
+          name: 🌐 Instalar navegadores Playwright (para UW)
+          command: npx playwright install chromium --with-deps
+
+      - save_cache:
+          key: v1-playwright-{{ checksum "package-lock.json" }}
+          paths:
+            - ~/.cache/ms-playwright
+            - node_modules
+
+      - run:
+          name: 📊 Actualizar Gamma Regime Data
+          command: npm run uw:daily:gamma
+          environment:
+            UW_EMAIL: $UW_EMAIL
+            UW_PASSWORD: $UW_PASSWORD
+
+      - run:
+          name: 💾 Commit & Push - Gamma Regime Data (intraday)
+          command: |
+            git config user.name "${GIT_AUTHOR_NAME:-circleci-bot}"
+            git config user.email "${GIT_AUTHOR_EMAIL:-circleci-bot@users.noreply.github.com}"
+
+            if [ -z "$GH_PUSH_TOKEN" ]; then
+              echo "GH_PUSH_TOKEN no configurado, no se puede pushear" >&2
+              exit 1
+            fi
+
+            git remote set-url origin "https://x-access-token:${GH_PUSH_TOKEN}@github.com/dpizzoni/gex-vex-options-team.git"
+
+            git fetch origin main
+            if ! git rebase --autostash origin/main; then
+              git rebase --abort || true
+              echo "No se pudo rebasear sobre main, aborto el commit." >&2
+              exit 1
+            fi
+
+            git add cache/
+            if git diff --cached --quiet; then
+              echo "Sin cambios para commitear."
+              exit 0
+            fi
+
+            git commit -m "chore(data): intraday gamma regime refresh [skip ci]"
+            git push origin HEAD:main
+
+workflows:
+  gamma-regime:
+    jobs:
+      - gamma-refresh

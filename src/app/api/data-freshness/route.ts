@@ -25,12 +25,18 @@ async function ghFetch(path: string, headers: GhHeaders) {
 // Insights aggregates with a multi-hour lag - right after a fresh run it
 // still returns stale/empty data, which silently fell back to the frozen
 // GitHub Actions conclusion above.
+// TEMP: returns a `debug` trail alongside the result so we can see what
+// happened directly in the JSON response - the free Vercel plan has no
+// persistent runtime logs to check console.error output in. Remove the
+// debug field once the stuck "failed" flag is diagnosed.
 async function latestCircleCIWorkflowRun(workflowName: string) {
+  const debug: string[] = [];
   const token = process.env.CIRCLECI_TOKEN;
   if (!token) {
-    console.error("[data-freshness] CIRCLECI_TOKEN not set");
-    return null;
+    debug.push("CIRCLECI_TOKEN not set");
+    return { run: null, debug };
   }
+  debug.push(`token present, length ${token.length}`);
   const headers = { "Circle-Token": token };
 
   const pipelinesRes = await fetch(
@@ -38,12 +44,11 @@ async function latestCircleCIWorkflowRun(workflowName: string) {
     { headers, cache: "no-store" }
   );
   if (!pipelinesRes.ok) {
-    console.error(
-      `[data-freshness] CircleCI pipeline list failed: ${pipelinesRes.status} ${await pipelinesRes.text()}`
-    );
-    return null;
+    debug.push(`pipeline list failed: ${pipelinesRes.status} ${(await pipelinesRes.text()).slice(0, 200)}`);
+    return { run: null, debug };
   }
   const pipelines = (await pipelinesRes.json())?.items ?? [];
+  debug.push(`pipelines found: ${pipelines.length}`);
 
   for (const pipeline of pipelines) {
     const workflowsRes = await fetch(`https://circleci.com/api/v2/pipeline/${pipeline.id}/workflow`, {
@@ -51,18 +56,20 @@ async function latestCircleCIWorkflowRun(workflowName: string) {
       cache: "no-store",
     });
     if (!workflowsRes.ok) {
-      console.error(
-        `[data-freshness] CircleCI workflow list failed for pipeline ${pipeline.id}: ${workflowsRes.status} ${await workflowsRes.text()}`
+      debug.push(
+        `workflow list failed for pipeline ${pipeline.id}: ${workflowsRes.status} ${(await workflowsRes.text()).slice(0, 200)}`
       );
       continue;
     }
     const workflows = (await workflowsRes.json())?.items ?? [];
     const workflow = workflows.find((w: { name: string }) => w.name === workflowName);
     if (workflow) {
-      return { ranAt: workflow.created_at as string, status: workflow.status as string };
+      debug.push(`matched workflow "${workflowName}" in pipeline ${pipeline.id}, status=${workflow.status}`);
+      return { run: { ranAt: workflow.created_at as string, status: workflow.status as string }, debug };
     }
+    debug.push(`pipeline ${pipeline.id}: no "${workflowName}" workflow among [${workflows.map((w: { name: string }) => w.name).join(", ")}]`);
   }
-  return null;
+  return { run: null, debug };
 }
 
 // Most recent completed run's conclusion for a workflow file. Used only for
@@ -113,8 +120,8 @@ export async function GET() {
 
   // Gamma Regime now runs on CircleCI (gammaCircleCIRun). Fall back to the
   // old GitHub Actions conclusion only if CIRCLECI_TOKEN isn't configured yet.
-  const gammaFailed = gammaCircleCIRun
-    ? gammaCircleCIRun.status === "failed" || gammaCircleCIRun.status === "error"
+  const gammaFailed = gammaCircleCIRun.run
+    ? gammaCircleCIRun.run.status === "failed" || gammaCircleCIRun.run.status === "error"
     : [dailyRun, intradayRun]
         .filter((r): r is NonNullable<typeof r> => r != null)
         .sort((a, b) => new Date(b.ranAt).getTime() - new Date(a.ranAt).getTime())[0]?.conclusion === "failure";
@@ -127,6 +134,7 @@ export async function GET() {
     gammaRegime: {
       ranAt: gammaCommit?.ranAt ?? null,
       failed: gammaFailed,
+      _debug: gammaCircleCIRun.debug,
     },
   });
 }

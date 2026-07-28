@@ -48,9 +48,6 @@ jobs:
       - run:
           name: 📊 Actualizar Gamma Regime Data
           command: npm run uw:daily:gamma
-          environment:
-            UW_EMAIL: $UW_EMAIL
-            UW_PASSWORD: $UW_PASSWORD
 
       - run:
           name: 💾 Commit & Push - Gamma Regime Data (intraday)

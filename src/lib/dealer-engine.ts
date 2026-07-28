@@ -42,9 +42,20 @@ function getAllJsonFiles(dirPath: string, arrayOfFiles: string[] = []): string[]
   return arrayOfFiles;
 }
 
+// In-memory cache: cache/dealer/ only changes via a redeploy (data is
+// committed by CI) or a local rebuild, so re-parsing every file on every
+// request burns Fluid Active CPU for no reason within a warm instance.
+let cachedDealerMap: Map<string, DealerSnapshot> | null = null;
+
+export function invalidateDealerCache() {
+  cachedDealerMap = null;
+}
+
 export function loadDealer(): Map<string, DealerSnapshot> {
+  if (cachedDealerMap) return cachedDealerMap;
+
   const cacheMap = new Map<string, DealerSnapshot>();
-  
+
   try {
     const dealerDir = path.join(process.cwd(), 'cache', 'dealer');
     if (!fs.existsSync(dealerDir)) return cacheMap;
@@ -96,7 +107,8 @@ export function loadDealer(): Map<string, DealerSnapshot> {
   } catch (error) {
     console.error('Error loading dealer cache:', error);
   }
-  
+
+  cachedDealerMap = cacheMap;
   return cacheMap;
 }
 

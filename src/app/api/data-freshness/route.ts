@@ -20,17 +20,36 @@ async function ghFetch(path: string, headers: GhHeaders) {
 // Actions ran out of free minutes; its gamma-intraday.yml schedule is
 // disabled, so latestRunConclusion for that workflow would stay frozen on
 // whatever it last was. This checks CircleCI's own run status instead.
+//
+// Uses the pipeline/workflow endpoints (not the Insights API) because
+// Insights aggregates with a multi-hour lag - right after a fresh run it
+// still returns stale/empty data, which silently fell back to the frozen
+// GitHub Actions conclusion above.
 async function latestCircleCIWorkflowRun(workflowName: string) {
   const token = process.env.CIRCLECI_TOKEN;
   if (!token) return null;
-  const res = await fetch(
-    `https://circleci.com/api/v2/insights/gh/${GITHUB_OWNER}/${GITHUB_REPO}/workflows/${workflowName}?branch=main`,
-    { headers: { "Circle-Token": token }, next: { revalidate: 300 } }
+  const headers = { "Circle-Token": token };
+
+  const pipelinesRes = await fetch(
+    `https://circleci.com/api/v2/project/gh/${GITHUB_OWNER}/${GITHUB_REPO}/pipeline?branch=main`,
+    { headers, next: { revalidate: 60 } }
   );
-  if (!res.ok) return null;
-  const body = await res.json();
-  const run = body?.items?.[0];
-  return run ? { ranAt: run.created_at as string, status: run.status as string } : null;
+  if (!pipelinesRes.ok) return null;
+  const pipelines = (await pipelinesRes.json())?.items ?? [];
+
+  for (const pipeline of pipelines) {
+    const workflowsRes = await fetch(`https://circleci.com/api/v2/pipeline/${pipeline.id}/workflow`, {
+      headers,
+      next: { revalidate: 60 },
+    });
+    if (!workflowsRes.ok) continue;
+    const workflows = (await workflowsRes.json())?.items ?? [];
+    const workflow = workflows.find((w: { name: string }) => w.name === workflowName);
+    if (workflow) {
+      return { ranAt: workflow.created_at as string, status: workflow.status as string };
+    }
+  }
+  return null;
 }
 
 // Most recent completed run's conclusion for a workflow file. Used only for

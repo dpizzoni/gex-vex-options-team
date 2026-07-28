@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { invalidateDealerCache } from '@/lib/dealer-engine';
 
 // Module-level lock: prevents concurrent build executions (DoS protection for local dev)
 let buildLock = false;
@@ -23,6 +24,7 @@ export async function POST() {
     // @ts-ignore
     const { runDealerBuilder } = await import('../../../../../../scripts/dealer-builder');
     runDealerBuilder();
+    invalidateDealerCache();
 
     const t1 = Date.now();
 

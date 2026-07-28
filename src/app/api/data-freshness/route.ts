@@ -27,22 +27,35 @@ async function ghFetch(path: string, headers: GhHeaders) {
 // GitHub Actions conclusion above.
 async function latestCircleCIWorkflowRun(workflowName: string) {
   const token = process.env.CIRCLECI_TOKEN;
-  if (!token) return null;
+  if (!token) {
+    console.error("[data-freshness] CIRCLECI_TOKEN not set");
+    return null;
+  }
   const headers = { "Circle-Token": token };
 
   const pipelinesRes = await fetch(
     `https://circleci.com/api/v2/project/gh/${GITHUB_OWNER}/${GITHUB_REPO}/pipeline?branch=main`,
-    { headers, next: { revalidate: 60 } }
+    { headers, cache: "no-store" }
   );
-  if (!pipelinesRes.ok) return null;
+  if (!pipelinesRes.ok) {
+    console.error(
+      `[data-freshness] CircleCI pipeline list failed: ${pipelinesRes.status} ${await pipelinesRes.text()}`
+    );
+    return null;
+  }
   const pipelines = (await pipelinesRes.json())?.items ?? [];
 
   for (const pipeline of pipelines) {
     const workflowsRes = await fetch(`https://circleci.com/api/v2/pipeline/${pipeline.id}/workflow`, {
       headers,
-      next: { revalidate: 60 },
+      cache: "no-store",
     });
-    if (!workflowsRes.ok) continue;
+    if (!workflowsRes.ok) {
+      console.error(
+        `[data-freshness] CircleCI workflow list failed for pipeline ${pipeline.id}: ${workflowsRes.status} ${await workflowsRes.text()}`
+      );
+      continue;
+    }
     const workflows = (await workflowsRes.json())?.items ?? [];
     const workflow = workflows.find((w: { name: string }) => w.name === workflowName);
     if (workflow) {

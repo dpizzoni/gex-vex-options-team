@@ -1,5 +1,6 @@
 version: 2.1
 
+# [trigger fresh pipeline run]
 # Piloto de migración: solo Gamma Regime intraday (antes en
 # .github/workflows/gamma-intraday.yml, ahora con el `schedule:` comentado
 # ahí). Se agotaron los minutos gratis de GitHub Actions; si esto funciona

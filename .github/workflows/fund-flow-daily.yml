@@ -1,0 +1,84 @@
+name: Fund Flow & COT Daily Capture
+
+# Sector ETF flow y market tide desde UW, más
+# el reporte semanal COT de la CFTC (público, sin login). Corre una vez al
+# día, después del cierre de mercado en US (21:00 UTC), en su propio job/login
+# - separado de daily-update.yml y gamma-intraday.yml a propósito, para que un
+# fallo en este scraper nuevo (menos probado que los otros dos) no pueda
+# arrastrar el commit de OI ni el de Gamma Regime.
+# Schedule nativo desactivado: este workflow se migró a CircleCI, encadenado
+# después del cierre de Gamma Regime (ver el workflow `daily-close` en
+# .circleci/config.yml) porque se agotaron los minutos gratis de GitHub
+# Actions. Queda workflow_dispatch para poder forzarlo a mano si hace falta
+# volver atrás. Reactivar el `schedule:` de abajo si se decide volver a
+# GitHub Actions.
+on:
+  # schedule:
+  #   - cron: '0 21 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fund-flow-capture:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Checkout del código
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: 📦 Instalar dependencias Node
+        run: npm install
+
+      - name: 📦 Cache de navegadores y paquetes apt de Playwright
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/ms-playwright
+            /var/cache/apt/archives
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: 🌐 Instalar navegadores Playwright (para UW)
+        run: npx playwright install chromium --with-deps
+
+      - name: 💰 Actualizar Fund Flow (UW) + COT (CFTC)
+        env:
+          UW_EMAIL: ${{ secrets.UW_EMAIL }}
+          UW_PASSWORD: ${{ secrets.UW_PASSWORD }}
+        run: npm run fund-flow:daily
+
+      - name: 📤 Subir capturas de pantalla de diagnóstico (en caso de error)
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: fund-flow-debug
+          path: debug/
+          if-no-files-found: ignore
+
+      - name: 🔄 Sincronizar con main antes de commitear
+        if: always()
+        run: |
+          git fetch origin main
+          if ! git rebase --autostash origin/main; then
+            git rebase --abort 2>/dev/null || true
+            echo "::warning::No se pudo rebasear sobre main (posible conflicto real de contenido). El commit puede fallar."
+          fi
+
+      - name: 💾 Commit & Push - Fund Flow & COT
+        if: always()
+        uses: stefanzweifel/git-auto-commit-action@v6
+        with:
+          commit_message: "chore(data): daily fund-flow & COT capture [skip ci]"
+          file_pattern: "cache/"
+          skip_fetch: false

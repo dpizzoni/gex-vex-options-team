@@ -1,23 +1,67 @@
 version: 2.1
 
-# [trigger fresh pipeline run]
-# Piloto de migración: solo Gamma Regime intraday (antes en
-# .github/workflows/gamma-intraday.yml, ahora con el `schedule:` comentado
-# ahí). Se agotaron los minutos gratis de GitHub Actions; si esto funciona
-# bien se migra también daily-update.yml y fund-flow-daily.yml.
+# Migración de GitHub Actions a CircleCI (se agotaron los minutos gratis de
+# GH Actions). Un único pipeline.parameter `trigger` decide qué workflow
+# corre en cada corrida - SIN esto, cualquier Scheduled Pipeline dispara
+# TODOS los workflows de este archivo (CircleCI corre todo lo que no tenga
+# `when:` en cada pipeline run).
 #
-# El disparo NO va acá adentro (los "triggers" por cron en config.yml están
-# deprecados). Hay que crear 3 Scheduled Pipelines desde el dashboard de
-# CircleCI (Project Settings > Triggers), apuntando a la rama `main`, en los
-# mismos horarios UTC que tenía el workflow original:
-#   - 31 10 * * 1-5  (mañana)
-#   - 0  15 * * 1-5  (tarde)
-#   - 0  20 * * 1-5  (cierre)
+# Hay que crear/editar 4 Scheduled Pipelines desde el dashboard de CircleCI
+# (Project Settings > Triggers), rama `main`, cada uno con su propio valor
+# de "Parameters" (JSON) para que dispare solo su workflow:
+#
+#   Horario UTC (L-V)   Parameters              Dispara
+#   10:31               {"trigger": "intraday"} gamma-intraday (solo gamma-refresh)
+#   15:00               {"trigger": "intraday"} gamma-intraday (solo gamma-refresh)
+#   20:30 (cierre)      {"trigger": "close"}     daily-close (gamma → fund-flow/COT, encadenados)
+#   21:30               {"trigger": "macro"}     macro-liquidity (Fed Liquidity + Flow Score)
 #
 # Variables de entorno a configurar en Project Settings > Environment Variables:
-#   UW_EMAIL, UW_PASSWORD  - credenciales de Unusual Whales
+#   UW_EMAIL, UW_PASSWORD  - credenciales de Unusual Whales (gamma + fund-flow)
+#   FRED_API_KEY           - key gratuita de FRED (macro-liquidity)
 #   GH_PUSH_TOKEN          - GitHub PAT (repo scope) para poder hacer commit/push
 #   GIT_AUTHOR_NAME / GIT_AUTHOR_EMAIL - opcional, si no se usa el default de abajo
+
+parameters:
+  trigger:
+    type: string
+    default: "intraday"
+
+commands:
+  push_cache:
+    description: "Commit y push de cache/ con rebase seguro sobre main"
+    parameters:
+      commit_message:
+        type: string
+    steps:
+      - run:
+          name: 💾 Commit & Push - <<parameters.commit_message>>
+          command: |
+            git config user.name "${GIT_AUTHOR_NAME:-circleci-bot}"
+            git config user.email "${GIT_AUTHOR_EMAIL:-circleci-bot@users.noreply.github.com}"
+
+            if [ -z "$GH_PUSH_TOKEN" ]; then
+              echo "GH_PUSH_TOKEN no configurado, no se puede pushear" >&2
+              exit 1
+            fi
+
+            git remote set-url origin "https://x-access-token:${GH_PUSH_TOKEN}@github.com/dpizzoni/gex-vex-options-team.git"
+
+            git fetch origin main
+            if ! git rebase --autostash origin/main; then
+              git rebase --abort || true
+              echo "No se pudo rebasear sobre main, aborto el commit." >&2
+              exit 1
+            fi
+
+            git add cache/
+            if git diff --cached --quiet; then
+              echo "Sin cambios para commitear."
+              exit 0
+            fi
+
+            git commit -m "<<parameters.commit_message>> [skip ci]"
+            git push origin HEAD:main
 
 jobs:
   gamma-refresh:
@@ -50,36 +94,89 @@ jobs:
           name: 📊 Actualizar Gamma Regime Data
           command: npm run uw:daily:gamma
 
+      - push_cache:
+          commit_message: "chore(data): intraday gamma regime refresh"
+
+  fund-flow-refresh:
+    docker:
+      - image: cimg/node:22.11
+    resource_class: medium
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - v1-playwright-{{ checksum "package-lock.json" }}
+            - v1-playwright-
+
       - run:
-          name: 💾 Commit & Push - Gamma Regime Data (intraday)
-          command: |
-            git config user.name "${GIT_AUTHOR_NAME:-circleci-bot}"
-            git config user.email "${GIT_AUTHOR_EMAIL:-circleci-bot@users.noreply.github.com}"
+          name: 📦 Instalar dependencias Node
+          command: npm install
 
-            if [ -z "$GH_PUSH_TOKEN" ]; then
-              echo "GH_PUSH_TOKEN no configurado, no se puede pushear" >&2
-              exit 1
-            fi
+      - run:
+          name: 🌐 Instalar navegadores Playwright (para UW)
+          command: npx playwright install chromium --with-deps
 
-            git remote set-url origin "https://x-access-token:${GH_PUSH_TOKEN}@github.com/dpizzoni/gex-vex-options-team.git"
+      - save_cache:
+          key: v1-playwright-{{ checksum "package-lock.json" }}
+          paths:
+            - ~/.cache/ms-playwright
+            - node_modules
 
-            git fetch origin main
-            if ! git rebase --autostash origin/main; then
-              git rebase --abort || true
-              echo "No se pudo rebasear sobre main, aborto el commit." >&2
-              exit 1
-            fi
+      - run:
+          name: 💰 Actualizar Fund Flow (UW) + COT (CFTC)
+          command: npm run fund-flow:daily
 
-            git add cache/
-            if git diff --cached --quiet; then
-              echo "Sin cambios para commitear."
-              exit 0
-            fi
+      - push_cache:
+          commit_message: "chore(data): daily fund-flow & COT capture"
 
-            git commit -m "chore(data): intraday gamma regime refresh [skip ci]"
-            git push origin HEAD:main
+  macro-liquidity-refresh:
+    docker:
+      - image: cimg/node:22.11
+    resource_class: small
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - v1-node-{{ checksum "package-lock.json" }}
+            - v1-node-
+
+      - run:
+          name: 📦 Instalar dependencias Node
+          command: npm install
+
+      - save_cache:
+          key: v1-node-{{ checksum "package-lock.json" }}
+          paths:
+            - node_modules
+
+      - run:
+          name: 💧 Actualizar Fed Liquidity + Institutional Flow Score
+          command: npm run macro:full
+
+      - push_cache:
+          commit_message: "chore(data): daily macro liquidity & institutional flow score refresh"
 
 workflows:
-  gamma-regime:
+  gamma-intraday:
+    when:
+      equal: ["intraday", << pipeline.parameters.trigger >>]
     jobs:
       - gamma-refresh
+
+  daily-close:
+    when:
+      equal: ["close", << pipeline.parameters.trigger >>]
+    jobs:
+      - gamma-refresh:
+          name: gamma-refresh-close
+      - fund-flow-refresh:
+          requires:
+            - gamma-refresh-close
+
+  macro-liquidity:
+    when:
+      equal: ["macro", << pipeline.parameters.trigger >>]
+    jobs:
+      - macro-liquidity-refresh

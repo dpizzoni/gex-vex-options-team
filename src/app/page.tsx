@@ -26,7 +26,14 @@ import { calcT, calcGamma, calcVanna, sanitizeIV, findGammaFlip } from "@/lib/ge
 import GammaRegimePanel from "./components/GammaRegimePanel";
 import GammaRegimeChart from "./components/GammaRegimeChart";
 import NotificationBell from "./components/NotificationBell";
+import FundFlowPanel, { SectorFlowSeries, MarketTideEntry, CotEntry, FundFlowAlert } from "./components/FundFlowPanel";
+import MacroLiquidityPanel, { FedLiquidityEntry } from "./components/MacroLiquidityPanel";
+import InstitutionalFlowScorePanel, { FlowScoreEntry } from "./components/InstitutionalFlowScorePanel";
 import { computeGammaRegime } from "@/lib/gamma-regime-engine";
+
+// The 11 SPDR sector ETFs + SPY - matches SECTOR_TICKERS in
+// scripts/uw-fetch-fund-flow.js (the only tickers /api/sector/etfs covers).
+const SECTOR_FLOW_TICKERS = ['SPY', 'XLB', 'XLC', 'XLE', 'XLF', 'XLI', 'XLK', 'XLP', 'XLRE', 'XLU', 'XLV', 'XLY'];
 
 interface OptionContract {
   strike: number;
@@ -141,6 +148,22 @@ export default function Home() {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [gexVexMeta, setGexVexMeta] = useState<{ ranAt: Date | null; failed: boolean }>({ ranAt: null, failed: false });
   const [gammaRegimeMeta, setGammaRegimeMeta] = useState<{ ranAt: Date | null; failed: boolean }>({ ranAt: null, failed: false });
+  const [fundFlowMeta, setFundFlowMeta] = useState<{ ranAt: Date | null; failed: boolean }>({ ranAt: null, failed: false });
+
+  // Fund Flow & COT Positioning panel state
+  const [sectorFlow, setSectorFlow] = useState<SectorFlowSeries[]>([]);
+  const [marketTide, setMarketTide] = useState<MarketTideEntry | null>(null);
+  const [cotPositioning, setCotPositioning] = useState<CotEntry[]>([]);
+  const [fundFlowAlerts, setFundFlowAlerts] = useState<FundFlowAlert[]>([]);
+  const [fundFlowLoading, setFundFlowLoading] = useState<boolean>(true);
+
+  // Fed Liquidity Monitor panel state
+  const [fedLiquidity, setFedLiquidity] = useState<FedLiquidityEntry[]>([]);
+  const [fedLiquidityLoading, setFedLiquidityLoading] = useState<boolean>(true);
+
+  // Institutional Flow Score panel state
+  const [flowScore, setFlowScore] = useState<FlowScoreEntry[]>([]);
+  const [flowScoreLoading, setFlowScoreLoading] = useState<boolean>(true);
 
   // Analysis Panel State
   const [analysisTab, setAnalysisTab] = useState<"visual" | "text">("visual");
@@ -200,8 +223,56 @@ export default function Home() {
     fetch(`/api/data-freshness?t=${Date.now()}`).then(res => res.json()).then(data => {
       setGexVexMeta({ ranAt: data.gexVex?.ranAt ? new Date(data.gexVex.ranAt) : null, failed: !!data.gexVex?.failed });
       setGammaRegimeMeta({ ranAt: data.gammaRegime?.ranAt ? new Date(data.gammaRegime.ranAt) : null, failed: !!data.gammaRegime?.failed });
+      setFundFlowMeta({ ranAt: data.fundFlow?.ranAt ? new Date(data.fundFlow.ranAt) : null, failed: !!data.fundFlow?.failed });
     }).catch(err => {
       console.error("Data freshness fetch failed", err);
+    });
+  }, []);
+
+  useEffect(() => {
+    setFundFlowLoading(true);
+    Promise.all([
+      Promise.all(SECTOR_FLOW_TICKERS.map(t => fetch(`/api/fund-flow?symbol=${t}`).then(res => res.json()))),
+      fetch(`/api/market-tide?t=${Date.now()}`).then(res => res.json()),
+      fetch(`/api/cot-positioning?t=${Date.now()}`).then(res => res.json()),
+      fetch(`/api/fund-flow-alerts?t=${Date.now()}`).then(res => res.json())
+    ]).then(([sectorResults, tideJson, cotJson, alertsJson]) => {
+      const sectorSeries: SectorFlowSeries[] = sectorResults
+        .map((r: any) => ({ ticker: r.ticker, history: r.history || [] }))
+        .filter((s: SectorFlowSeries) => s.history.length > 0);
+      setSectorFlow(sectorSeries);
+      setMarketTide(tideJson.history?.[tideJson.history.length - 1] ?? null);
+
+      // Full history per instrument - FundFlowPanel derives both the "as of
+      // now" values and the 30-day bar history from this same array.
+      setCotPositioning(cotJson.positioning || []);
+      setFundFlowAlerts(alertsJson.alerts || []);
+    }).catch(err => {
+      console.error("Fund flow fetch failed", err);
+    }).finally(() => {
+      setFundFlowLoading(false);
+    });
+  }, []);
+
+  useEffect(() => {
+    setFedLiquidityLoading(true);
+    fetch(`/api/fed-liquidity?t=${Date.now()}`).then(res => res.json()).then(data => {
+      setFedLiquidity(data.history || []);
+    }).catch(err => {
+      console.error("Fed liquidity fetch failed", err);
+    }).finally(() => {
+      setFedLiquidityLoading(false);
+    });
+  }, []);
+
+  useEffect(() => {
+    setFlowScoreLoading(true);
+    fetch(`/api/institutional-flow-score?t=${Date.now()}`).then(res => res.json()).then(data => {
+      setFlowScore(data.history || []);
+    }).catch(err => {
+      console.error("Institutional flow score fetch failed", err);
+    }).finally(() => {
+      setFlowScoreLoading(false);
     });
   }, []);
 
@@ -1601,10 +1672,19 @@ ${blockSoportesResistencias}`;
                 {gammaRegimeMeta.ranAt && (
                   <span
                     style={{ fontSize: '0.65rem', color: gammaRegimeMeta.failed ? '#ff2a6d' : '#64748b', whiteSpace: 'nowrap' }}
-                    title="Última corrida completada de captura Gamma Regime (daily-update.yml Etapa 1, o gamma-intraday.yml)"
+                    title="Última corrida completada de captura Gamma Regime (gamma-intraday.yml, 3x/día)"
                   >
                     Última Act. Gamma Reg: {gammaRegimeMeta.ranAt.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' })}
                     {gammaRegimeMeta.failed && ' ⚠️'}
+                  </span>
+                )}
+                {fundFlowMeta.ranAt && (
+                  <span
+                    style={{ fontSize: '0.65rem', color: fundFlowMeta.failed ? '#ff2a6d' : '#64748b', whiteSpace: 'nowrap' }}
+                    title="Última corrida completada de Fund Flow & COT (fund-flow-daily.yml, post-cierre)"
+                  >
+                    Última Act. Fund Flow: {fundFlowMeta.ranAt.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' })}
+                    {fundFlowMeta.failed && ' ⚠️'}
                   </span>
                 )}
               </div>
@@ -2675,6 +2755,23 @@ ${blockSoportesResistencias}`;
       </>
       )}
 
+      <MacroLiquidityPanel
+        history={fedLiquidity}
+        loading={fedLiquidityLoading}
+      />
+
+      <InstitutionalFlowScorePanel
+        history={flowScore}
+        loading={flowScoreLoading}
+      />
+
+      <FundFlowPanel
+        sectorFlow={sectorFlow}
+        marketTide={marketTide}
+        cotPositioning={cotPositioning}
+        fundFlowAlerts={fundFlowAlerts}
+        loading={fundFlowLoading}
+      />
 
     </div>
   );

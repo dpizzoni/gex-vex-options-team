@@ -93,16 +93,19 @@ export async function GET() {
   };
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  const [gexVexCommit, gammaCommit, dailyRun, intradayRun, gammaCircleCIRun] = await Promise.all([
-    latestCommitFor(["chore(data): daily UW capture & dealer update"], headers),
-    latestCommitFor(
-      ["chore(data): daily gamma regime capture", "chore(data): intraday gamma regime refresh"],
-      headers
-    ),
-    latestRunConclusion("daily-update.yml", headers),
-    latestRunConclusion("gamma-intraday.yml", headers),
-    latestCircleCIWorkflowRun("gamma-regime"),
-  ]);
+  const [gexVexCommit, gammaCommit, fundFlowCommit, dailyRun, intradayRun, fundFlowRun, gammaCircleCIRun] =
+    await Promise.all([
+      latestCommitFor(["chore(data): daily UW capture & dealer update"], headers),
+      latestCommitFor(
+        ["chore(data): daily gamma regime capture", "chore(data): intraday gamma regime refresh"],
+        headers
+      ),
+      latestCommitFor(["chore(data): daily fund-flow & COT capture"], headers),
+      latestRunConclusion("daily-update.yml", headers),
+      latestRunConclusion("gamma-intraday.yml", headers),
+      latestRunConclusion("fund-flow-daily.yml", headers),
+      latestCircleCIWorkflowRun("gamma-regime"),
+    ]);
 
   // Gamma Regime now runs on CircleCI (gammaCircleCIRun). Fall back to the
   // old GitHub Actions conclusion only if CIRCLECI_TOKEN isn't configured yet.
@@ -120,6 +123,10 @@ export async function GET() {
     gammaRegime: {
       ranAt: gammaCommit?.ranAt ?? null,
       failed: gammaFailed,
+    },
+    fundFlow: {
+      ranAt: fundFlowCommit?.ranAt ?? null,
+      failed: fundFlowRun?.conclusion === "failure",
     },
   });
 }

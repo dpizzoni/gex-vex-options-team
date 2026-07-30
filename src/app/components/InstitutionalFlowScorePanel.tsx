@@ -25,6 +25,9 @@ export interface FlowScoreEntry {
     qqq_pct_5d: number | null;
     qqqe_pct_5d: number | null;
     spy_net_flow: number | null;
+    qqq_net_flow: number | null;
+    iwm_net_flow: number | null;
+    etf_net_flow_total: number | null;
   };
 }
 
@@ -42,7 +45,7 @@ const COMPONENT_LABELS: Record<keyof FlowScoreComponents, string> = {
   vix: 'VIX',
   us10y: 'US10Y',
   breadth: 'Breadth (QQQ vs QQQE)',
-  etf_flows: 'ETF Flows (SPY)'
+  etf_flows: 'ETF Flows (SPY+QQQ+IWM)'
 };
 
 const COMPONENT_ORDER: (keyof FlowScoreComponents)[] = ['liquidity', 'credit_spread', 'dollar', 'vix', 'us10y', 'breadth', 'etf_flows'];

@@ -7,6 +7,21 @@ const yahooFinance = new YF({ suppressNotices: ['yahooSurvey'] });
 export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
 
+// fetchMatrixData (page.tsx) fires one request per expiration concurrently
+// for the same symbol, so Yahoo Finance sees a burst of near-simultaneous
+// calls - transient rate-limit/network hiccups there shouldn't have to fail
+// the whole matrix load. One retry after a short backoff covers that without
+// masking a genuinely broken symbol/expiration (which will still fail twice).
+async function withRetry<T>(fn: () => Promise<T>, retries = 1, delayMs = 400): Promise<T> {
+  try {
+    return await fn();
+  } catch (err) {
+    if (retries <= 0) throw err;
+    await new Promise(resolve => setTimeout(resolve, delayMs));
+    return withRetry(fn, retries - 1, delayMs);
+  }
+}
+
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const symbol = searchParams.get('symbol');
@@ -17,14 +32,14 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const quote = await yahooFinance.quote(symbol) as any;
+    const quote = await withRetry(() => yahooFinance.quote(symbol)) as any;
     const spot = quote.regularMarketPrice || quote.ask || quote.bid;
 
     if (!spot) {
       return NextResponse.json({ error: `Could not retrieve spot price for ${symbol}` }, { status: 404 });
     }
 
-    const resultWithExps = await yahooFinance.options(symbol) as any;
+    const resultWithExps = await withRetry(() => yahooFinance.options(symbol)) as any;
     if (!resultWithExps || !resultWithExps.expirationDates || resultWithExps.expirationDates.length === 0) {
       return NextResponse.json({ spot, symbol, expirations: [], calls: [], puts: [] });
     }
@@ -33,7 +48,7 @@ export async function GET(request: NextRequest) {
 
     const finalExp: string = (expParam && expirations.includes(expParam)) ? expParam : expirations[0];
 
-    const chainData = await yahooFinance.options(symbol, { date: new Date(finalExp) }) as any;
+    const chainData = await withRetry(() => yahooFinance.options(symbol, { date: new Date(finalExp) })) as any;
     const chain = chainData.options[0] || { calls: [], puts: [] };
 
     // AUDIT M1/M2 FIX: T unified via calcT (16:00 ET, DST-aware), r via RISK_FREE_RATE in engine

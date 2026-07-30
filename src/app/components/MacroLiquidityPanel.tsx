@@ -46,73 +46,126 @@ function weekAgoEntry(history: FedLiquidityEntry[]): FedLiquidityEntry | null {
   return best;
 }
 
-const CHART_HEIGHT = 80;
+const SINGLE_CHART_HEIGHT = 70;
 const CHART_WIDTH_PERCENT = 100;
 
-function NetLiquidityChart({ history }: { history: FedLiquidityEntry[] }) {
-  const [hovered, setHovered] = useState<{ x: number; date: string; value: number } | null>(null);
+type LiquiditySeriesKey = 'walcl' | 'tga' | 'rrp' | 'net_liquidity';
 
-  if (history.length < 2) {
+const LIQUIDITY_SERIES: { key: LiquiditySeriesKey; label: string; color: string }[] = [
+  { key: 'net_liquidity', label: 'Net Liquidity', color: '#a78bfa' },
+  { key: 'walcl', label: 'Fed Balance (WALCL)', color: '#00e676' },
+  { key: 'tga', label: 'TGA', color: '#f59e0b' },
+  { key: 'rrp', label: 'RRP', color: '#22d3ee' }
+];
+
+// One mini-chart per metric, each on its own min/max scale (nominal $
+// values, no normalization) - overlaying all four on a shared scale made
+// RRP/TGA invisible next to WALCL's trillions, and normalizing to 0-100%
+// hid the real shape of small day-to-day moves. Stacking separately trades
+// direct overlay-comparison for readable per-metric detail.
+function SingleMetricChart({ label, color, data, formatValue }: {
+  label: string;
+  color: string;
+  data: { date: string; value: number }[];
+  formatValue: (v: number) => string;
+}) {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  if (data.length < 2) {
     return <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.3)' }}>Historial insuficiente para graficar.</span>;
   }
 
-  const values = history.map(h => h.net_liquidity);
+  const width = 600;
+  const values = data.map(d => d.value);
   const min = Math.min(...values);
   const max = Math.max(...values);
-  const range = Math.max(max - min, 1);
-  const width = 600;
-  const points = history.map((h, i) => {
-    const x = (i / (history.length - 1)) * width;
-    const y = CHART_HEIGHT - ((h.net_liquidity - min) / range) * CHART_HEIGHT;
-    return { x, y, date: h.date, value: h.net_liquidity };
-  });
+  const range = Math.max(max - min, Math.abs(max || 1) * 1e-6);
 
+  const points = data.map((d, i) => ({
+    x: (i / (data.length - 1)) * width,
+    y: SINGLE_CHART_HEIGHT - ((d.value - min) / range) * SINGLE_CHART_HEIGHT,
+    date: d.date,
+    value: d.value
+  }));
   const path = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(2)} ${p.y.toFixed(2)}`).join(' ');
-  const trendUp = points[points.length - 1].value >= points[0].value;
+  const slotWidth = width / data.length;
+  const hovered = hoveredIndex !== null ? points[hoveredIndex] : null;
 
   return (
-    <svg
-      width={`${CHART_WIDTH_PERCENT}%`}
-      height={CHART_HEIGHT + 4}
-      viewBox={`0 0 ${width} ${CHART_HEIGHT + 4}`}
-      preserveAspectRatio="none"
-      style={{ display: 'block', overflow: 'visible' }}
-    >
-      <path d={path} fill="none" stroke={trendUp ? '#00e676' : '#ff2a6d'} strokeWidth={1.5} />
-      {points.map((p, i) => (
-        <rect
-          key={i}
-          x={p.x - width / points.length / 2}
-          y={0}
-          width={width / points.length}
-          height={CHART_HEIGHT}
-          fill="transparent"
-          onMouseEnter={() => setHovered(p)}
-          onMouseLeave={() => setHovered(null)}
-          style={{ cursor: 'pointer' }}
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '2px' }}>
+        <span style={{ fontSize: '0.72rem', fontWeight: 800, color }}>{label}</span>
+        <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace' }}>
+          {formatValue(min)} — {formatValue(max)}
+        </span>
+      </div>
+      <svg
+        width={`${CHART_WIDTH_PERCENT}%`}
+        height={SINGLE_CHART_HEIGHT + 4}
+        viewBox={`0 0 ${width} ${SINGLE_CHART_HEIGHT + 4}`}
+        preserveAspectRatio="none"
+        style={{ display: 'block', overflow: 'visible' }}
+      >
+        <line x1={0} x2={width} y1={0} y2={0} stroke="rgba(255,255,255,0.06)" strokeWidth={1} />
+        <line x1={0} x2={width} y1={SINGLE_CHART_HEIGHT} y2={SINGLE_CHART_HEIGHT} stroke="rgba(255,255,255,0.06)" strokeWidth={1} />
+        <path d={path} fill="none" stroke={color} strokeWidth={1.75} />
+
+        {points.map((p, i) => (
+          <rect
+            key={p.date}
+            x={i * slotWidth}
+            y={0}
+            width={slotWidth}
+            height={SINGLE_CHART_HEIGHT}
+            fill="transparent"
+            onMouseEnter={() => setHoveredIndex(i)}
+            onMouseLeave={() => setHoveredIndex(null)}
+            style={{ cursor: 'pointer' }}
+          />
+        ))}
+
+        {hovered && (
+          <>
+            <line x1={hovered.x} x2={hovered.x} y1={0} y2={SINGLE_CHART_HEIGHT} stroke="rgba(255,255,255,0.25)" strokeDasharray="2,2" />
+            <circle cx={hovered.x} cy={hovered.y} r={2.5} fill={color} />
+            <foreignObject x={Math.min(Math.max(hovered.x - 60, 0), width - 120)} y={-46} width={120} height={42} style={{ pointerEvents: 'none', overflow: 'visible' }}>
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <div style={{
+                  backgroundColor: 'rgba(10, 16, 35, 0.97)',
+                  border: `1px solid ${color}`,
+                  borderRadius: '6px',
+                  padding: '4px 8px',
+                  fontFamily: 'monospace',
+                  fontSize: '10px',
+                  lineHeight: 1.4,
+                  width: 'max-content',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
+                }}>
+                  <div style={{ color: 'rgba(255,255,255,0.6)' }}>{hovered.date}</div>
+                  <div style={{ color, fontWeight: 700 }}>{formatValue(hovered.value)}</div>
+                </div>
+              </div>
+            </foreignObject>
+          </>
+        )}
+      </svg>
+    </div>
+  );
+}
+
+function LiquidityChartsStack({ history }: { history: FedLiquidityEntry[] }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+      {LIQUIDITY_SERIES.map(s => (
+        <SingleMetricChart
+          key={s.key}
+          label={s.label}
+          color={s.color}
+          data={history.map(h => ({ date: h.date, value: h[s.key] }))}
+          formatValue={formatBillions}
         />
       ))}
-      {hovered && (
-        <foreignObject x={Math.min(Math.max(hovered.x - 60, 0), width - 120)} y={-54} width={120} height={50} style={{ pointerEvents: 'none', overflow: 'visible' }}>
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <div style={{
-              backgroundColor: 'rgba(10, 16, 35, 0.95)',
-              border: '1px solid #a78bfa',
-              borderRadius: '6px',
-              padding: '4px 8px',
-              fontFamily: 'monospace',
-              fontSize: '10px',
-              lineHeight: 1.4,
-              width: 'max-content',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
-            }}>
-              <div style={{ color: 'rgba(255,255,255,0.6)' }}>{hovered.date}</div>
-              <div style={{ color: '#a78bfa', fontWeight: 700 }}>{formatBillions(hovered.value)}</div>
-            </div>
-          </div>
-        </foreignObject>
-      )}
-    </svg>
+    </div>
   );
 }
 
@@ -213,8 +266,8 @@ export default function MacroLiquidityPanel({ history, loading }: MacroLiquidity
       </div>
 
       <div>
-        <h4 style={colHeaderStyle}>NET LIQUIDITY (90D)</h4>
-        <NetLiquidityChart history={recentHistory} />
+        <h4 style={colHeaderStyle}>LIQUIDEZ FED — 4 MÉTRICAS (90D, ESCALA PROPIA)</h4>
+        <LiquidityChartsStack history={recentHistory} />
       </div>
 
       <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', textAlign: 'right' }}>

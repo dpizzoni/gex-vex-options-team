@@ -15,6 +15,17 @@ const cacheDir = path.join(__dirname, '..', 'cache');
 // The 11 SPDR sector ETFs + SPY - exactly what /api/sector/etfs returns.
 const SECTOR_TICKERS = ['SPY', 'XLB', 'XLC', 'XLE', 'XLF', 'XLI', 'XLK', 'XLP', 'XLRE', 'XLU', 'XLV', 'XLY'];
 
+// /api/sector/etfs' in_out_flow window is only ~5 trading days deep, and it
+// doesn't cover QQQ/IWM at all (SPDR-sector-only). /api/etfs/{TICKER}/stats
+// on each ETF's own /etf/{TICKER} page covers ANY ETF - including every
+// SECTOR_TICKERS name - with the SAME `change` field ($ scale) but going
+// back much further (100s of rows vs ~5). Runs for every ticker so the
+// short-window in_out_flow data from /api/sector/etfs gets backfilled with
+// deep history; updateEtfStatsFundFlow only touches last/prev_close/volume/
+// net_flow fields, so call_premium/put_premium/etc from the sector fetch
+// above are preserved untouched on days both endpoints cover.
+const ETF_STATS_TICKERS = [...SECTOR_TICKERS, 'QQQ', 'IWM'];
+
 function todayStr() {
   return new Date().toISOString().split('T')[0];
 }
@@ -118,6 +129,34 @@ function updateSectorFundFlow(sectorEtfRows) {
   }
 }
 
+// /api/etfs/{TICKER}/stats returns rows newest-first, each `change` already
+// a real daily $ total (no polling/backfill-window juggling needed, unlike
+// the sector endpoint's separate in_out_flow array) - same idea as
+// updateSectorFundFlow but simpler since date and flow live on the same row.
+// prev_close comes from the next (older) row in that same descending array.
+function updateEtfStatsFundFlow(ticker, statsRows) {
+  const filePath = path.join(cacheDir, `fund-flow-${ticker}.json`);
+  const history = loadJson(filePath, []);
+  const byDate = new Map(history.map(h => [h.date, h]));
+
+  statsRows.forEach((row, i) => {
+    const prevRow = statsRows[i + 1];
+    const existing = byDate.get(row.date) ?? { date: row.date };
+    byDate.set(row.date, {
+      ...existing,
+      date: row.date,
+      last: parseFloat(row.close),
+      prev_close: prevRow ? parseFloat(prevRow.close) : existing.prev_close,
+      volume: row.volume,
+      net_flow: row.change,
+      net_flow_date: row.date
+    });
+  });
+
+  const merged = Array.from(byDate.values()).sort((a, b) => a.date.localeCompare(b.date));
+  writeJson(filePath, merged);
+}
+
 // /api/net-flow-ticks (market_day_timeframe=1) returns per-minute market-wide
 // net call/put premium, not a cumulative total - the last row(s) are null
 // while the current minute is still in progress. Summing the completed
@@ -187,6 +226,21 @@ async function run() {
     console.log(`  Updated fund-flow-{TICKER}.json for ${SECTOR_TICKERS.length} sector ETFs.`);
   } catch (err) {
     console.error('Failed to fetch sector ETF flow:', err.message);
+  }
+
+  for (const ticker of ETF_STATS_TICKERS) {
+    try {
+      console.log(`Fetching ${ticker} ETF flow...`);
+      const stats = await captureJson(
+        page,
+        `https://unusualwhales.com/etf/${ticker}`,
+        new RegExp(`/api/etfs/${ticker}/stats`)
+      );
+      updateEtfStatsFundFlow(ticker, stats.data);
+      console.log(`  Updated fund-flow-${ticker}.json.`);
+    } catch (err) {
+      console.error(`Failed to fetch ${ticker} ETF flow:`, err.message);
+    }
   }
 
   try {

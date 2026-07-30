@@ -29,11 +29,14 @@ import NotificationBell from "./components/NotificationBell";
 import FundFlowPanel, { SectorFlowSeries, MarketTideEntry, CotEntry, FundFlowAlert } from "./components/FundFlowPanel";
 import MacroLiquidityPanel, { FedLiquidityEntry } from "./components/MacroLiquidityPanel";
 import InstitutionalFlowScorePanel, { FlowScoreEntry } from "./components/InstitutionalFlowScorePanel";
+import InstitutionalAnalystPanel, { InstitutionalAnalysisEntry } from "./components/InstitutionalAnalystPanel";
 import { computeGammaRegime } from "@/lib/gamma-regime-engine";
 
-// The 11 SPDR sector ETFs + SPY - matches SECTOR_TICKERS in
-// scripts/uw-fetch-fund-flow.js (the only tickers /api/sector/etfs covers).
-const SECTOR_FLOW_TICKERS = ['SPY', 'XLB', 'XLC', 'XLE', 'XLF', 'XLI', 'XLK', 'XLP', 'XLRE', 'XLU', 'XLV', 'XLY'];
+// The 11 SPDR sector ETFs + SPY (SECTOR_TICKERS in uw-fetch-fund-flow.js,
+// from /api/sector/etfs) plus QQQ/IWM (ETF_STATS_TICKERS in the same
+// script, from /api/etfs/{TICKER}/stats - a different UW endpoint since
+// /api/sector/etfs is SPDR-sector-only and doesn't cover them).
+const SECTOR_FLOW_TICKERS = ['SPY', 'QQQ', 'IWM', 'XLB', 'XLC', 'XLE', 'XLF', 'XLI', 'XLK', 'XLP', 'XLRE', 'XLU', 'XLV', 'XLY'];
 
 interface OptionContract {
   strike: number;
@@ -165,6 +168,10 @@ export default function Home() {
   const [flowScore, setFlowScore] = useState<FlowScoreEntry[]>([]);
   const [flowScoreLoading, setFlowScoreLoading] = useState<boolean>(true);
 
+  // Institutional Analyst panel state
+  const [institutionalAnalysis, setInstitutionalAnalysis] = useState<InstitutionalAnalysisEntry[]>([]);
+  const [institutionalAnalysisLoading, setInstitutionalAnalysisLoading] = useState<boolean>(true);
+
   // Analysis Panel State
   const [analysisTab, setAnalysisTab] = useState<"visual" | "text">("visual");
   const [copied, setCopied] = useState(false);
@@ -273,6 +280,17 @@ export default function Home() {
       console.error("Institutional flow score fetch failed", err);
     }).finally(() => {
       setFlowScoreLoading(false);
+    });
+  }, []);
+
+  useEffect(() => {
+    setInstitutionalAnalysisLoading(true);
+    fetch(`/api/institutional-analysis?t=${Date.now()}`).then(res => res.json()).then(data => {
+      setInstitutionalAnalysis(data.history || []);
+    }).catch(err => {
+      console.error("Institutional analysis fetch failed", err);
+    }).finally(() => {
+      setInstitutionalAnalysisLoading(false);
     });
   }, []);
 
@@ -414,6 +432,10 @@ export default function Home() {
       setMatrixLoading(true);
     }
     try {
+      // One failed expiration (a Yahoo Finance hiccup, a burst-of-N-concurrent-
+      // requests rate limit) used to fail the whole Promise.all and wipe out
+      // a matrix that was otherwise fully loaded. Settle each independently
+      // instead, so a single bad expiration just gets skipped.
       const promises = expirations.map(async (exp) => {
         const url = `/api/options?symbol=${ticker}&expiration=${exp}`;
         const res = await fetch(url, { cache: 'no-store' });
@@ -425,10 +447,20 @@ export default function Home() {
           puts: json.puts
         };
       });
-      const results = await Promise.all(promises);
+      const settled = await Promise.allSettled(promises);
+      const results = settled
+        .filter((r): r is PromiseFulfilledResult<{ expiration: string; calls: OptionsResponse['calls']; puts: OptionsResponse['puts'] }> => r.status === 'fulfilled')
+        .map(r => r.value);
+      const failedCount = settled.length - results.length;
+      if (failedCount > 0) {
+        console.error(`${failedCount}/${settled.length} expiration(s) failed to load for ${ticker}`);
+      }
       if (currentTickerRef.current === ticker) {
         setMatrixRawData(results);
         setLastUpdated(new Date());
+        if (failedCount > 0 && results.length === 0) {
+          setError(`No se pudo cargar ninguna expiración para ${ticker}`);
+        }
         if (results.length > 0 && matrixSelectedExps.length === 0) {
           setMatrixSelectedExps([results[0].expiration]);
           // filteredMatrixData filters by selectedExp, not matrixSelectedExps -
@@ -533,9 +565,15 @@ export default function Home() {
   };
 
   useEffect(() => {
+    // Skip the tick while the tab is backgrounded/minimized - a forgotten
+    // background tab was polling /api/options (real Yahoo Finance + GEX/Vanna
+    // compute per expiration) every minute indefinitely, driving up Vercel
+    // Fluid Active CPU with nobody actually looking at the page.
     const interval = setInterval(() => {
-      autoRefreshFn.current();
-    }, 1 * 60 * 1000); // 1 minute
+      if (document.visibilityState === 'visible') {
+        autoRefreshFn.current();
+      }
+    }, 60 * 60 * 1000); // 60 minutes
     return () => clearInterval(interval);
   }, []);
 
@@ -2755,15 +2793,24 @@ ${blockSoportesResistencias}`;
       </>
       )}
 
-      <MacroLiquidityPanel
-        history={fedLiquidity}
-        loading={fedLiquidityLoading}
-      />
-
-      <InstitutionalFlowScorePanel
-        history={flowScore}
-        loading={flowScoreLoading}
-      />
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", width: "100%", alignItems: "stretch" }}>
+        <div style={{ flex: "2 1 min-content", minWidth: "300px" }}>
+          <MacroLiquidityPanel
+            history={fedLiquidity}
+            loading={fedLiquidityLoading}
+          />
+        </div>
+        <div style={{ flex: "1 1 min-content", minWidth: "300px", display: "flex", flexDirection: "column" }}>
+          <InstitutionalFlowScorePanel
+            history={flowScore}
+            loading={flowScoreLoading}
+          />
+          <InstitutionalAnalystPanel
+            history={institutionalAnalysis}
+            loading={institutionalAnalysisLoading}
+          />
+        </div>
+      </div>
 
       <FundFlowPanel
         sectorFlow={sectorFlow}

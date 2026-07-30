@@ -1,0 +1,93 @@
+[
+  {
+    "date": "2026-07-28",
+    "narrative": "La contracción de liquidez neta (-$69.9B en 7 días por drenaje al TGA) y el deterioro de componentes macro llevaron el *institutional flow score* a -2 (Distribution), a pesar de flujos mayoritarios positivos en ETFs como SPY ($3.05M) y QQQ ($7.1M) que suman un flujo total de $12.75M. Los institucionales muestran posturas mixtas, destacándose acumulación silenciosa en SPY y XLK frente a distribución en XLF y XLP, mientras el régimen de *Short Gamma* (-$2.32B de GEX neto) amplifica la sensibilidad ante movimientos de precio. En el mercado de futuros, los *leveraged funds* incrementaron posiciones netas en ES (+41,276 contratos) pero recortaron en NQ (-10,264 contratos). Las señales son contradictorias, combinando una macroestructura restrictiva con flujos estables hacia índices clave. Este escenario sugiere una alta volatilidad direccional, donde el régimen de *Short Gamma* aumenta la probabilidad de movimientos abruptos ante cualquier alteración de liquidez.",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-07-30T02:21:16.150Z",
+    "inputs": {
+      "fecha": "2026-07-28",
+      "liquidez": {
+        "net_liquidity": 5916.628999999999,
+        "net_liquidity_delta_7d": -69.90600000000177,
+        "walcl": 6747.378,
+        "walcl_delta_7d": 4.349999999999454,
+        "tga": 829.623,
+        "tga_delta_7d": 73.40500000000009,
+        "rrp": 1.126,
+        "rrp_delta_7d": 0.8509999999999999
+      },
+      "institutional_flow_score": {
+        "score": -2,
+        "label": "Distribution",
+        "components": {
+          "liquidity": -2,
+          "credit_spread": -1,
+          "dollar": 0,
+          "vix": -1,
+          "us10y": 0,
+          "breadth": 2,
+          "etf_flows": 0
+        }
+      },
+      "gamma_regime": {
+        "ticker": "SPY",
+        "fecha": "2026-07-29",
+        "spot": 735.49,
+        "regimen": "SHORT_GAMMA",
+        "net_gex": -2319072,
+        "net_gex_delta_1d": 224525,
+        "ema3_net_gex": -2422753,
+        "king_node": null
+      },
+      "etf_flows": {
+        "spy_net_flow": 3050000,
+        "qqq_net_flow": 7100000,
+        "iwm_net_flow": 2600000,
+        "total_net_flow": 12750000
+      },
+      "cot_semanal": [
+        {
+          "instrumento": "ES",
+          "asset_mgr_net_change": -12116,
+          "lev_money_net_change": 41276
+        },
+        {
+          "instrumento": "NQ",
+          "asset_mgr_net_change": -1328,
+          "lev_money_net_change": -10264
+        },
+        {
+          "instrumento": "VX",
+          "asset_mgr_net_change": 1790,
+          "lev_money_net_change": -7091
+        }
+      ],
+      "fund_flow_alerts": [
+        {
+          "ticker": "SPY",
+          "type": "QUIET_ACCUMULATION",
+          "streak_days": 3,
+          "net_flow_total": 8700000
+        },
+        {
+          "ticker": "XLF",
+          "type": "QUIET_DISTRIBUTION",
+          "streak_days": 3,
+          "net_flow_total": -8950000
+        },
+        {
+          "ticker": "XLK",
+          "type": "QUIET_ACCUMULATION",
+          "streak_days": 3,
+          "net_flow_total": 1750000
+        },
+        {
+          "ticker": "XLP",
+          "type": "QUIET_DISTRIBUTION",
+          "streak_days": 3,
+          "net_flow_total": -2350000
+        }
+      ]
+    }
+  }
+]

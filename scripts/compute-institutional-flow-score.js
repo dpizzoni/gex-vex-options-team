@@ -141,10 +141,18 @@ async function fetchBreadthPctChanges() {
   };
 }
 
+// Latest net_flow for one ETF's fund-flow cache (each ticker can update on
+// a slightly different date, so this reads its own history's last row
+// rather than assuming all three share the same latest date).
+function latestNetFlow(ticker) {
+  const rows = loadJson(path.join(cacheDir, `fund-flow-${ticker}.json`), []);
+  const sorted = rows.filter(r => r.net_flow != null).sort((a, b) => a.date.localeCompare(b.date));
+  return sorted.length > 0 ? sorted[sorted.length - 1].net_flow : null;
+}
+
 async function run() {
   const fedLiquidity = loadJson(path.join(cacheDir, 'fed-liquidity.json'), []);
   const marketRisk = loadJson(path.join(cacheDir, 'market-risk.json'), []);
-  const spyFlow = loadJson(path.join(cacheDir, 'fund-flow-SPY.json'), []);
 
   if (fedLiquidity.length === 0 || marketRisk.length === 0) {
     console.error('Missing fed-liquidity.json or market-risk.json - run macro:daily first.');
@@ -156,8 +164,13 @@ async function run() {
   const latestRisk = marketRisk[marketRisk.length - 1];
   const weekAgoRisk = weekAgoEntry(marketRisk);
 
-  const spyFlowSorted = [...spyFlow].filter(r => r.net_flow != null).sort((a, b) => a.date.localeCompare(b.date));
-  const latestSpyFlow = spyFlowSorted[spyFlowSorted.length - 1]?.net_flow ?? null;
+  const spyNetFlow = latestNetFlow('SPY');
+  const qqqNetFlow = latestNetFlow('QQQ');
+  const iwmNetFlow = latestNetFlow('IWM');
+  const etfFlows = [spyNetFlow, qqqNetFlow, iwmNetFlow];
+  const totalEtfFlow = etfFlows.some(f => f != null)
+    ? etfFlows.reduce((sum, f) => sum + (f ?? 0), 0)
+    : null;
 
   let breadth = { qqqPctChange: null, qqqePctChange: null };
   try {
@@ -173,7 +186,7 @@ async function run() {
     vix: scoreVix(latestRisk.vix, weekAgoRisk?.vix),
     us10y: scoreUS10Y(latestRisk.us10y, weekAgoRisk?.us10y),
     breadth: scoreBreadth(breadth.qqqPctChange, breadth.qqqePctChange),
-    etf_flows: scoreEtfFlow(latestSpyFlow)
+    etf_flows: scoreEtfFlow(totalEtfFlow)
   };
 
   const score = Object.values(components).reduce((a, b) => a + b, 0);
@@ -192,7 +205,10 @@ async function run() {
       us10y: latestRisk.us10y,
       qqq_pct_5d: breadth.qqqPctChange,
       qqqe_pct_5d: breadth.qqqePctChange,
-      spy_net_flow: latestSpyFlow
+      spy_net_flow: spyNetFlow,
+      qqq_net_flow: qqqNetFlow,
+      iwm_net_flow: iwmNetFlow,
+      etf_net_flow_total: totalEtfFlow
     }
   };
 

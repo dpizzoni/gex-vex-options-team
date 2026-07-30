@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Activity, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Activity, AlertCircle, Bell } from 'lucide-react';
 
 export interface SectorFlowEntry {
   date: string;
@@ -58,7 +58,6 @@ interface FundFlowPanelProps {
   loading: boolean;
 }
 
-const MAX_BAR_DAYS = 30;
 const BAR_WIDTH = 2;
 const BAR_GAP = 1;
 const MONTH_GAP = 4;
@@ -135,71 +134,250 @@ function MetricBars({
   const width = cursor;
 
   return (
-    <svg
-      width={responsive ? `${widthPercent}%` : width}
-      height={height}
-      viewBox={responsive ? `0 0 ${width} ${height}` : undefined}
-      preserveAspectRatio={responsive ? 'none' : undefined}
-      style={{ display: 'block', flexShrink: 0, overflow: 'visible' }}
-    >
-      <line x1={0} y1={height / 2} x2={width} y2={height / 2} stroke="rgba(255,255,255,0.08)" strokeWidth={1} />
-      {bars.map(b => (
-        <React.Fragment key={b.date}>
-          {b.isMonthStart && (
-            <line
-              x1={b.x - monthGap / 2}
-              x2={b.x - monthGap / 2}
-              y1={0}
-              y2={height}
-              stroke="rgba(255,255,255,0.3)"
-              strokeDasharray="2,2"
+    <div style={{ position: 'relative', width: responsive ? `${widthPercent}%` : `${width}px`, flexShrink: 0 }}>
+      <svg
+        width="100%"
+        height={height}
+        viewBox={responsive ? `0 0 ${width} ${height}` : undefined}
+        preserveAspectRatio={responsive ? 'none' : undefined}
+        style={{ display: 'block', overflow: 'visible' }}
+      >
+        <line x1={0} y1={height / 2} x2={width} y2={height / 2} stroke="rgba(255,255,255,0.08)" strokeWidth={1} />
+        {bars.map(b => (
+          <React.Fragment key={b.date}>
+            {b.isMonthStart && (
+              <line
+                x1={b.x - monthGap / 2}
+                x2={b.x - monthGap / 2}
+                y1={0}
+                y2={height}
+                stroke="rgba(255,255,255,0.3)"
+                strokeDasharray="2,2"
+              />
+            )}
+            <rect
+              x={b.x - 1}
+              y={0}
+              width={barWidth + 2}
+              height={height}
+              fill="transparent"
+              onMouseEnter={() => setHovered({ x: b.x + barWidth / 2, date: b.date, value: b.value })}
+              onMouseLeave={() => setHovered(null)}
+              style={{ cursor: 'pointer' }}
             />
-          )}
-          <rect
-            x={b.x - 1}
-            y={0}
-            width={barWidth + 2}
-            height={height}
-            fill="transparent"
-            onMouseEnter={() => setHovered({ x: b.x + barWidth / 2, date: b.date, value: b.value })}
-            onMouseLeave={() => setHovered(null)}
-            style={{ cursor: 'pointer' }}
-          />
-          <rect x={b.x} y={b.y} width={barWidth} height={b.barHeight} fill={b.value >= 0 ? '#00e676' : '#ff2a6d'} style={{ pointerEvents: 'none' }} />
-        </React.Fragment>
-      ))}
+            <rect x={b.x} y={b.y} width={barWidth} height={b.barHeight} fill={b.value >= 0 ? '#00e676' : '#ff2a6d'} style={{ pointerEvents: 'none' }} />
+          </React.Fragment>
+        ))}
+      </svg>
 
+      {/* Plain HTML overlay, not an SVG foreignObject - a foreignObject here
+          would inherit the svg's preserveAspectRatio="none" stretch (needed
+          to make the bars fill widthPercent) and render the tooltip text
+          non-uniformly squashed/stretched. Percentage-based CSS positioning
+          sidesteps that entirely. */}
       {hovered && (
-        <foreignObject x={hovered.x - 60} y={-54} width={120} height={50} style={{ pointerEvents: 'none', overflow: 'visible' }}>
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <div style={{
-              backgroundColor: 'rgba(10, 16, 35, 0.95)',
-              border: '1px solid #a78bfa',
-              borderRadius: '6px',
-              padding: '4px 8px',
-              fontFamily: 'monospace',
-              fontSize: '10px',
-              lineHeight: 1.4,
-              width: 'max-content',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
-            }}>
-              <div style={{ color: 'rgba(255,255,255,0.6)' }}>{hovered.date}</div>
-              <div style={{ color: hovered.value >= 0 ? '#00e676' : '#ff2a6d', fontWeight: 700 }}>
-                {formatValue(hovered.value)}
-              </div>
+        <div
+          style={{
+            position: 'absolute',
+            left: `${(hovered.x / width) * 100}%`,
+            top: 0,
+            transform: 'translate(-50%, calc(-100% - 8px))',
+            pointerEvents: 'none',
+            zIndex: 10
+          }}
+        >
+          <div style={{
+            backgroundColor: 'rgba(10, 16, 35, 0.95)',
+            border: '1px solid #a78bfa',
+            borderRadius: '6px',
+            padding: '4px 8px',
+            fontFamily: 'monospace',
+            fontSize: '10px',
+            lineHeight: 1.4,
+            width: 'max-content',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
+          }}>
+            <div style={{ color: 'rgba(255,255,255,0.6)' }}>{hovered.date}</div>
+            <div style={{ color: hovered.value >= 0 ? '#00e676' : '#ff2a6d', fontWeight: 700 }}>
+              {formatValue(hovered.value)}
             </div>
           </div>
-        </foreignObject>
+        </div>
       )}
-    </svg>
+    </div>
   );
 }
 
+const SECTOR_WEEKS_WINDOW = 12;
+const WEEKLY_BAR_WIDTH = 5;
+const WEEKLY_BAR_GAP = 2;
+const DAILY_BAR_WIDTH = 2;
+const DAILY_BAR_GAP = 1;
+const WEEK_SECTION_GAP = 6;
+
+type DayPoint = { date: string; value: number };
+type WeekGroup = { weekStart: string; total: number; days: DayPoint[] };
+
+// Monday of the ISO week containing `dateStr` (UTC, so date-only strings
+// don't drift across a local timezone's midnight).
+function mondayOf(dateStr: string): string {
+  const d = new Date(`${dateStr}T00:00:00Z`);
+  const day = d.getUTCDay();
+  const diffToMonday = day === 0 ? -6 : 1 - day;
+  d.setUTCDate(d.getUTCDate() + diffToMonday);
+  return d.toISOString().slice(0, 10);
+}
+
+function groupByWeek(series: DayPoint[]): WeekGroup[] {
+  const byWeek = new Map<string, WeekGroup>();
+  for (const d of series) {
+    const key = mondayOf(d.date);
+    let group = byWeek.get(key);
+    if (!group) {
+      group = { weekStart: key, total: 0, days: [] };
+      byWeek.set(key, group);
+    }
+    group.total += d.value;
+    group.days.push(d);
+  }
+  return Array.from(byWeek.values())
+    .map(g => ({ ...g, days: [...g.days].sort((a, b) => a.date.localeCompare(b.date)) }))
+    .sort((a, b) => a.weekStart.localeCompare(b.weekStart));
+}
+
+type HoverInfo = { x: number; title: string; lines: { label: string; value: number }[] };
+
+// Weekly bars for everything except the most recent week, which breaks down
+// into individual daily bars instead - the recent week is where day-to-day
+// detail actually matters for spotting an accumulation/distribution streak
+// starting, while older weeks are more useful summarized. Hovering a weekly
+// bar shows the day-by-day breakdown that got collapsed into it.
 function SectorFlowBars({ history }: { history: SectorFlowEntry[] }) {
-  const series: BarPoint[] = dedupedFlowSeries(history)
-    .slice(-MAX_BAR_DAYS)
-    .map(d => ({ date: d.date, value: d.net_flow }));
-  return <MetricBars series={series} formatValue={formatMoney} />;
+  const [hovered, setHovered] = useState<HoverInfo | null>(null);
+
+  const daily: DayPoint[] = dedupedFlowSeries(history).map(d => ({ date: d.date, value: d.net_flow }));
+  if (daily.length === 0) {
+    return <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)' }}>Sin historial</span>;
+  }
+
+  const weeks = groupByWeek(daily).slice(-SECTOR_WEEKS_WINDOW);
+  const pastWeeks = weeks.slice(0, -1);
+  const currentWeek = weeks[weeks.length - 1];
+
+  const maxAbs = Math.max(
+    ...pastWeeks.map(w => Math.abs(w.total)),
+    ...currentWeek.days.map(d => Math.abs(d.value)),
+    1
+  );
+
+  let cursor = 0;
+  const weekBars = pastWeeks.map(w => {
+    const x = cursor;
+    cursor += WEEKLY_BAR_WIDTH + WEEKLY_BAR_GAP;
+    const barHeight = Math.max(1, (Math.abs(w.total) / maxAbs) * (CHART_HEIGHT / 2));
+    const y = w.total >= 0 ? CHART_HEIGHT / 2 - barHeight : CHART_HEIGHT / 2;
+    return { ...w, x, barHeight, y };
+  });
+
+  const dividerX = cursor + WEEK_SECTION_GAP / 2;
+  cursor += WEEK_SECTION_GAP;
+
+  const dayBars = currentWeek.days.map(d => {
+    const x = cursor;
+    cursor += DAILY_BAR_WIDTH + DAILY_BAR_GAP;
+    const barHeight = Math.max(1, (Math.abs(d.value) / maxAbs) * (CHART_HEIGHT / 2));
+    const y = d.value >= 0 ? CHART_HEIGHT / 2 - barHeight : CHART_HEIGHT / 2;
+    return { ...d, x, barHeight, y };
+  });
+
+  const width = cursor;
+
+  return (
+    <svg width={width} height={CHART_HEIGHT} style={{ display: 'block', flexShrink: 0, overflow: 'visible' }}>
+      <line x1={0} y1={CHART_HEIGHT / 2} x2={width} y2={CHART_HEIGHT / 2} stroke="rgba(255,255,255,0.08)" strokeWidth={1} />
+      {weekBars.length > 0 && dayBars.length > 0 && (
+        <line x1={dividerX} x2={dividerX} y1={0} y2={CHART_HEIGHT} stroke="rgba(167,139,250,0.4)" strokeDasharray="2,2" />
+      )}
+      {weekBars.map(w => (
+        <React.Fragment key={w.weekStart}>
+          <rect
+            x={w.x - 1}
+            y={0}
+            width={WEEKLY_BAR_WIDTH + 2}
+            height={CHART_HEIGHT}
+            fill="transparent"
+            onMouseEnter={() => setHovered({
+              x: w.x + WEEKLY_BAR_WIDTH / 2,
+              title: `Semana del ${w.weekStart}`,
+              lines: [{ label: 'Total', value: w.total }, ...w.days.map(d => ({ label: d.date.slice(5), value: d.value }))]
+            })}
+            onMouseLeave={() => setHovered(null)}
+            style={{ cursor: 'pointer' }}
+          />
+          <rect x={w.x} y={w.y} width={WEEKLY_BAR_WIDTH} height={w.barHeight} fill={w.total >= 0 ? '#00e676' : '#ff2a6d'} style={{ pointerEvents: 'none' }} />
+        </React.Fragment>
+      ))}
+      {dayBars.map(d => (
+        <React.Fragment key={d.date}>
+          <rect
+            x={d.x - 1}
+            y={0}
+            width={DAILY_BAR_WIDTH + 2}
+            height={CHART_HEIGHT}
+            fill="transparent"
+            onMouseEnter={() => setHovered({ x: d.x + DAILY_BAR_WIDTH / 2, title: d.date, lines: [{ label: '', value: d.value }] })}
+            onMouseLeave={() => setHovered(null)}
+            style={{ cursor: 'pointer' }}
+          />
+          <rect x={d.x} y={d.y} width={DAILY_BAR_WIDTH} height={d.barHeight} fill={d.value >= 0 ? '#00e676' : '#ff2a6d'} style={{ pointerEvents: 'none' }} />
+        </React.Fragment>
+      ))}
+
+      {hovered && (() => {
+        const maxAbs = Math.max(...hovered.lines.map(l => Math.abs(l.value)), 1);
+        const tooltipWidth = 230;
+        const rowHeight = 16;
+        return (
+          <foreignObject
+            x={hovered.x - tooltipWidth / 2}
+            y={-(30 + hovered.lines.length * rowHeight)}
+            width={tooltipWidth}
+            height={26 + hovered.lines.length * rowHeight}
+            style={{ pointerEvents: 'none', overflow: 'visible' }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <div style={{
+                backgroundColor: 'rgba(10, 16, 35, 0.97)',
+                border: '1px solid #a78bfa',
+                borderRadius: '6px',
+                padding: '6px 9px',
+                fontFamily: 'monospace',
+                fontSize: '10px',
+                width: `${tooltipWidth - 18}px`,
+                boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
+              }}>
+                <div style={{ color: 'rgba(255,255,255,0.6)', fontWeight: 700, marginBottom: '4px' }}>{hovered.title}</div>
+                {hovered.lines.map((l, i) => {
+                  const color = l.value >= 0 ? '#00e676' : '#ff2a6d';
+                  return (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px', height: `${rowHeight}px` }}>
+                      <span style={{ color: 'rgba(255,255,255,0.5)', width: '34px', flexShrink: 0 }}>{l.label || ' '}</span>
+                      <div style={{ position: 'relative', flex: 1, height: '8px', backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: '3px', overflow: 'hidden' }}>
+                        <div style={{ position: 'absolute', top: 0, bottom: 0, left: 0, width: `${(Math.abs(l.value) / maxAbs) * 100}%`, backgroundColor: color, borderRadius: '3px' }} />
+                      </div>
+                      <span style={{ color, fontWeight: 700, width: '54px', textAlign: 'right', flexShrink: 0 }}>
+                        {formatMoney(l.value)}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </foreignObject>
+        );
+      })()}
+    </svg>
+  );
 }
 
 const COT_CHART_HEIGHT = 56;
@@ -229,6 +407,8 @@ function formatContracts(val: number | null | undefined): string {
 // through the daily cache just for display text.
 const SECTOR_LABELS: Record<string, string> = {
   SPY: 'S&P 500',
+  QQQ: 'Nasdaq 100',
+  IWM: 'Russell 2000',
   XLK: 'Technology',
   XLF: 'Financials',
   XLE: 'Energy',
@@ -250,6 +430,93 @@ function formatMoney(val: number | null | undefined): string {
   if (absVal >= 1.0e6) return `${sign}$${(absVal / 1.0e6).toFixed(2)}M`;
   if (absVal >= 1.0e3) return `${sign}$${(absVal / 1.0e3).toFixed(1)}K`;
   return `${sign}$${absVal.toFixed(0)}`;
+}
+
+const FUND_FLOW_ALERTS_READ_KEY = 'fundFlowAlerts_readIds';
+
+// Same bell/dropdown/unread-badge pattern as NotificationBell.tsx (used for
+// Gamma Regime alerts) - kept local to this file since it's the only place
+// fund-flow alerts render, instead of a shared component for a single user.
+function FundFlowAlertsBell({ alerts }: { alerts: FundFlowAlert[] }) {
+  const [readIds, setReadIds] = useState<Set<string>>(new Set());
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(FUND_FLOW_ALERTS_READ_KEY);
+      if (stored) setReadIds(new Set(JSON.parse(stored)));
+    } catch (e) {
+      // ignore malformed localStorage state
+    }
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const unreadCount = alerts.filter(a => !readIds.has(a.id)).length;
+
+  const handleToggle = () => {
+    const next = !open;
+    setOpen(next);
+    if (next && unreadCount > 0) {
+      const allIds = new Set([...Array.from(readIds), ...alerts.map(a => a.id)]);
+      setReadIds(allIds);
+      try {
+        localStorage.setItem(FUND_FLOW_ALERTS_READ_KEY, JSON.stringify(Array.from(allIds)));
+      } catch (e) {
+        // ignore write failures (e.g. storage disabled)
+      }
+    }
+  };
+
+  return (
+    <div ref={containerRef} style={{ position: 'relative' }}>
+      <button onClick={handleToggle} style={bellButtonStyle} aria-label="Señales de divergencia precio/flujo">
+        <Bell size={14} color={unreadCount > 0 ? '#fbbf24' : '#a1a1aa'} />
+        {unreadCount > 0 && (
+          <span style={bellBadgeStyle}>{unreadCount > 9 ? '9+' : unreadCount}</span>
+        )}
+      </button>
+
+      {open && (
+        <div style={bellDropdownStyle}>
+          <div style={bellDropdownHeaderStyle}>Señales (divergencia precio / flujo)</div>
+          <div style={{ maxHeight: '360px', overflowY: 'auto' }}>
+            {alerts.length === 0 ? (
+              <div style={bellEmptyStyle}>Sin señales por ahora.</div>
+            ) : (
+              alerts.map(a => {
+                const isDistribution = a.type === 'QUIET_DISTRIBUTION';
+                const color = isDistribution ? '#ff2a6d' : '#00e676';
+                return (
+                  <div key={a.id} style={bellAlertItemStyle}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontWeight: 700, fontSize: '0.8rem', color }}>
+                        {a.ticker} — {isDistribution ? 'Distribución silenciosa' : 'Acumulación silenciosa'}
+                      </span>
+                      <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)' }}>{a.date}</span>
+                    </div>
+                    <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.65)', marginTop: '4px', lineHeight: 1.4 }}>
+                      {a.streak_days} sesiones de {isDistribution ? 'salida' : 'entrada'} neta ({formatMoney(a.net_flow_total)} acumulado)
+                      {' '}mientras el precio {isDistribution ? 'se sostuvo' : 'no acompañó'} ({a.price_change_pct >= 0 ? '+' : ''}{a.price_change_pct.toFixed(2)}%).
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function FundFlowPanel({ sectorFlow, marketTide, cotPositioning, fundFlowAlerts, loading }: FundFlowPanelProps) {
@@ -291,9 +558,19 @@ export default function FundFlowPanel({ sectorFlow, marketTide, cotPositioning, 
     ...s,
     latest: s.history[s.history.length - 1] as SectorFlowEntry | undefined
   }));
-  const sortedSectors = [...sectorsWithLatest].sort(
-    (a, b) => (b.latest?.net_flow ?? -Infinity) - (a.latest?.net_flow ?? -Infinity)
-  );
+  // Indices first (SPY, QQQ, IWM, in that fixed order since they're the
+  // broad-market anchors), then every SPDR sector alphabetically by ticker.
+  const INDEX_ORDER = ['SPY', 'QQQ', 'IWM'];
+  const sortedSectors = [...sectorsWithLatest].sort((a, b) => {
+    const aIdx = INDEX_ORDER.indexOf(a.ticker);
+    const bIdx = INDEX_ORDER.indexOf(b.ticker);
+    if (aIdx !== -1 || bIdx !== -1) {
+      if (aIdx === -1) return 1;
+      if (bIdx === -1) return -1;
+      return aIdx - bIdx;
+    }
+    return a.ticker.localeCompare(b.ticker);
+  });
   const netTide = marketTide ? marketTide.net_call_premium + marketTide.net_put_premium : null;
 
   const COT_INSTRUMENT_ORDER: CotEntry['instrument'][] = ['ES', 'NQ', 'VX'];
@@ -335,7 +612,10 @@ export default function FundFlowPanel({ sectorFlow, marketTide, cotPositioning, 
       <div style={gridStyle}>
         {/* Sector Flow */}
         <div style={{ ...colStyle, minWidth: '320px' }}>
-          <h4 style={colHeaderStyle}>FLUJO NETO POR SECTOR (ETF, IN/OUT FLOW, 30D)</h4>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <h4 style={colHeaderStyle}>FLUJO NETO POR SECTOR (ETF, {SECTOR_WEEKS_WINDOW}SEM + ÚLT. SEMANA DIARIA)</h4>
+            <FundFlowAlertsBell alerts={fundFlowAlerts} />
+          </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {sortedSectors.map(s => (
               <div key={s.ticker} style={sectorRowStyle}>
@@ -427,32 +707,6 @@ export default function FundFlowPanel({ sectorFlow, marketTide, cotPositioning, 
           )}
         </div>
       </div>
-
-      {fundFlowAlerts.length > 0 && (
-        <div style={alertsContainerStyle}>
-          <h4 style={colHeaderStyle}>SEÑALES (DIVERGENCIA PRECIO / FLUJO)</h4>
-          {fundFlowAlerts.map(a => {
-            const isDistribution = a.type === 'QUIET_DISTRIBUTION';
-            const color = isDistribution ? '#ff2a6d' : '#00e676';
-            const bg = isDistribution ? 'rgba(255,42,109,0.06)' : 'rgba(0,230,118,0.06)';
-            const border = isDistribution ? 'rgba(255,42,109,0.25)' : 'rgba(0,230,118,0.25)';
-            return (
-              <div key={a.id} style={{ ...alertCardStyle, backgroundColor: bg, borderColor: border }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontWeight: 800, fontSize: '0.8rem', color }}>
-                    {a.ticker} — {isDistribution ? 'Distribución silenciosa' : 'Acumulación silenciosa'}
-                  </span>
-                  <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)' }}>{a.date}</span>
-                </div>
-                <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)', marginTop: '4px' }}>
-                  {a.streak_days} sesiones de {isDistribution ? 'salida' : 'entrada'} neta ({formatMoney(a.net_flow_total)} acumulado)
-                  {' '}mientras el precio {isDistribution ? 'se sostuvo' : 'no acompañó'} ({a.price_change_pct >= 0 ? '+' : ''}{a.price_change_pct.toFixed(2)}%).
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
     </div>
   );
 }
@@ -583,17 +837,68 @@ const errorDescStyle: React.CSSProperties = {
   lineHeight: 1.6
 };
 
-const alertsContainerStyle: React.CSSProperties = {
+const bellButtonStyle: React.CSSProperties = {
+  position: 'relative',
+  background: 'rgba(255,255,255,0.05)',
+  border: '1px solid rgba(255,255,255,0.1)',
+  borderRadius: '8px',
+  width: '26px',
+  height: '26px',
   display: 'flex',
-  flexDirection: 'column',
-  gap: '10px',
-  borderTop: '1px solid rgba(255,255,255,0.06)',
-  paddingTop: '16px'
+  alignItems: 'center',
+  justifyContent: 'center',
+  cursor: 'pointer'
 };
 
-const alertCardStyle: React.CSSProperties = {
-  padding: '12px 16px',
+const bellBadgeStyle: React.CSSProperties = {
+  position: 'absolute',
+  top: '-5px',
+  right: '-5px',
+  backgroundColor: '#ff2a6d',
+  color: '#fff',
+  fontSize: '0.6rem',
+  fontWeight: 800,
   borderRadius: '10px',
-  borderWidth: '1px',
-  borderStyle: 'solid'
+  minWidth: '15px',
+  height: '15px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: '0 3px',
+  lineHeight: 1
+};
+
+const bellDropdownStyle: React.CSSProperties = {
+  position: 'absolute',
+  top: '32px',
+  right: 0,
+  width: '320px',
+  backgroundColor: 'rgba(10, 16, 35, 0.98)',
+  border: '1px solid rgba(255,255,255,0.1)',
+  borderRadius: '10px',
+  boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+  zIndex: 200,
+  overflow: 'hidden'
+};
+
+const bellDropdownHeaderStyle: React.CSSProperties = {
+  padding: '10px 14px',
+  fontSize: '0.75rem',
+  fontWeight: 800,
+  letterSpacing: '0.05em',
+  color: '#a78bfa',
+  borderBottom: '1px solid rgba(255,255,255,0.06)'
+};
+
+const bellAlertItemStyle: React.CSSProperties = {
+  padding: '10px 14px',
+  borderBottom: '1px solid rgba(255,255,255,0.04)'
+};
+
+const bellEmptyStyle: React.CSSProperties = {
+  padding: '20px 14px',
+  fontSize: '0.75rem',
+  color: 'rgba(255,255,255,0.4)',
+  fontStyle: 'italic',
+  textAlign: 'center'
 };

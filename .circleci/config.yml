@@ -14,11 +14,17 @@ version: 2.1
 #   10:31               {"trigger": "intraday"} gamma-intraday (solo gamma-refresh)
 #   15:00               {"trigger": "intraday"} gamma-intraday (solo gamma-refresh)
 #   20:30 (cierre)      {"trigger": "close"}     daily-close (gamma → fund-flow/COT, encadenados)
-#   21:30               {"trigger": "macro"}     macro-liquidity (Fed Liquidity + Flow Score)
+#   21:30               {"trigger": "macro"}     macro-liquidity (Fed Liquidity + Flow Score → análisis institucional, encadenados)
+#
+# El workflow `macro-liquidity` en sí ya encadena macro-liquidity-refresh →
+# institutional-analysis-refresh vía `requires:` (no hace falta un 5to
+# trigger horario) - así el agente LLM siempre corre sobre el Flow Score y
+# el Fed Liquidity del mismo día, ya frescos.
 #
 # Variables de entorno a configurar en Project Settings > Environment Variables:
 #   UW_EMAIL, UW_PASSWORD  - credenciales de Unusual Whales (gamma + fund-flow)
 #   FRED_API_KEY           - key gratuita de FRED (macro-liquidity)
+#   GEMINI_API_KEY         - key gratuita de Gemini (análisis institucional, v1 de prueba)
 #   GH_PUSH_TOKEN          - GitHub PAT (repo scope) para poder hacer commit/push
 #   GIT_AUTHOR_NAME / GIT_AUTHOR_EMAIL - opcional, si no se usa el default de abajo
 
@@ -158,6 +164,34 @@ jobs:
       - push_cache:
           commit_message: "chore(data): daily macro liquidity & institutional flow score refresh"
 
+  institutional-analysis-refresh:
+    docker:
+      - image: cimg/node:22.11
+    resource_class: small
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - v1-node-{{ checksum "package-lock.json" }}
+            - v1-node-
+
+      - run:
+          name: 📦 Instalar dependencias Node
+          command: npm install
+
+      - save_cache:
+          key: v1-node-{{ checksum "package-lock.json" }}
+          paths:
+            - node_modules
+
+      - run:
+          name: 🤖 Generar análisis institucional (LLM)
+          command: npm run analysis:daily
+
+      - push_cache:
+          commit_message: "chore(data): daily institutional analysis"
+
 workflows:
   gamma-intraday:
     when:
@@ -180,3 +214,6 @@ workflows:
       equal: ["macro", << pipeline.parameters.trigger >>]
     jobs:
       - macro-liquidity-refresh
+      - institutional-analysis-refresh:
+          requires:
+            - macro-liquidity-refresh

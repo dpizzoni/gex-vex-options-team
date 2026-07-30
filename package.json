@@ -25,7 +25,8 @@
     "fund-flow:check-shifts": "node scripts/check-fund-flow-shifts.js",
     "macro:daily": "node scripts/fetch-fed-liquidity.js",
     "score:daily": "node scripts/fetch-market-risk.js && node scripts/compute-institutional-flow-score.js",
-    "macro:full": "npm run macro:daily && npm run score:daily"
+    "macro:full": "npm run macro:daily && npm run score:daily",
+    "analysis:daily": "node scripts/generate-institutional-analysis.js"
   },
   "dependencies": {
     "dotenv": "^17.4.2",

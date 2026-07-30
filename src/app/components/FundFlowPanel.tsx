@@ -62,7 +62,7 @@ interface FundFlowPanelProps {
 const BAR_WIDTH = 2;
 const BAR_GAP = 1;
 const MONTH_GAP = 4;
-const CHART_HEIGHT = 24;
+const CHART_HEIGHT = 40;
 
 // Same dedupe-by-net_flow_date idea as scripts/check-fund-flow-shifts.js:
 // a date can appear more than once in the raw history (its own backfilled
@@ -210,8 +210,8 @@ function MetricBars({
 }
 
 const SECTOR_WEEKS_WINDOW = 12;
-const WEEKLY_BAR_WIDTH = 5;
-const WEEKLY_BAR_GAP = 2;
+const WEEKLY_BAR_WIDTH = 6;
+const WEEKLY_BAR_GAP = 3;
 
 type DayPoint = { date: string; value: number };
 type WeekGroup = { weekStart: string; total: number; days: DayPoint[] };
@@ -273,7 +273,7 @@ function SectorFlowBars({ history }: { history: SectorFlowEntry[] }) {
   const width = cursor;
 
   return (
-    <svg width={width} height={CHART_HEIGHT} style={{ display: 'block', flexShrink: 0, overflow: 'visible' }}>
+    <svg width={width} height={CHART_HEIGHT} style={{ display: 'block', flexShrink: 0, overflow: 'visible', position: 'relative', zIndex: hovered ? 20 : 'auto' }}>
       <line x1={0} y1={CHART_HEIGHT / 2} x2={width} y2={CHART_HEIGHT / 2} stroke="rgba(255,255,255,0.08)" strokeWidth={1} />
       {weekBars.map(w => (
         <React.Fragment key={w.weekStart}>
@@ -297,42 +297,55 @@ function SectorFlowBars({ history }: { history: SectorFlowEntry[] }) {
 
       {hovered && (() => {
         const maxAbs = Math.max(...hovered.lines.map(l => Math.abs(l.value)), 1);
-        const tooltipWidth = 230;
-        const rowHeight = 16;
+        const colWidth = 64;
+        const barAreaHeight = 100;
+        const tooltipWidth = hovered.lines.length * colWidth + 18;
+        const tooltipHeight = 18 + 20 + barAreaHeight + 18 + 12;
         return (
           <foreignObject
             x={hovered.x - tooltipWidth / 2}
-            y={-(30 + hovered.lines.length * rowHeight)}
+            y={-(tooltipHeight + 12)}
             width={tooltipWidth}
-            height={26 + hovered.lines.length * rowHeight}
+            height={tooltipHeight}
             style={{ pointerEvents: 'none', overflow: 'visible' }}
           >
             <div style={{ display: 'flex', justifyContent: 'center' }}>
               <div style={{
                 backgroundColor: 'rgba(10, 16, 35, 0.97)',
                 border: '1px solid #a78bfa',
-                borderRadius: '6px',
-                padding: '6px 9px',
+                borderRadius: '8px',
+                padding: '10px 12px',
                 fontFamily: 'monospace',
-                fontSize: '10px',
-                width: `${tooltipWidth - 18}px`,
-                boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
+                boxShadow: '0 4px 16px rgba(0,0,0,0.5)'
               }}>
-                <div style={{ color: 'rgba(255,255,255,0.6)', fontWeight: 700, marginBottom: '4px' }}>{hovered.title}</div>
-                {hovered.lines.map((l, i) => {
-                  const color = l.value >= 0 ? '#00e676' : '#ff2a6d';
-                  return (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px', height: `${rowHeight}px` }}>
-                      <span style={{ color: 'rgba(255,255,255,0.5)', width: '34px', flexShrink: 0 }}>{l.label || ' '}</span>
-                      <div style={{ position: 'relative', flex: 1, height: '8px', backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: '3px', overflow: 'hidden' }}>
-                        <div style={{ position: 'absolute', top: 0, bottom: 0, left: 0, width: `${(Math.abs(l.value) / maxAbs) * 100}%`, backgroundColor: color, borderRadius: '3px' }} />
+                <div style={{ color: 'rgba(255,255,255,0.6)', fontWeight: 700, fontSize: '0.75rem', marginBottom: '8px' }}>{hovered.title}</div>
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  {hovered.lines.map((l, i) => {
+                    const color = l.value >= 0 ? '#00e676' : '#ff2a6d';
+                    const barH = Math.max(3, (Math.abs(l.value) / maxAbs) * (barAreaHeight / 2));
+                    return (
+                      <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: `${colWidth}px` }}>
+                        <div style={{ color, fontWeight: 700, fontSize: '0.75rem', height: '16px', whiteSpace: 'nowrap' }}>{formatMoney(l.value)}</div>
+                        <div style={{ position: 'relative', width: '100%', height: `${barAreaHeight}px` }}>
+                          <div style={{ position: 'absolute', left: 0, right: 0, top: barAreaHeight / 2, height: '1px', backgroundColor: 'rgba(255,255,255,0.15)' }} />
+                          <div
+                            style={{
+                              position: 'absolute',
+                              left: '50%',
+                              transform: 'translateX(-50%)',
+                              top: l.value >= 0 ? barAreaHeight / 2 - barH : barAreaHeight / 2,
+                              width: '26px',
+                              height: `${barH}px`,
+                              backgroundColor: color,
+                              borderRadius: '3px'
+                            }}
+                          />
+                        </div>
+                        <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.7rem', fontWeight: 700, height: '16px', marginTop: '4px' }}>{l.label || ' '}</div>
                       </div>
-                      <span style={{ color, fontWeight: 700, width: '54px', textAlign: 'right', flexShrink: 0 }}>
-                        {formatMoney(l.value)}
-                      </span>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </foreignObject>
@@ -342,9 +355,9 @@ function SectorFlowBars({ history }: { history: SectorFlowEntry[] }) {
   );
 }
 
-const COT_CHART_HEIGHT = 56;
-const COT_BAR_WIDTH = 4;
-const COT_BAR_GAP = 2;
+const COT_CHART_HEIGHT = 76;
+const COT_BAR_WIDTH = 3;
+const COT_BAR_GAP = 3;
 
 // COT reports are weekly (one point/week), so the equivalent of the ETF
 // bars' "last 30 trading days" is the last 52 report weeks - a full
@@ -726,7 +739,7 @@ export default function FundFlowPanel({ sectorFlow, marketTide, cotPositioning, 
                   <span style={sectorLabelStyle}>{SECTOR_LABELS[s.ticker] ?? ''}</span>
                 </span>
                 <SectorFlowBars history={s.history} />
-                <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flex: '0 0 auto' }}>
+                <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flex: '0 0 92px', textAlign: 'right', marginLeft: 'auto' }}>
                   <span
                     style={{
                       fontFamily: 'monospace',
@@ -762,11 +775,11 @@ export default function FundFlowPanel({ sectorFlow, marketTide, cotPositioning, 
               {cotInstruments.map(({ instrument, latest: c, assetMgrSeries, levMoneySeries, alerts }) => (
                 <div key={instrument} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}>
-                    <span style={{ fontWeight: 700 }}>{instrument}</span>
+                    <span style={{ fontWeight: 700, marginLeft: '50px' }}>{instrument}</span>
                     <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem' }}>{c.date}</span>
                   </div>
                   {alerts.length > 0 && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px' }}>
                       {alerts.map((a, i) => (
                         <div
                           key={i}
@@ -783,7 +796,7 @@ export default function FundFlowPanel({ sectorFlow, marketTide, cotPositioning, 
                   )}
                   <div style={cotMetricBlockStyle}>
                     <div style={cotMetricHeaderStyle}>
-                      <span style={labelStyle}>Asset Mgr</span>
+                      <span style={{ ...labelStyle, marginLeft: '75px' }}>Asset Mgr</span>
                       <span style={{ display: 'flex', gap: '8px', alignItems: 'baseline' }}>
                         <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '0.8rem', color: c.asset_mgr_net >= 0 ? '#00e676' : '#ff2a6d' }}>
                           {c.asset_mgr_net.toLocaleString()}
@@ -793,19 +806,21 @@ export default function FundFlowPanel({ sectorFlow, marketTide, cotPositioning, 
                         </span>
                       </span>
                     </div>
-                    <MetricBars
-                      series={assetMgrSeries}
-                      formatValue={formatContracts}
-                      responsive
-                      widthPercent={75}
-                      height={COT_CHART_HEIGHT}
-                      barWidth={COT_BAR_WIDTH}
-                      barGap={COT_BAR_GAP}
-                    />
+                    <div style={{ paddingLeft: '90px' }}>
+                      <MetricBars
+                        series={assetMgrSeries}
+                        formatValue={formatContracts}
+                        responsive
+                        widthPercent={85}
+                        height={COT_CHART_HEIGHT}
+                        barWidth={COT_BAR_WIDTH}
+                        barGap={COT_BAR_GAP}
+                      />
+                    </div>
                   </div>
                   <div style={cotMetricBlockStyle}>
                     <div style={cotMetricHeaderStyle}>
-                      <span style={labelStyle}>Leveraged Funds</span>
+                      <span style={{ ...labelStyle, marginLeft: '75px' }}>Leveraged Funds</span>
                       <span style={{ display: 'flex', gap: '8px', alignItems: 'baseline' }}>
                         <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '0.8rem', color: c.lev_money_net >= 0 ? '#00e676' : '#ff2a6d' }}>
                           {c.lev_money_net.toLocaleString()}
@@ -815,15 +830,17 @@ export default function FundFlowPanel({ sectorFlow, marketTide, cotPositioning, 
                         </span>
                       </span>
                     </div>
-                    <MetricBars
-                      series={levMoneySeries}
-                      formatValue={formatContracts}
-                      responsive
-                      widthPercent={75}
-                      height={COT_CHART_HEIGHT}
-                      barWidth={COT_BAR_WIDTH}
-                      barGap={COT_BAR_GAP}
-                    />
+                    <div style={{ paddingLeft: '90px' }}>
+                      <MetricBars
+                        series={levMoneySeries}
+                        formatValue={formatContracts}
+                        responsive
+                        widthPercent={85}
+                        height={COT_CHART_HEIGHT}
+                        barWidth={COT_BAR_WIDTH}
+                        barGap={COT_BAR_GAP}
+                      />
+                    </div>
                   </div>
                 </div>
               ))}

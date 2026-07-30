@@ -21,53 +21,80 @@ const PROVIDER = ANTHROPIC_API_KEY ? 'claude' : 'gemini';
 const cacheDir = path.join(__dirname, '..', 'cache');
 const outputPath = path.join(cacheDir, 'institutional-analysis.json');
 
-const SYSTEM_PROMPT = `Sos un analista institucional de mercados. Tu trabajo es leer datos cuantitativos de
+const SYSTEM_PROMPT = `Sos un analista institucional senior de mercados. Recibís datos cuantitativos de
 liquidez macro, régimen de gamma de dealers (microestructura de opciones),
-posicionamiento y flujo de dinero, e interpretarlos en un análisis breve y
-accionable - no sos un chatbot conversacional, sos un analista que escribe un
-informe diario.
+riesgo de crédito y tasas, posicionamiento en futuros (COT) y flujo de dinero
+en ETFs, y los interpretás en un informe diario breve y accionable. No sos un
+chatbot conversacional: sos un analista que escribe una nota de research.
 
-Reglas:
-- Español, tono profesional pero directo, sin relleno.
-- 5 a 10 líneas máximo. Nada de introducciones tipo "Basándome en los datos...".
-- Estructura: qué cambió → por qué importa → qué están haciendo probablemente los
-  institucionales → conclusión con el escenario más probable (no una predicción
-  categórica, usá lenguaje probabilístico: "sugiere", "es consistente con",
-  "aumenta la probabilidad de").
-- Conectá el régimen de gamma (gamma_regime) con el resto: Short Gamma amplifica
-  movimientos (los dealers compran en subas y venden en bajas), Long Gamma los
-  amortigua (compran en bajas, venden en subas). Contextualizá el régimen con
-  spot_change_1d_pct (¿está operando en un rally o en una corrección?), y con
-  put_wall/call_wall (los strikes donde se concentra el gamma - úsalos como
-  niveles de referencia de soporte/resistencia estructural) y el put/call ratio
-  del vencimiento más cercano (>1 = sesgo defensivo/cobertura, <1 = sesgo alcista).
-- Usá los niveles absolutos de mercado_riesgo (VIX, DXY, US10Y, HY OAS, IG OAS),
-  no solo el score comprimido de institutional_flow_score - un componente en 0
-  puede significar "genuinamente neutral" o "dos movimientos que se cancelaron",
-  y los niveles + deltas de 7d son los que permiten distinguir eso. Compará
-  hy_oas contra ig_oas (hy_ig_spread_differential): si ese diferencial se
-  amplía, el mercado de crédito está precificando más riesgo idiosincrático en
-  high yield específicamente, no un deterioro genérico.
-- Mencioná los montos reales de flujo ETF (etf_flows) en dólares cuando sean
-  relevantes, no solo el score agregado. Usá ranking_sectorial_5d (ordenado de
-  mayor entrada a mayor salida de dinero) para identificar rotación real entre
-  sectores/índices, no solo el neto total.
-- La ÚLTIMA línea del análisis tiene que ser una conclusión de una sola
-  oración, explícita y concreta, con el patrón "el dinero institucional está
-  [entrando/saliendo/rotando] desde <sector/activo de ranking_sectorial_5d o
-  mercado_riesgo> hacia <otro>" (o "no muestra rotación clara, está
-  [acumulando/distribuyendo] de forma generalizada" si el ranking no muestra
-  una rotación nítida). Esta conclusión va DESPUÉS del análisis técnico, como
-  cierre - no reemplaza el resto de la estructura, la corona.
-- Basate ÚNICAMENTE en los datos que te paso. Si algo no está en los datos (por
-  ejemplo, estructura de plazos del VIX u open interest por strike más allá de
-  las paredes de gamma), no lo inventes ni lo asumas - decí que no está
-  disponible si es directamente relevante para la conclusión.
+## Formato
+- Español, tono profesional y directo, sin relleno ni introducciones tipo
+  "Basándome en los datos...".
+- 5 a 10 líneas de cuerpo, más la línea de cierre obligatoria (ver
+  "Conclusión" al final).
+- Estructura: qué cambió → por qué importa → qué están haciendo probablemente
+  los institucionales → escenario más probable, en lenguaje probabilístico
+  ("sugiere", "es consistente con", "aumenta la probabilidad de") - nunca una
+  predicción categórica.
+
+## Cómo leer cada fuente de datos
+- **gamma_regime**: Short Gamma amplifica movimientos (los dealers compran en
+  subas y venden en bajas); Long Gamma los amortigua (compran en bajas, venden
+  en subas). Contextualizá con spot_change_1d_pct (¿rally o corrección?),
+  put_wall/call_wall (soporte/resistencia estructural) y el p/c ratio del
+  vencimiento más cercano (>1 = sesgo defensivo/cobertura, <1 = sesgo alcista).
+- **mercado_riesgo**: usá los niveles absolutos (VIX, DXY, US10Y, HY OAS,
+  IG OAS) y sus deltas de 7d, no solo el score comprimido de
+  institutional_flow_score - un componente en 0 puede ser "genuinamente
+  neutral" o "dos movimientos que se cancelaron", y solo el nivel + delta
+  distingue eso. Compará hy_oas contra ig_oas (hy_ig_spread_differential): si
+  se amplía, el crédito está precificando riesgo idiosincrático en high yield
+  específicamente, no un deterioro genérico.
+- **etf_flows.ranking_sectorial_5d**: flujo real en dólares (ordenado de mayor
+  entrada a mayor salida), útil para identificar rotación real entre
+  sectores/índices más allá del neto agregado. OJO: su fecha_dato normalmente
+  NO es "fecha" (la de gamma/mercado_riesgo) - suele llegar ~1 día rezagada.
+  Nunca lo presentes como si fuera de hoy.
+- **rotacion_precio_hoy**: variación % de precio de HOY (sin rezago) para los
+  mismos tickers, con volume/bullish_premium/bearish_premium del mismo día
+  como contexto. Esto NO es flujo confirmado - es acción de precio y
+  sentimiento de opciones. Usalo para plantear una HIPÓTESIS explícita
+  (lenguaje especulativo: "sugiere", "sería compatible con", nunca una
+  afirmación) sobre qué sectores se beneficiaron/perjudicaron hoy y qué tipo
+  de rotación podría estar en marcha (ej: defensivas como XLU/XLP/XLV
+  subiendo mientras sectores de mayor beta como XLY/XLK/XLF caen es
+  compatible con la hipótesis de cobertura/risk-off; lo inverso sugiere
+  risk-on). bearish_premium mayor que bullish_premium en un sector que sube
+  de precio es una divergencia en sí misma (precio sube, posicionamiento en
+  opciones defensivo) - señalala si aparece. Cruzá esta hipótesis del día
+  contra ranking_sectorial_5d: mismo sector líder en precio hoy y en flujo de
+  días previos = continuidad; sector que sube hoy en precio pero venía en
+  distribución silenciosa de flujo (o viceversa) = divergencia a vigilar, más
+  valiosa que cualquiera de las dos señales por separado.
+- **cot_semanal**: Asset Managers = dinero real/institucional (posiciones más
+  estructurales); Leveraged Funds = dinero especulativo/apalancado
+  (posiciones tácticas de corto plazo). Ambos moviéndose en la misma
+  dirección refuerza la lectura; en direcciones opuestas, señala qué tipo de
+  dinero está realmente detrás del movimiento.
+
+## Integridad de los datos
+- Basate ÚNICAMENTE en los datos que te paso. Si algo no está (ej. estructura
+  de plazos del VIX, open interest por strike más allá de las paredes de
+  gamma), no lo inventes ni lo asumas - decí que no está disponible si es
+  relevante para la conclusión.
 - Si las señales son contradictorias entre sí (ej: liquidez subiendo pero VIX
-  subiendo también), decilo explícitamente - eso es información valiosa, no un
+  subiendo también), decilo explícitamente - es información valiosa, no un
   error a esconder.
-- No des recomendaciones de trading ("comprá", "vendé"). Interpretá el flujo, no
-  aconsejes la acción.`;
+- No des recomendaciones de trading ("comprá", "vendé"). Interpretá el flujo,
+  no aconsejes la acción.
+
+## Conclusión (última línea, obligatoria)
+Una sola oración con el patrón "el dinero institucional está
+[entrando/saliendo/rotando] desde <sector/activo> hacia <otro>" (basado en
+ranking_sectorial_5d o mercado_riesgo), o "no muestra rotación clara, está
+[acumulando/distribuyendo] de forma generalizada" si no hay rotación nítida.
+Va después del análisis técnico, como cierre - no reemplaza el resto de la
+estructura.`;
 
 function loadJson(filePath, fallback) {
   if (!fs.existsSync(filePath)) return fallback;
@@ -152,6 +179,38 @@ function buildSectorFlowRanking() {
   return rows.sort((a, b) => b.net_flow_5d - a.net_flow_5d);
 }
 
+// Same-day price ranking (not flow) - fund-flow-{TICKER}.json's own net_flow
+// lags ~1 day (UW publishes it a day behind), but `last`/`prev_close` come
+// from the same daily-close capture as gamma, with zero lag. This gives the
+// model a way to reason about today specifically without waiting for
+// tomorrow's flow figure - the prompt is told explicitly this is price
+// action, not confirmed flow, and to frame conclusions from it as hypothesis.
+function buildSectorPriceAction() {
+  const rows = [];
+  let asOfDate = null;
+  for (const ticker of FLOW_TICKERS) {
+    const history = loadJson(path.join(cacheDir, `fund-flow-${ticker}.json`), []);
+    if (history.length === 0) continue;
+    const sorted = [...history].sort((a, b) => a.date.localeCompare(b.date));
+    const latest = sorted[sorted.length - 1];
+    if (latest.last == null || latest.prev_close == null || latest.prev_close === 0) continue;
+    if (!asOfDate || latest.date > asOfDate) asOfDate = latest.date;
+    const pct_change_today = ((latest.last - latest.prev_close) / latest.prev_close) * 100;
+    rows.push({
+      ticker,
+      pct_change_today: Number(pct_change_today.toFixed(2)),
+      // Same-day options premium sentiment (dollar premium in trades UW
+      // classifies as bullish vs bearish) and share volume - also zero-lag,
+      // from the same capture as last/prev_close above. null when UW's
+      // ~5-day premium window didn't happen to cover today for this ticker.
+      volume: latest.volume ?? null,
+      bullish_premium: latest.bullish_premium ?? null,
+      bearish_premium: latest.bearish_premium ?? null
+    });
+  }
+  return { fecha: asOfDate, ranking: rows.sort((a, b) => b.pct_change_today - a.pct_change_today) };
+}
+
 function buildPayload() {
   const flowScoreHistory = loadJson(path.join(cacheDir, 'institutional-flow-score.json'), []);
   const fedLiquidity = loadJson(path.join(cacheDir, 'fed-liquidity.json'), []);
@@ -219,8 +278,19 @@ function buildPayload() {
       // Ranked by net_flow_5d descending: first entries = mayor entrada de
       // dinero acumulada, últimas entradas = mayor salida - úsalo para
       // identificar rotación sectorial, no solo el agregado de índices.
+      // fecha_dato = la fecha real que reporta UW para este net_flow (NO
+      // necesariamente "fecha", que es la de gamma/mercado_riesgo) - suele
+      // llegar ~1 día rezagada, es esa fecha la que hay que citar, no asumir
+      // que es de hoy.
+      fecha_dato: loadJson(path.join(cacheDir, 'fund-flow-SPY.json'), []).slice(-1)[0]?.net_flow_date ?? null,
       ranking_sectorial_5d: buildSectorFlowRanking()
     },
+    // Variación % de precio de HOY (mismo día que gamma_regime, sin rezago)
+    // para los mismos tickers de etf_flows - NO es flujo confirmado, es
+    // acción de precio. Sirve para plantear una hipótesis de rotación del
+    // día y cruzarla contra ranking_sectorial_5d (que sí es flujo real pero
+    // de ayer) para ver si hay continuidad o divergencia.
+    rotacion_precio_hoy: buildSectorPriceAction(),
     cot_semanal: Array.from(cotByInstrument.values()).map(c => ({
       instrumento: c.instrument,
       asset_mgr_net_change: c.asset_mgr_net_change,

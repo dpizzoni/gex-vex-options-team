@@ -181,9 +181,9 @@
   },
   {
     "date": "2026-07-29",
-    "narrative": "SPY sube 0.78% en régimen SHORT_GAMMA con net GEX deteriorándose (-3.03MM, -717k en 1d), lo que amplifica la suba actual pero deja al mercado vulnerable a un giro brusco si el spot pincha el put wall en 730; el call wall en 740 actúa como techo estructural inmediato. El p/c ratio de 2.87 en el vencimiento cercano es fuertemente defensivo pese al rally, señal de cobertura activa más que de convicción alcista genuina. En crédito, HY OAS sube más que IG (diferencial 2.06 y ampliándose 0.19 en 7d) mientras el score de crédito es el componente más negativo del flow score, indicando estrés idiosincrático en high yield sin deterioro generalizado del IG. La liquidez neta cae levemente (-2.2 en 7d) por absorción vía RRP, y el VIX sube 1.57 pts pese al rally del spot — contradicción que confirma la lectura defensiva del p/c ratio: suben precios y volatilidad implícita a la vez. En COT, leveraged money aumenta fuerte su neto largo en ES (+41,276) mientras asset managers reducen (-12,116), sugiriendo que el impulso alcista lo están llevando especuladores apalancados, no manos fuertes institucionales. El flujo ETF muestra acumulación silenciosa en SPY (3 días, +8.7MM) y XLRE, mientras XLE y XLF están en distribución silenciosa pese a que XLF lidera el ranking de 5 días (+41MM) — posible toma de ganancias tras el flujo fuerte previo. La combinación short gamma + p/c defensivo + VIX subiendo en rally es consistente con un mercado que sube por mecánica de cobertura y apalancamiento táctico más que por convicción de fondo, aumentando la probabilidad de reversión si el spot se acerca a 730.\n\nEl dinero institucional está rotando desde XLE y XLF (distribución silenciosa) hacia SPY y XLRE (acumulación silenciosa).",
+    "narrative": "SPY sube 1.68% intradía pero el mercado opera en SHORT_GAMMA con net_gex muy negativo (-3.03M, deteriorándose -717k en 1d), lo que amplifica el rally actual y puede amplificar igual de rápido una reversión; el spot (741.71) queda encajonado entre put_wall 730 y call_wall 750, niveles a vigilar como soporte/resistencia estructural. El p/c ratio del vencimiento cercano en 2.87 es marcadamente defensivo pese a la suba, señal de cobertura activa que no cuadra con el optimismo del precio. VIX subiendo (18.21, +1.57 7d) junto con el rally es una contradicción clásica de \"suba con miedo residual\", reforzada por el hy_ig_spread_differential en 2.06 (hy_oas +0.19 vs ig_oas +0.03 en 7d), indicando que el estrés de crédito es idiosincrático en high yield, no sistémico. La rotación de precio hoy es contraintuitiva: XLK lidera con +4.54% pero con bearish_premium (1.99M) casi igualando al bullish (2.26M), mientras XLC (-3.52%), XLP (-2.4%) y XLV (-2.38%) caen fuerte —esto no es el patrón típico risk-on ni risk-off limpio, sugiere dispersión sectorial más que rotación direccional clara. En flujo real (con rezago a ayer), XLF lideraba con +41M a 5d pero hoy el precio cae -0.71% y hay alerta de QUIET_DISTRIBUTION por -8.95M, divergencia que sugiere que la entrada reciente en financieras se está revirtiendo; XLE profundiza distribución silenciosa (-19.5M a 5d, -9.85M en alerta) consistente con su floja acción de precio. SPY mantiene acumulación silenciosa sostenida (streak 3 días, ~8.7M) pese a la volatilidad del gamma, y IWM capta flujo neto (+3M) aunque cae -1.64% en precio, otra divergencia a vigilar. El conjunto —short gamma, p/c defensivo, VIX en alza durante el rally y distribución en XLF/XLE— es consistente con un mercado que sube por cobertura de cortos o gamma squeeze más que por convicción direccional genuina. El dinero institucional está saliendo de XLE y XLF (distribución confirmada) hacia SPY e IWM, sin rotación sectorial nítida hacia un tema único, lo que sugiere acumulación defensiva más que un posicionamiento agresivo de riesgo.",
     "model": "claude-sonnet-5",
-    "generated_at": "2026-07-30T16:10:20.466Z",
+    "generated_at": "2026-07-30T23:42:45.940Z",
     "inputs": {
       "fecha": "2026-07-29",
       "liquidez": {
@@ -225,22 +225,23 @@
       "gamma_regime": {
         "ticker": "SPY",
         "fecha": "2026-07-30",
-        "spot": 735.13,
-        "spot_change_1d_pct": 0.7772873084199214,
+        "spot": 741.71,
+        "spot_change_1d_pct": 1.679324431771447,
         "regimen": "SHORT_GAMMA",
         "net_gex": -3035791,
         "net_gex_delta_1d": -716719,
         "ema3_net_gex": -2729272,
         "king_node": null,
         "put_wall": 730,
-        "call_wall": 740,
+        "call_wall": 750,
         "p_c_ratio_vencimiento_cercano": 2.8703
       },
       "etf_flows": {
-        "spy_net_flow": 3050000,
-        "qqq_net_flow": 7100000,
-        "iwm_net_flow": 2600000,
-        "total_net_flow": 12750000,
+        "spy_net_flow": 300000,
+        "qqq_net_flow": 0,
+        "iwm_net_flow": 3000000,
+        "total_net_flow": 3300000,
+        "fecha_dato": "2026-07-29",
         "ranking_sectorial_5d": [
           {
             "ticker": "XLF",
@@ -314,6 +315,109 @@
           }
         ]
       },
+      "rotacion_precio_hoy": {
+        "fecha": "2026-07-30",
+        "ranking": [
+          {
+            "ticker": "XLK",
+            "pct_change_today": 4.54,
+            "volume": 6515708,
+            "bullish_premium": 2255749,
+            "bearish_premium": 1985475
+          },
+          {
+            "ticker": "SPY",
+            "pct_change_today": 0.78,
+            "volume": 18802417,
+            "bullish_premium": 519485619,
+            "bearish_premium": 444798551
+          },
+          {
+            "ticker": "XLY",
+            "pct_change_today": 0.02,
+            "volume": 3329807,
+            "bullish_premium": 188154,
+            "bearish_premium": 347065
+          },
+          {
+            "ticker": "XLI",
+            "pct_change_today": -0.23,
+            "volume": 2620230,
+            "bullish_premium": 160680,
+            "bearish_premium": 221738
+          },
+          {
+            "ticker": "XLF",
+            "pct_change_today": -0.71,
+            "volume": 14045315,
+            "bullish_premium": 650349,
+            "bearish_premium": 1015581
+          },
+          {
+            "ticker": "XLB",
+            "pct_change_today": -0.75,
+            "volume": 4061867,
+            "bullish_premium": 119813,
+            "bearish_premium": 137489
+          },
+          {
+            "ticker": "XLE",
+            "pct_change_today": -0.76,
+            "volume": 8322874,
+            "bullish_premium": 1464206,
+            "bearish_premium": 1568504
+          },
+          {
+            "ticker": "XLU",
+            "pct_change_today": -0.97,
+            "volume": 8235779,
+            "bullish_premium": 552670,
+            "bearish_premium": 976250
+          },
+          {
+            "ticker": "IWM",
+            "pct_change_today": -1.64,
+            "volume": 31207759,
+            "bullish_premium": null,
+            "bearish_premium": null
+          },
+          {
+            "ticker": "QQQ",
+            "pct_change_today": -2.04,
+            "volume": 50581422,
+            "bullish_premium": null,
+            "bearish_premium": null
+          },
+          {
+            "ticker": "XLRE",
+            "pct_change_today": -2.06,
+            "volume": 2454698,
+            "bullish_premium": 12773,
+            "bearish_premium": 20474
+          },
+          {
+            "ticker": "XLV",
+            "pct_change_today": -2.38,
+            "volume": 5742867,
+            "bullish_premium": 1219435,
+            "bearish_premium": 1541598
+          },
+          {
+            "ticker": "XLP",
+            "pct_change_today": -2.4,
+            "volume": 8252789,
+            "bullish_premium": 2190490,
+            "bearish_premium": 994057
+          },
+          {
+            "ticker": "XLC",
+            "pct_change_today": -3.52,
+            "volume": 2708384,
+            "bullish_premium": 214826,
+            "bearish_premium": 117189
+          }
+        ]
+      },
       "cot_semanal": [
         {
           "instrumento": "ES",
@@ -367,9 +471,9 @@
   },
   {
     "date": "2026-07-30",
-    "narrative": "SPY sube 1.68% intradía pero opera en régimen Short Gamma con net GEX en -3.03M (empeorando -716K en 1d), lo que implica que los dealers están comprando en la suba para cubrir su posición corta de gamma, amplificando el movimiento en vez de amortiguarlo. El call wall en 750 queda cerca (spot 741.69) como resistencia estructural a vigilar; el put wall en 730 da soporte inmediato. El p/c ratio de 2.87 en el vencimiento más cercano es fuertemente defensivo — contradice la suba del día y sugiere que gran parte del rally se está negociando con cobertura de puts activa, no convicción direccional pura.\n\nLa liquidez neta cae 90.5B en 7 días (TGA subiendo 81B drena reservas) y el VIX sube 4 puntos en la semana a 20.66, ambos señales de stress creciente — consistente con el score de Distribution (-4). El crédito no acompaña la narrativa de pánico generalizado: HY OAS sube apenas 0.19 vs IG OAS +0.03, y el diferencial HY-IG en 2.06 no muestra ampliación agresiva, es decir, el mercado de crédito no está precificando deterioro sistémico, solo cautela puntual. COT semanal muestra asset managers reduciendo neto en ES (-12.116) mientras leveraged money incrementa fuertemente (+41.276), sugiriendo que el rally reciente en ES está siendo empujado por especuladores apalancados, no por real money, y que estos últimos están aligerando posición.\n\nEn flujos, XLF lidera entradas (+41M en 5d, +8.8M hoy) pese a alertas de distribución silenciosa reportadas, y XLE lidera salidas (-19.5M en 5d) con distribución confirmada por 3 días consecutivos. SPY acumula silenciosamente (+8.7M, 3 días de racha) mientras XLB y XLV también pierden flujo. La combinación de Short Gamma + rally + p/c ratio defensivo + liquidez cayendo aumenta la probabilidad de que el movimiento alcista actual sea frágil y propenso a reversión violenta si el spot pierde el put wall de 730.\n\nEl dinero institucional no muestra rotación clara hacia risk-on puro: está rotando desde energía (XLE) y materiales (XLB) hacia financieras (XLF) y defensivos como utilities (XLU) y staples (XLP), mientras acumula SPY de forma cautelosa bajo cobertura de puts.",
+    "narrative": "SPY rebota +1.68% hoy pero opera en régimen Short Gamma con net GEX deteriorándose (-716k en 1d), lo que amplifica el movimiento en lugar de contenerlo; el put wall en 730 y call wall en 750 delimitan un rango angosto, y el p/c ratio de 2.87 en el vencimiento cercano muestra un posicionamiento fuertemente defensivo pese al rally. La divergencia es notable: XLK sube 5.5% en precio hoy pero viene de flujo moderado en 5d (+4.95M), mientras XLP y XLU caen hoy (-2.16% y -0.56%) después de liderar entradas defensivas recientes (+8.7M y +6.05M) — sugiere que el rally de hoy es una reversión táctica de corto plazo más que una rotación estructural hacia riesgo. En crédito, HY OAS se amplía más que IG (hy_ig_spread_differential 2.06, ambos con delta 7d positivo pero HY +0.19 vs IG +0.03) indicando estrés idiosincrático en high yield, no deterioro genérico, consistente con VIX subiendo +4.02 en 7d pese al rebote de spot. COT muestra asset managers reduciendo exposición en ES (-12,116) mientras leveraged funds la aumentan agresivamente (+41,276): es dinero especulativo comprando el rebote, no institucional estructural, lo cual es compatible con el score de Distribution (-4) y la caída de liquidez neta (-90.5 en 7d) con TGA absorbiendo liquidez (+81.15). El flujo confirmado de ayer (rezagado) muestra XLF como líder claro (+41M en 5d, +8.8M en 1d) pero con alerta de QUIET_DISTRIBUTION simultánea — señal contradictoria que amerita vigilancia; XLE profundiza distribución silenciosa (-19.5M en 5d, -9.85M acumulado en alerta) consistente con su breve tregua de precio hoy (+0.53%) sin convicción de flujo.\n\nConclusión: el dinero institucional no muestra rotación clara, está distribuyendo de forma generalizada mientras el dinero especulativo apalancado sostiene el rebote táctico de corto plazo.",
     "model": "claude-sonnet-5",
-    "generated_at": "2026-07-30T21:38:55.267Z",
+    "generated_at": "2026-07-30T23:54:09.947Z",
     "inputs": {
       "fecha": "2026-07-30",
       "liquidez": {
@@ -427,6 +531,7 @@
         "qqq_net_flow": 0,
         "iwm_net_flow": 3000000,
         "total_net_flow": 3300000,
+        "fecha_dato": "2026-07-29",
         "ranking_sectorial_5d": [
           {
             "ticker": "XLF",
@@ -497,6 +602,109 @@
             "ticker": "XLE",
             "net_flow_1d": -8400000,
             "net_flow_5d": -19500000
+          }
+        ]
+      },
+      "rotacion_precio_hoy": {
+        "fecha": "2026-07-30",
+        "ranking": [
+          {
+            "ticker": "XLK",
+            "pct_change_today": 5.5,
+            "volume": 14990134,
+            "bullish_premium": 6014874,
+            "bearish_premium": 3935768
+          },
+          {
+            "ticker": "SPY",
+            "pct_change_today": 1.68,
+            "volume": 57582972,
+            "bullish_premium": 1203900186,
+            "bearish_premium": 1116963088
+          },
+          {
+            "ticker": "XLI",
+            "pct_change_today": 0.98,
+            "volume": 7345588,
+            "bullish_premium": 906320,
+            "bearish_premium": 3184681
+          },
+          {
+            "ticker": "XLY",
+            "pct_change_today": 0.7,
+            "volume": 8011977,
+            "bullish_premium": 514927,
+            "bearish_premium": 517995
+          },
+          {
+            "ticker": "XLF",
+            "pct_change_today": 0.56,
+            "volume": 32585966,
+            "bullish_premium": 4719777,
+            "bearish_premium": 3680277
+          },
+          {
+            "ticker": "XLE",
+            "pct_change_today": 0.53,
+            "volume": 22922985,
+            "bullish_premium": 4841464,
+            "bearish_premium": 3740065
+          },
+          {
+            "ticker": "XLB",
+            "pct_change_today": -0.19,
+            "volume": 10786761,
+            "bullish_premium": 243757,
+            "bearish_premium": 221557
+          },
+          {
+            "ticker": "XLU",
+            "pct_change_today": -0.56,
+            "volume": 23296213,
+            "bullish_premium": 1563736,
+            "bearish_premium": 1656494
+          },
+          {
+            "ticker": "XLRE",
+            "pct_change_today": -1.44,
+            "volume": 6437118,
+            "bullish_premium": 28721,
+            "bearish_premium": 37031
+          },
+          {
+            "ticker": "IWM",
+            "pct_change_today": -1.64,
+            "volume": 31207759,
+            "bullish_premium": null,
+            "bearish_premium": null
+          },
+          {
+            "ticker": "XLV",
+            "pct_change_today": -1.64,
+            "volume": 12456365,
+            "bullish_premium": 2211024,
+            "bearish_premium": 2891788
+          },
+          {
+            "ticker": "QQQ",
+            "pct_change_today": -2.04,
+            "volume": 50581422,
+            "bullish_premium": null,
+            "bearish_premium": null
+          },
+          {
+            "ticker": "XLP",
+            "pct_change_today": -2.16,
+            "volume": 16147733,
+            "bullish_premium": 3685567,
+            "bearish_premium": 3755993
+          },
+          {
+            "ticker": "XLC",
+            "pct_change_today": -2.68,
+            "volume": 10070756,
+            "bullish_premium": 643280,
+            "bearish_premium": 215576
           }
         ]
       },

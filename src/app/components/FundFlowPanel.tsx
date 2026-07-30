@@ -593,6 +593,14 @@ function formatMoney(val: number | null | undefined): string {
   return `${sign}$${absVal.toFixed(0)}`;
 }
 
+function formatShares(val: number | null | undefined): string {
+  if (val === null || val === undefined || Number.isNaN(val)) return 'N/D';
+  if (val >= 1.0e9) return `${(val / 1.0e9).toFixed(2)}B`;
+  if (val >= 1.0e6) return `${(val / 1.0e6).toFixed(2)}M`;
+  if (val >= 1.0e3) return `${(val / 1.0e3).toFixed(1)}K`;
+  return `${val.toFixed(0)}`;
+}
+
 const FUND_FLOW_ALERTS_READ_KEY = 'fundFlowAlerts_readIds';
 
 // Same bell/dropdown/unread-badge pattern as NotificationBell.tsx (used for
@@ -789,21 +797,31 @@ export default function FundFlowPanel({ sectorFlow, marketTide, cotPositioning, 
                   <span style={sectorLabelStyle}>{SECTOR_LABELS[s.ticker] ?? ''}</span>
                 </span>
                 <SectorFlowBars history={s.history} />
-                <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flex: '0 0 92px', textAlign: 'right', marginLeft: 'auto' }}>
-                  <span
-                    style={{
-                      fontFamily: 'monospace',
-                      fontWeight: 700,
-                      fontSize: '0.75rem',
-                      color: s.latest?.net_flow == null ? 'rgba(255,255,255,0.3)' : s.latest.net_flow >= 0 ? '#00e676' : '#ff2a6d'
-                    }}
-                  >
-                    {s.latest?.net_flow == null ? 'N/D' : formatMoney(s.latest.net_flow)}
-                  </span>
-                  {s.latest?.net_flow_date && (
-                    <span style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.35)' }}>al {s.latest.net_flow_date}</span>
-                  )}
-                </span>
+                {(() => {
+                  const l = s.latest;
+                  const pctChange = l?.last != null && l?.prev_close ? ((l.last - l.prev_close) / l.prev_close) * 100 : null;
+                  const bullish = l?.bullish_premium ?? null;
+                  const bearish = l?.bearish_premium ?? null;
+                  const totalPrem = bullish != null && bearish != null ? bullish + bearish : null;
+                  const bullPct = totalPrem ? (bullish! / totalPrem) * 100 : null;
+                  return (
+                    <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '3px', flex: '0 0 110px', textAlign: 'right', marginLeft: 'auto' }}>
+                      <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '0.75rem', alignSelf: 'center', color: pctChange == null ? 'rgba(255,255,255,0.3)' : pctChange >= 0 ? '#00e676' : '#ff2a6d' }}>
+                        {pctChange == null ? 'N/D' : `${pctChange >= 0 ? '+' : ''}${pctChange.toFixed(2)}%`}
+                      </span>
+                      {bullPct != null && (
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px', width: '100%' }}>
+                          <span style={{ flex: 1, height: '6px', borderRadius: '3px', overflow: 'hidden', display: 'flex' }}>
+                            <span style={{ width: `${100 - bullPct}%`, backgroundColor: '#ff2a6d' }} />
+                            <span style={{ width: `${bullPct}%`, backgroundColor: '#00e676' }} />
+                          </span>
+                          <span style={{ fontSize: '0.6rem', color: '#00e676', fontFamily: 'monospace', fontWeight: 700, flexShrink: 0 }}>{bullPct.toFixed(0)}%</span>
+                        </span>
+                      )}
+                      <span style={{ fontSize: '0.62rem', color: '#fbbf24' }}>vol {formatShares(l?.volume)}</span>
+                    </span>
+                  );
+                })()}
               </div>
             ))}
           </div>

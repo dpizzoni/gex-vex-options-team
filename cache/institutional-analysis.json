@@ -1,9 +1,9 @@
 [
   {
     "date": "2026-07-28",
-    "narrative": "SPY cae 1.54% en un régimen SHORT_GAMMA (net GEX -2.32M), lo que amplifica la corrección: dealers vendiendo en la baja empujan el spot hacia el put wall de 725, nivel a vigilar como soporte estructural inmediato; el call wall en 750 queda lejos y pierde relevancia como techo de corto plazo. El p/c ratio de 1.46 confirma sesgo defensivo fuerte en el vencimiento cercano, consistente con cobertura activa más que con posicionamiento direccional bajista puro. La liquidez neta cae 69.9bn en 7 días (TGA subiendo 73.4bn drena el sistema) mientras VIX sube a 18.21 (+1.16) — ambas señales alineadas hacia menor apetito de riesgo, sin contradicción. Crédito no confirma pánico: HY OAS en 2.84 (+0.15) e IG OAS en 0.81 (+0.03) con diferencial HY-IG de 2.03, ampliándose levemente pero sin señal de estrés sistémico, más bien deterioro idiosincrático acotado en high yield. COT semanal muestra apalancados aumentando +41,276 contratos netos en ES pero asset managers reduciendo -12,116, divergencia que sugiere especuladores comprando el dip mientras el dinero real se retira; en VX, asset managers suman +1,790 (cobertura de cola) y leveraged money recorta -7,091. El ranking sectorial de 5 días muestra a XLF como líder absoluto de entradas (+52.35M) pese a la alerta de QUIET_DISTRIBUTION de los últimos 3 días (-8.95M), señal de que el flujo se revirtió recientemente después de una racha previa fuerte; XLV lidera las salidas (-11.75M) de forma sostenida. SPY acumula silenciosamente (+8.7M en 3 días) mientras el mercado corrige, compatible con manos fuertes comprando debilidad en el índice amplio. El cuadro es mixto: liquidez y VIX se deterioran, pero crédito se mantiene contenido y hay acumulación selectiva en SPY/XLK, lo que reduce la probabilidad de una corrección sistémica y aumenta la de un ajuste técnico de corto plazo amplificado por gamma negativo.\n\nEl dinero institucional está rotando desde XLV y XLF (distribución reciente) hacia SPY y XLK, sin mostrar pánico generalizado sino reposicionamiento sectorial defensivo.",
-    "model": "claude-sonnet-5",
-    "generated_at": "2026-07-30T04:20:05.964Z",
+    "narrative": "La contracción de liquidez neta (-69.9B por alza del TGA) y el aumento del VIX (18.21) coinciden con un régimen Short Gamma en SPY operando en un fuerte rally (+0.93% a 736.22), amplificando la volatilidad direccional hacia el call wall en 740 y el put wall en 730. El diferencial de crédito HY-IG se amplió (2.03) junto al alza de HY OAS (+15 bps), evidenciando presión en riesgo crediticio mientras el flujo total de ETFs registró modestos inflows netos ($12.75M), liderados por XLF ($52.35M a 5d) frente a las fuertes salidas en XLV (-$11.75M). Este trasfondo sugiere que la operatoria bajo Short Gamma exacerba las subas a pesar de la divergencia con la menor liquidez y el stress de cobertura reflejado en un put/call ratio elevado (2.87). El dinero institucional está rotando desde sectores defensivos como XLV hacia financieros (XLF).",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-07-30T15:05:22.788Z",
     "inputs": {
       "fecha": "2026-07-28",
       "liquidez": {
@@ -44,17 +44,17 @@
       },
       "gamma_regime": {
         "ticker": "SPY",
-        "fecha": "2026-07-29",
-        "spot": 729.46,
-        "spot_change_1d_pct": -1.5387522608859943,
+        "fecha": "2026-07-30",
+        "spot": 736.22,
+        "spot_change_1d_pct": 0.9267129109204056,
         "regimen": "SHORT_GAMMA",
-        "net_gex": -2319072,
-        "net_gex_delta_1d": 224525,
-        "ema3_net_gex": -2422753,
+        "net_gex": -3035791,
+        "net_gex_delta_1d": -716719,
+        "ema3_net_gex": -2729272,
         "king_node": null,
-        "put_wall": 725,
-        "call_wall": 750,
-        "p_c_ratio_vencimiento_cercano": 1.4565
+        "put_wall": 730,
+        "call_wall": 740,
+        "p_c_ratio_vencimiento_cercano": 2.8703
       },
       "etf_flows": {
         "spy_net_flow": 3050000,

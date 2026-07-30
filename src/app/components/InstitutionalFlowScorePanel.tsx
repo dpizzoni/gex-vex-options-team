@@ -1,5 +1,6 @@
-import React from 'react';
-import { Gauge, AlertCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
+import { Gauge, AlertCircle, Info, X } from 'lucide-react';
 
 export interface FlowScoreComponents {
   liquidity: number;
@@ -87,7 +88,72 @@ function ComponentBar({ value }: { value: number }) {
   );
 }
 
+function FlowScoreInfoModal({ onClose }: { onClose: () => void }) {
+  // Portal to document.body: same backdrop-filter stacking-context issue as
+  // the other panels' info/history modals.
+  return createPortal(
+    <div style={infoOverlayStyle} onClick={onClose}>
+      <div style={infoModalStyle} onClick={e => e.stopPropagation()}>
+        <div style={infoModalHeaderStyle}>
+          <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#a78bfa' }}>¿Qué es el Institutional Flow Score?</span>
+          <button onClick={onClose} style={infoCloseButtonStyle} aria-label="Cerrar"><X size={16} /></button>
+        </div>
+
+        <p style={infoTextStyle}>
+          Un modelo cuantitativo (no es IA) que suma 7 componentes, cada uno puntuado entre -2 y +2 (US10Y entre
+          -1 y +1) según cómo cambió esa variable en los últimos 7 días. El total va de -13 a +13 y se traduce en
+          una etiqueta: Acumulación Fuerte / Acumulación / Neutral / Distribución / Distribución Fuerte.
+        </p>
+
+        <div style={infoSectionStyle}>
+          <div style={infoTermStyle}>Liquidez (Fed − TGA − RRP)</div>
+          <p style={infoTextStyle}>Net Liquidity subiendo &gt;0.5% en 7d suma, cayendo &gt;0.5% resta. Más liquidez en el sistema, más combustible para activos de riesgo.</p>
+        </div>
+        <div style={infoSectionStyle}>
+          <div style={infoTermStyle}>Credit Spread (HY OAS)</div>
+          <p style={infoTextStyle}>El spread de crédito high-yield comprimiéndose (&gt;0.15pp en 7d) suma — señal de apetito por riesgo. Ampliándose, resta.</p>
+        </div>
+        <div style={infoSectionStyle}>
+          <div style={infoTermStyle}>Dólar (DXY, banda ancha)</div>
+          <p style={infoTextStyle}>Dólar debilitándose (&gt;1% en 7d) suma — típicamente favorece activos de riesgo y flujos hacia emergentes/commodities. Fortaleciéndose, resta.</p>
+        </div>
+        <div style={infoSectionStyle}>
+          <div style={infoTermStyle}>VIX</div>
+          <p style={infoTextStyle}>Nivel bajo (&lt;15) o cayendo fuerte suma; nivel alto (&gt;25) o subiendo fuerte (&gt;3pts en 7d) resta. Mide miedo/cobertura.</p>
+        </div>
+        <div style={infoSectionStyle}>
+          <div style={infoTermStyle}>US10Y</div>
+          <p style={infoTextStyle}>Rendimiento del bono a 10 años cayendo (&gt;0.15pp en 7d) suma — menor costo de capital. Subiendo, resta. Rango acotado (-1 a +1).</p>
+        </div>
+        <div style={infoSectionStyle}>
+          <div style={infoTermStyle}>Breadth (QQQ vs QQQE)</div>
+          <p style={infoTextStyle}>Compara el Nasdaq 100 cap-weighted (QQQ) contra su versión equal-weight (QQQE) a 5 días. Si QQQE le gana a QQQ, la suba es amplia (no solo mega-caps) y suma. Si QQQ le gana por mucho, la suba es angosta y resta.</p>
+        </div>
+        <div style={infoSectionStyle}>
+          <div style={infoTermStyle}>ETF Flows (SPY+QQQ+IWM)</div>
+          <p style={infoTextStyle}>Flujo neto en dólares hacia los 3 ETFs de índice más grandes. Más de $1B de entrada suma, más de $1B de salida resta.</p>
+        </div>
+
+        <div style={{ ...infoSectionStyle, borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '12px' }}>
+          <div style={{ ...infoTermStyle, color: '#fff' }}>Cómo se relacionan</div>
+          <p style={infoTextStyle}>
+            Liquidez, crédito, dólar y tasas describen el contexto macro (¿hay viento de cola o de frente para
+            activos de riesgo?), mientras que VIX, breadth y ETF flows describen el comportamiento real del
+            mercado en ese contexto (¿el dinero se está moviendo acorde a lo que el macro sugiere?). Cuando ambos
+            grupos apuntan para el mismo lado, el score es más confiable; cuando divergen (ej. macro favorable pero
+            flujos saliendo), es la señal de alerta más útil — el mercado no está confirmando lo que la liquidez
+            sugiere.
+          </p>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
 export default function InstitutionalFlowScorePanel({ history, loading }: InstitutionalFlowScorePanelProps) {
+  const [showInfo, setShowInfo] = useState(false);
+
   if (loading) {
     return (
       <div style={panelContainerStyle}>
@@ -132,6 +198,9 @@ export default function InstitutionalFlowScorePanel({ history, loading }: Instit
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Gauge size={18} style={{ color: '#a78bfa' }} />
           <h3 style={titleStyle}>INSTITUTIONAL FLOW SCORE</h3>
+          <button onClick={() => setShowInfo(true)} style={infoButtonStyle} aria-label="¿Qué significan estos datos?">
+            <Info size={14} />
+          </button>
         </div>
         <div style={{ ...badgeStyle, backgroundColor: `${color}1a`, color, borderColor: color }}>
           {labelEs(latest.label)}
@@ -194,6 +263,8 @@ export default function InstitutionalFlowScorePanel({ history, loading }: Instit
       <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', textAlign: 'right' }}>
         al {latest.date} · modelo cuantitativo, no es IA
       </div>
+
+      {showInfo && <FlowScoreInfoModal onClose={() => setShowInfo(false)} />}
     </div>
   );
 }
@@ -279,4 +350,84 @@ const errorDescStyle: React.CSSProperties = {
   fontSize: '0.8rem',
   color: 'rgba(255,255,255,0.4)',
   lineHeight: 1.6
+};
+
+const infoButtonStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  background: 'rgba(255,255,255,0.06)',
+  border: '1px solid rgba(255,255,255,0.15)',
+  borderRadius: '50%',
+  color: 'rgba(255,255,255,0.5)',
+  cursor: 'pointer',
+  width: '20px',
+  height: '20px',
+  padding: 0
+};
+
+const infoOverlayStyle: React.CSSProperties = {
+  position: 'fixed',
+  inset: 0,
+  backgroundColor: 'rgba(0,0,0,0.6)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  zIndex: 1000,
+  padding: '20px'
+};
+
+const infoModalStyle: React.CSSProperties = {
+  backgroundColor: '#0a1023',
+  border: '1px solid rgba(167,139,250,0.3)',
+  borderRadius: '14px',
+  padding: '22px',
+  width: '480px',
+  maxWidth: '100%',
+  maxHeight: '85vh',
+  overflowY: 'auto',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '14px',
+  boxShadow: '0 12px 40px rgba(0,0,0,0.6)',
+  color: '#fff'
+};
+
+const infoModalHeaderStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between'
+};
+
+const infoCloseButtonStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  background: 'rgba(255,255,255,0.06)',
+  border: '1px solid rgba(255,255,255,0.1)',
+  borderRadius: '6px',
+  color: 'rgba(255,255,255,0.7)',
+  cursor: 'pointer',
+  width: '26px',
+  height: '26px',
+  padding: 0
+};
+
+const infoSectionStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '4px'
+};
+
+const infoTermStyle: React.CSSProperties = {
+  fontSize: '0.8rem',
+  fontWeight: 800,
+  color: '#a78bfa'
+};
+
+const infoTextStyle: React.CSSProperties = {
+  margin: 0,
+  fontSize: '0.78rem',
+  lineHeight: 1.6,
+  color: 'rgba(255,255,255,0.75)'
 };

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Activity, AlertCircle, Bell } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { Activity, AlertCircle, Bell, Info, X } from 'lucide-react';
 
 export interface SectorFlowEntry {
   date: string;
@@ -358,6 +359,142 @@ function cotChangeSeries(entries: CotEntry[], field: 'asset_mgr_net_change' | 'l
     .map(e => ({ date: e.date, value: e[field] }));
 }
 
+function CotInfoModal({ onClose }: { onClose: () => void }) {
+  // Portal to document.body: same backdrop-filter stacking-context issue as
+  // the other panels' info modals.
+  return createPortal(
+    <div style={infoOverlayStyle} onClick={onClose}>
+      <div style={infoModalStyle} onClick={e => e.stopPropagation()}>
+        <div style={infoModalHeaderStyle}>
+          <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#a78bfa' }}>¿Qué es el reporte COT?</span>
+          <button onClick={onClose} style={infoCloseButtonStyle} aria-label="Cerrar"><X size={16} /></button>
+        </div>
+
+        <p style={infoTextStyle}>
+          El Commitment of Traders (CFTC) publica cada viernes el posicionamiento agregado en futuros de la
+          semana que cerró el martes anterior — no es en tiempo real, tiene ~3-4 días de rezago, pero es la única
+          fuente pública de "quién tiene qué posición" en el mercado de futuros por tipo de trader.
+        </p>
+
+        <div style={infoSectionStyle}>
+          <div style={infoTermStyle}>Instrumentos: ES, NQ, VX</div>
+          <p style={infoTextStyle}>
+            ES = futuros del S&amp;P 500, NQ = futuros del Nasdaq 100, VX = futuros del VIX. Los tres muestran el
+            posicionamiento neto (contratos largos menos cortos) de cada categoría de trader.
+          </p>
+        </div>
+
+        <div style={infoSectionStyle}>
+          <div style={infoTermStyle}>Asset Managers ("dinero real")</div>
+          <p style={infoTextStyle}>
+            Fondos de pensión, aseguradoras, asset managers tradicionales — posiciones más estructurales/de largo
+            plazo, menos reactivas a movimientos de corto plazo. Se los toma como proxy de convicción institucional.
+          </p>
+        </div>
+
+        <div style={infoSectionStyle}>
+          <div style={infoTermStyle}>Leveraged Funds ("dinero especulativo")</div>
+          <p style={infoTextStyle}>
+            Hedge funds y CTAs — posiciones tácticas, apalancadas, que rotan rápido con el momentum del precio.
+            Se los toma como proxy de especulación de corto plazo, no de convicción de fondo.
+          </p>
+        </div>
+
+        <div style={{ ...infoSectionStyle, borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '12px' }}>
+          <div style={{ ...infoTermStyle, color: '#fbbf24' }}>⚠ Alerta de Divergencia</div>
+          <p style={infoTextStyle}>
+            Se dispara cuando Asset Managers y Leveraged Funds cambiaron su neto en direcciones opuestas esta
+            semana, ambos por más que su movimiento semanal típico (umbral auto-calibrado por instrumento, ya que
+            ES/NQ/VX operan en escalas de contratos muy distintas). Señala que un movimiento del mercado lo está
+            llevando el dinero táctico y no el institucional — o viceversa —, algo que ni gamma-regime ni fund-flow
+            pueden ver porque ninguno de los dos mide posicionamiento en futuros.
+          </p>
+        </div>
+
+        <div style={infoSectionStyle}>
+          <div style={{ ...infoTermStyle, color: '#a78bfa' }}>📊 Alerta de Extremo (52 semanas)</div>
+          <p style={infoTextStyle}>
+            Se dispara cuando el neto actual de una categoría es el máximo o mínimo de las últimas 52 semanas.
+            Es la señal contraria clásica de "posicionamiento demasiado cargado hacia un lado": cuanto más extremo
+            y unánime el posicionamiento, menos margen queda para que ese mismo grupo siga empujando en la misma
+            dirección, y mayor la probabilidad de que un catalizador menor dispare una reversión o short/long
+            squeeze.
+          </p>
+        </div>
+
+        <div style={{ ...infoSectionStyle, borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '12px' }}>
+          <div style={{ ...infoTermStyle, color: '#fff' }}>Cómo leerlo en conjunto</div>
+          <p style={infoTextStyle}>
+            El caso más informativo es cuando ambas alertas coinciden: por ejemplo, Leveraged Funds en máximo
+            histórico de 52 semanas MIENTRAS Asset Managers reduce su exposición esa misma semana — eso es
+            "dinero apalancado llevando el mercado a un extremo mientras el dinero real se retira", una
+            combinación que históricamente precede correcciones más que cualquiera de las dos señales por
+            separado. Si solo aparece la de extremo sin divergencia, el posicionamiento está cargado pero
+            todavía hay consenso entre ambos grupos — menos urgente.
+          </p>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
+type CotAlert = { kind: 'divergence' | 'extreme'; text: string };
+
+// Two rules-based signals from the 52-week COT window - complementary to
+// gamma-regime (options/dealers) and fund-flow (ETF $/price) alerts because
+// COT is the only source here that measures futures positioning by trader
+// type, not price or options flow:
+//
+// 1. Divergence: Asset Managers ("real money") and Leveraged Funds
+//    ("speculative/tactical") moved in opposite directions this week, both
+//    by more than a "typical" week's move for that instrument (self-scaled
+//    via the median absolute weekly change, since ES/NQ/VX have very
+//    different contract-count scales). Flags whether a move is being led by
+//    real institutional conviction or by tactical leverage.
+// 2. Extreme positioning: current net position is the highest or lowest in
+//    the trailing 52 weeks - classic "crowded positioning" signal that
+//    often precedes a reversal.
+function computeCotAlerts(entries: CotEntry[]): CotAlert[] {
+  const sorted = [...entries].sort((a, b) => a.date.localeCompare(b.date));
+  if (sorted.length < 8) return [];
+  const latest = sorted[sorted.length - 1];
+  const alerts: CotAlert[] = [];
+
+  const median = (nums: number[]) => {
+    const s = [...nums].sort((a, b) => a - b);
+    const mid = Math.floor(s.length / 2);
+    return s.length % 2 === 0 ? (s[mid - 1] + s[mid]) / 2 : s[mid];
+  };
+
+  const amChanges = sorted.map(e => Math.abs(e.asset_mgr_net_change));
+  const lmChanges = sorted.map(e => Math.abs(e.lev_money_net_change));
+  const amThreshold = median(amChanges);
+  const lmThreshold = median(lmChanges);
+
+  const amMoved = Math.abs(latest.asset_mgr_net_change) > amThreshold;
+  const lmMoved = Math.abs(latest.lev_money_net_change) > lmThreshold;
+  const oppositeSign = Math.sign(latest.asset_mgr_net_change) !== Math.sign(latest.lev_money_net_change);
+
+  if (amMoved && lmMoved && oppositeSign && latest.asset_mgr_net_change !== 0 && latest.lev_money_net_change !== 0) {
+    const amDir = latest.asset_mgr_net_change > 0 ? 'suma' : 'reduce';
+    const lmDir = latest.lev_money_net_change > 0 ? 'suma' : 'reduce';
+    alerts.push({
+      kind: 'divergence',
+      text: `Asset Mgr ${amDir} mientras Leveraged Funds ${lmDir} — posicionamiento divergente esta semana`
+    });
+  }
+
+  const amNets = sorted.map(e => e.asset_mgr_net);
+  const lmNets = sorted.map(e => e.lev_money_net);
+  if (latest.asset_mgr_net === Math.max(...amNets)) alerts.push({ kind: 'extreme', text: 'Asset Mgr en máximo de 52 semanas' });
+  if (latest.asset_mgr_net === Math.min(...amNets)) alerts.push({ kind: 'extreme', text: 'Asset Mgr en mínimo de 52 semanas' });
+  if (latest.lev_money_net === Math.max(...lmNets)) alerts.push({ kind: 'extreme', text: 'Leveraged Funds en máximo de 52 semanas' });
+  if (latest.lev_money_net === Math.min(...lmNets)) alerts.push({ kind: 'extreme', text: 'Leveraged Funds en mínimo de 52 semanas' });
+
+  return alerts;
+}
+
 function formatContracts(val: number | null | undefined): string {
   if (val === null || val === undefined || Number.isNaN(val)) return 'N/D';
   return `${val >= 0 ? '+' : ''}${val.toLocaleString()}`;
@@ -422,6 +559,7 @@ function FundFlowAlertsBell({ alerts }: { alerts: FundFlowAlert[] }) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const sortedAlerts = [...alerts].sort((a, b) => b.date.localeCompare(a.date));
   const unreadCount = alerts.filter(a => !readIds.has(a.id)).length;
 
   const handleToggle = () => {
@@ -451,10 +589,10 @@ function FundFlowAlertsBell({ alerts }: { alerts: FundFlowAlert[] }) {
         <div style={bellDropdownStyle}>
           <div style={bellDropdownHeaderStyle}>Señales (divergencia precio / flujo)</div>
           <div style={{ maxHeight: '360px', overflowY: 'auto' }}>
-            {alerts.length === 0 ? (
+            {sortedAlerts.length === 0 ? (
               <div style={bellEmptyStyle}>Sin señales por ahora.</div>
             ) : (
-              alerts.map(a => {
+              sortedAlerts.map(a => {
                 const isDistribution = a.type === 'QUIET_DISTRIBUTION';
                 const color = isDistribution ? '#ff2a6d' : '#00e676';
                 return (
@@ -481,6 +619,8 @@ function FundFlowAlertsBell({ alerts }: { alerts: FundFlowAlert[] }) {
 }
 
 export default function FundFlowPanel({ sectorFlow, marketTide, cotPositioning, fundFlowAlerts, loading }: FundFlowPanelProps) {
+  const [showCotInfo, setShowCotInfo] = useState(false);
+
   if (loading) {
     return (
       <div style={panelContainerStyle}>
@@ -547,7 +687,8 @@ export default function FundFlowPanel({ sectorFlow, marketTide, cotPositioning, 
       instrument,
       latest: entries[entries.length - 1],
       assetMgrSeries: cotChangeSeries(entries, 'asset_mgr_net_change'),
-      levMoneySeries: cotChangeSeries(entries, 'lev_money_net_change')
+      levMoneySeries: cotChangeSeries(entries, 'lev_money_net_change'),
+      alerts: computeCotAlerts(entries)
     };
   });
 
@@ -607,17 +748,39 @@ export default function FundFlowPanel({ sectorFlow, marketTide, cotPositioning, 
 
         {/* COT Positioning */}
         <div style={{ ...colStyle, borderRight: 'none' }}>
-          <h4 style={colHeaderStyle}>COT (CFTC, SEMANAL, 52W)</h4>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <h4 style={colHeaderStyle}>COT (CFTC, SEMANAL, 52W)</h4>
+            <button onClick={() => setShowCotInfo(true)} style={infoButtonStyle} aria-label="¿Qué significan estos datos?">
+              <Info size={12} />
+            </button>
+          </div>
+          {showCotInfo && <CotInfoModal onClose={() => setShowCotInfo(false)} />}
           {cotInstruments.length === 0 ? (
             <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)' }}>Sin reporte todavía.</div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {cotInstruments.map(({ instrument, latest: c, assetMgrSeries, levMoneySeries }) => (
+              {cotInstruments.map(({ instrument, latest: c, assetMgrSeries, levMoneySeries, alerts }) => (
                 <div key={instrument} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}>
                     <span style={{ fontWeight: 700 }}>{instrument}</span>
                     <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem' }}>{c.date}</span>
                   </div>
+                  {alerts.length > 0 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                      {alerts.map((a, i) => (
+                        <div
+                          key={i}
+                          style={{
+                            ...cotAlertChipStyle,
+                            borderColor: a.kind === 'divergence' ? 'rgba(251,191,36,0.4)' : 'rgba(167,139,250,0.4)',
+                            color: a.kind === 'divergence' ? '#fbbf24' : '#a78bfa'
+                          }}
+                        >
+                          {a.kind === 'divergence' ? '⚠' : '📊'} {a.text}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                   <div style={cotMetricBlockStyle}>
                     <div style={cotMetricHeaderStyle}>
                       <span style={labelStyle}>Asset Mgr</span>
@@ -734,6 +897,17 @@ const sectorRowStyle: React.CSSProperties = {
   alignItems: 'center',
   gap: '10px',
   fontSize: '0.8rem'
+};
+
+const cotAlertChipStyle: React.CSSProperties = {
+  fontSize: '0.68rem',
+  fontWeight: 600,
+  padding: '3px 8px',
+  borderRadius: '5px',
+  border: '1px solid',
+  backgroundColor: 'rgba(255,255,255,0.03)',
+  lineHeight: 1.4,
+  width: 'fit-content'
 };
 
 const cotMetricBlockStyle: React.CSSProperties = {
@@ -866,4 +1040,84 @@ const bellEmptyStyle: React.CSSProperties = {
   color: 'rgba(255,255,255,0.4)',
   fontStyle: 'italic',
   textAlign: 'center'
+};
+
+const infoButtonStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  background: 'rgba(255,255,255,0.06)',
+  border: '1px solid rgba(255,255,255,0.15)',
+  borderRadius: '50%',
+  color: 'rgba(255,255,255,0.5)',
+  cursor: 'pointer',
+  width: '18px',
+  height: '18px',
+  padding: 0
+};
+
+const infoOverlayStyle: React.CSSProperties = {
+  position: 'fixed',
+  inset: 0,
+  backgroundColor: 'rgba(0,0,0,0.6)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  zIndex: 1000,
+  padding: '20px'
+};
+
+const infoModalStyle: React.CSSProperties = {
+  backgroundColor: '#0a1023',
+  border: '1px solid rgba(167,139,250,0.3)',
+  borderRadius: '14px',
+  padding: '22px',
+  width: '480px',
+  maxWidth: '100%',
+  maxHeight: '85vh',
+  overflowY: 'auto',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '14px',
+  boxShadow: '0 12px 40px rgba(0,0,0,0.6)',
+  color: '#fff'
+};
+
+const infoModalHeaderStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between'
+};
+
+const infoCloseButtonStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  background: 'rgba(255,255,255,0.06)',
+  border: '1px solid rgba(255,255,255,0.1)',
+  borderRadius: '6px',
+  color: 'rgba(255,255,255,0.7)',
+  cursor: 'pointer',
+  width: '26px',
+  height: '26px',
+  padding: 0
+};
+
+const infoSectionStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '4px'
+};
+
+const infoTermStyle: React.CSSProperties = {
+  fontSize: '0.8rem',
+  fontWeight: 800,
+  color: '#a78bfa'
+};
+
+const infoTextStyle: React.CSSProperties = {
+  margin: 0,
+  fontSize: '0.78rem',
+  lineHeight: 1.6,
+  color: 'rgba(255,255,255,0.75)'
 };

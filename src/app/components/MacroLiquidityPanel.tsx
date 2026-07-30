@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Droplets, AlertCircle } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { Droplets, AlertCircle, Info, X } from 'lucide-react';
 
 export interface FedLiquidityEntry {
   date: string;
@@ -182,7 +183,74 @@ function LiquidityChartsStack({ history }: { history: FedLiquidityEntry[] }) {
   );
 }
 
+function LiquidityInfoModal({ onClose }: { onClose: () => void }) {
+  // Portal to document.body: this panel's own container uses backdrop-filter,
+  // which creates a stacking context that would trap a fixed-position overlay
+  // behind later sibling panels (same issue fixed in InstitutionalAnalystPanel).
+  return createPortal(
+    <div style={infoOverlayStyle} onClick={onClose}>
+      <div style={infoModalStyle} onClick={e => e.stopPropagation()}>
+        <div style={infoModalHeaderStyle}>
+          <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#a78bfa' }}>¿Qué es la liquidez de la Fed?</span>
+          <button onClick={onClose} style={infoCloseButtonStyle} aria-label="Cerrar"><X size={16} /></button>
+        </div>
+
+        <div style={infoSectionStyle}>
+          <div style={{ ...infoTermStyle, color: '#00e676' }}>Fed Balance (WALCL)</div>
+          <p style={infoTextStyle}>
+            El tamaño total del balance de la Reserva Federal — todos los activos que compró (bonos del Tesoro,
+            MBS) mediante QE/QT. Sube cuando la Fed inyecta dinero al sistema comprando activos; baja cuando los
+            deja vencer sin reinvertir (QT). Es la fuente bruta de liquidez.
+          </p>
+        </div>
+
+        <div style={infoSectionStyle}>
+          <div style={{ ...infoTermStyle, color: '#f59e0b' }}>Treasury General Account (TGA)</div>
+          <p style={infoTextStyle}>
+            La cuenta corriente del Tesoro de EE.UU. en la Fed. Cuando el Tesoro emite deuda y junta efectivo ahí,
+            ese dinero sale del sistema bancario (drena liquidez). Cuando el Tesoro gasta (transferencias, sueldos,
+            etc.), el dinero vuelve al sistema (agrega liquidez). Sube = liquidez saliendo del mercado.
+          </p>
+        </div>
+
+        <div style={infoSectionStyle}>
+          <div style={{ ...infoTermStyle, color: '#22d3ee' }}>Reverse Repo (RRP)</div>
+          <p style={infoTextStyle}>
+            Efectivo que money market funds y bancos estacionan overnight en la Fed a cambio de una tasa de interés,
+            en vez de prestarlo al mercado. Es liquidez "parqueada", fuera de circulación. Sube = liquidez saliendo
+            del mercado; baja = ese efectivo vuelve a circular.
+          </p>
+        </div>
+
+        <div style={infoSectionStyle}>
+          <div style={{ ...infoTermStyle, color: '#a78bfa' }}>Net Liquidity = WALCL − TGA − RRP</div>
+          <p style={infoTextStyle}>
+            La liquidez neta que efectivamente está disponible para el sistema financiero (y en última instancia,
+            para activos de riesgo). Es el balance bruto de la Fed menos el efectivo que quedó "afuera" estacionado
+            en TGA y RRP. Es la métrica que más correlaciona con el apetito de riesgo del mercado.
+          </p>
+        </div>
+
+        <div style={{ ...infoSectionStyle, borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '12px' }}>
+          <div style={{ ...infoTermStyle, color: '#fff' }}>Cómo se relacionan</div>
+          <p style={infoTextStyle}>
+            WALCL sube o cae lento (decisión de política monetaria), mientras TGA y RRP se mueven más rápido por
+            razones técnicas (emisión de deuda, vencimientos, tasas overnight) y suelen ser la fuente real de los
+            movimientos de corto plazo en Net Liquidity. Por eso puede haber liquidez drenándose (Net Liquidity cae)
+            incluso con la Fed en pausa o expandiendo WALCL: alcanza con que el Tesoro esté acumulando caja en la
+            TGA (típico después de emitir deuda) o que suba el RRP. Una caída sostenida de Net Liquidity tiende a
+            preceder presión bajista en activos de riesgo; una expansión sostenida, lo contrario — con rezago de
+            días a semanas, no instantáneo.
+          </p>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
 export default function MacroLiquidityPanel({ history, loading }: MacroLiquidityPanelProps) {
+  const [showInfo, setShowInfo] = useState(false);
   if (loading) {
     return (
       <div style={panelContainerStyle}>
@@ -233,6 +301,9 @@ export default function MacroLiquidityPanel({ history, loading }: MacroLiquidity
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Droplets size={18} style={{ color: '#a78bfa' }} />
           <h3 style={titleStyle}>FED LIQUIDITY MONITOR</h3>
+          <button onClick={() => setShowInfo(true)} style={infoButtonStyle} aria-label="¿Qué significan estos datos?">
+            <Info size={14} />
+          </button>
         </div>
         <div style={{
           ...regimeBadgeStyle,
@@ -286,6 +357,8 @@ export default function MacroLiquidityPanel({ history, loading }: MacroLiquidity
       <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', textAlign: 'right' }}>
         al {latest.date} · fuente: FRED (WALCL, RRPONTSYD, WTREGEN)
       </div>
+
+      {showInfo && <LiquidityInfoModal onClose={() => setShowInfo(false)} />}
     </div>
   );
 }
@@ -392,4 +465,83 @@ const errorDescStyle: React.CSSProperties = {
   fontSize: '0.8rem',
   color: 'rgba(255,255,255,0.4)',
   lineHeight: 1.6
+};
+
+const infoButtonStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  background: 'rgba(255,255,255,0.06)',
+  border: '1px solid rgba(255,255,255,0.15)',
+  borderRadius: '50%',
+  color: 'rgba(255,255,255,0.5)',
+  cursor: 'pointer',
+  width: '20px',
+  height: '20px',
+  padding: 0
+};
+
+const infoOverlayStyle: React.CSSProperties = {
+  position: 'fixed',
+  inset: 0,
+  backgroundColor: 'rgba(0,0,0,0.6)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  zIndex: 1000,
+  padding: '20px'
+};
+
+const infoModalStyle: React.CSSProperties = {
+  backgroundColor: '#0a1023',
+  border: '1px solid rgba(167,139,250,0.3)',
+  borderRadius: '14px',
+  padding: '22px',
+  width: '480px',
+  maxWidth: '100%',
+  maxHeight: '85vh',
+  overflowY: 'auto',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '14px',
+  boxShadow: '0 12px 40px rgba(0,0,0,0.6)',
+  color: '#fff'
+};
+
+const infoModalHeaderStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between'
+};
+
+const infoCloseButtonStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  background: 'rgba(255,255,255,0.06)',
+  border: '1px solid rgba(255,255,255,0.1)',
+  borderRadius: '6px',
+  color: 'rgba(255,255,255,0.7)',
+  cursor: 'pointer',
+  width: '26px',
+  height: '26px',
+  padding: 0
+};
+
+const infoSectionStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '4px'
+};
+
+const infoTermStyle: React.CSSProperties = {
+  fontSize: '0.8rem',
+  fontWeight: 800
+};
+
+const infoTextStyle: React.CSSProperties = {
+  margin: 0,
+  fontSize: '0.78rem',
+  lineHeight: 1.6,
+  color: 'rgba(255,255,255,0.75)'
 };

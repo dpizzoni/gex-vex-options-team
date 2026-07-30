@@ -1,9 +1,9 @@
 [
   {
     "date": "2026-07-28",
-    "narrative": "La contracción de liquidez neta (-$69.9B en 7 días por drenaje al TGA) y el deterioro de componentes macro llevaron el *institutional flow score* a -2 (Distribution), a pesar de flujos mayoritarios positivos en ETFs como SPY ($3.05M) y QQQ ($7.1M) que suman un flujo total de $12.75M. Los institucionales muestran posturas mixtas, destacándose acumulación silenciosa en SPY y XLK frente a distribución en XLF y XLP, mientras el régimen de *Short Gamma* (-$2.32B de GEX neto) amplifica la sensibilidad ante movimientos de precio. En el mercado de futuros, los *leveraged funds* incrementaron posiciones netas en ES (+41,276 contratos) pero recortaron en NQ (-10,264 contratos). Las señales son contradictorias, combinando una macroestructura restrictiva con flujos estables hacia índices clave. Este escenario sugiere una alta volatilidad direccional, donde el régimen de *Short Gamma* aumenta la probabilidad de movimientos abruptos ante cualquier alteración de liquidez.",
-    "model": "gemini-flash-lite-latest",
-    "generated_at": "2026-07-30T02:21:16.150Z",
+    "narrative": "**Liquidez y crédito**\nNet liquidity cae 69.9bn en 7d, pero no por RRP (+0.85bn) sino por reconstrucción de TGA (+73.4bn) — drenaje técnico, no huida de reservas. WALCL sigue expandiéndose (+4.35bn). En crédito, HY OAS sube más que IG (2.84 vs 0.81, diferencial 2.03) — el estrés es idiosincrático en high yield, no un deterioro sistémico de crédito.\n\n**Gamma y spot**\nSPY en SHORT_GAMMA con net_gex en -2.32M y profundizándose (ema3 más negativo), spot cayendo -0.59% intradía — el posicionamiento de dealers amplifica la baja, vendiendo en la corrección. Put wall en 730 (spot 736.49) queda como referencia de soporte estructural inmediato; call wall en 750. P/C ratio 1.4565 confirma sesgo defensivo fuerte en el vencimiento cercano, coherente con VIX subiendo (+1.16 en 7d, 18.21 nivel).\n\n**Contradicción de señales**\nEl score compone -2 (Distribution) pero breadth aporta +2 mientras liquidity y vix restan — score comprimido esconde una divergencia real: mercado amplio sostiene fortaleza técnica mientras liquidez/vol se deterioran. Flujo ETF total +12.75M (QQQ lidera con +7.1M) contrasta con rotación sectorial clara: XLF y XLP en distribución silenciosa (-8.95M y -2.35M), SPY y XLK en acumulación silenciosa.",
+    "model": "claude-sonnet-5",
+    "generated_at": "2026-07-30T04:11:00.404Z",
     "inputs": {
       "fecha": "2026-07-28",
       "liquidez": {
@@ -29,15 +29,32 @@
           "etf_flows": 0
         }
       },
+      "mercado_riesgo": {
+        "vix": 18.21,
+        "vix_delta_7d": 1.1600000000000001,
+        "hy_oas": 2.84,
+        "hy_oas_delta_7d": 0.1499999999999999,
+        "ig_oas": 0.81,
+        "ig_oas_delta_7d": 0.030000000000000027,
+        "hy_ig_spread_differential": 2.03,
+        "dxy": 120.7105,
+        "dxy_delta_7d": 0.1325999999999965,
+        "us10y": 4.61,
+        "us10y_delta_7d": -0.019999999999999574
+      },
       "gamma_regime": {
         "ticker": "SPY",
         "fecha": "2026-07-29",
-        "spot": 735.49,
+        "spot": 736.49,
+        "spot_change_1d_pct": -0.589855033339633,
         "regimen": "SHORT_GAMMA",
         "net_gex": -2319072,
         "net_gex_delta_1d": 224525,
         "ema3_net_gex": -2422753,
-        "king_node": null
+        "king_node": null,
+        "put_wall": 730,
+        "call_wall": 750,
+        "p_c_ratio_vencimiento_cercano": 1.4565
       },
       "etf_flows": {
         "spy_net_flow": 3050000,

@@ -10,6 +10,7 @@ const FRED_ENDPOINT = 'https://api.stlouisfed.org/fred/series/observations';
 const SERIES = {
   vix: 'VIXCLS',        // CBOE Volatility Index, daily
   hyOas: 'BAMLH0A0HYM2', // ICE BofA US High Yield OAS credit spread, daily
+  igOas: 'BAMLC0A0CM',   // ICE BofA US Investment Grade (Corporate Master) OAS, daily
   us10y: 'DGS10',        // 10-Year Treasury Constant Maturity Rate, daily
   dxy: 'DTWEXBGS'        // Fed's Nominal Broad U.S. Dollar Index (DXY proxy - no
                           // license-restricted ICE DXY series is free on FRED), daily
@@ -39,28 +40,30 @@ function loadHistory() {
 // All four series are daily but each has its own holiday/publish gaps, so
 // merge on the union of dates and forward-fill - same approach as
 // fetch-fed-liquidity.js's mixed-frequency merge.
-function mergeSeries(vix, hyOas, us10y, dxy) {
+function mergeSeries(vix, hyOas, igOas, us10y, dxy) {
   const maps = {
     vix: new Map(vix.map(o => [o.date, o.value])),
     hyOas: new Map(hyOas.map(o => [o.date, o.value])),
+    igOas: new Map(igOas.map(o => [o.date, o.value])),
     us10y: new Map(us10y.map(o => [o.date, o.value])),
     dxy: new Map(dxy.map(o => [o.date, o.value]))
   };
   const allDates = Array.from(new Set([
     ...vix.map(o => o.date),
     ...hyOas.map(o => o.date),
+    ...igOas.map(o => o.date),
     ...us10y.map(o => o.date),
     ...dxy.map(o => o.date)
   ])).sort();
 
-  const last = { vix: null, hyOas: null, us10y: null, dxy: null };
+  const last = { vix: null, hyOas: null, igOas: null, us10y: null, dxy: null };
   const merged = [];
   for (const date of allDates) {
     for (const key of Object.keys(maps)) {
       if (maps[key].has(date)) last[key] = maps[key].get(date);
     }
-    if (last.vix === null || last.hyOas === null || last.us10y === null || last.dxy === null) continue;
-    merged.push({ date, vix: last.vix, hy_oas: last.hyOas, us10y: last.us10y, dxy: last.dxy });
+    if (last.vix === null || last.hyOas === null || last.igOas === null || last.us10y === null || last.dxy === null) continue;
+    merged.push({ date, vix: last.vix, hy_oas: last.hyOas, ig_oas: last.igOas, us10y: last.us10y, dxy: last.dxy });
   }
   return merged;
 }
@@ -77,14 +80,15 @@ async function run() {
     : '2024-06-01';
 
   try {
-    const [vix, hyOas, us10y, dxy] = await Promise.all([
+    const [vix, hyOas, igOas, us10y, dxy] = await Promise.all([
       fetchSeries(SERIES.vix, startDate),
       fetchSeries(SERIES.hyOas, startDate),
+      fetchSeries(SERIES.igOas, startDate),
       fetchSeries(SERIES.us10y, startDate),
       fetchSeries(SERIES.dxy, startDate)
     ]);
 
-    const freshMerged = mergeSeries(vix, hyOas, us10y, dxy);
+    const freshMerged = mergeSeries(vix, hyOas, igOas, us10y, dxy);
     const byDate = new Map(existing.map(e => [e.date, e]));
     for (const entry of freshMerged) byDate.set(entry.date, entry);
 

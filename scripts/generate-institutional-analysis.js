@@ -2,9 +2,12 @@ require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 
-// Free-tier testing provider - swap to Claude later by replacing only
-// callLLM() below. Everything else (payload shape, prompt, cache format)
-// is provider-agnostic on purpose.
+// Two providers, picked automatically by which key is set (ANTHROPIC_API_KEY
+// wins if both are present) - payload shape, prompt, and cache format are
+// identical either way, only callLLM()'s HTTP call differs.
+const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY?.trim();
+const CLAUDE_MODEL = process.env.CLAUDE_MODEL?.trim() || 'claude-sonnet-5';
+
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY?.trim();
 // gemini-2.0-flash/-lite return quota limit:0 on this account's free tier;
 // gemini-flash-lite-latest is the one that actually has free daily quota
@@ -12,6 +15,8 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY?.trim();
 // with a hard 0 limit despite being listed as available models).
 const GEMINI_MODEL = process.env.GEMINI_MODEL?.trim() || 'gemini-flash-lite-latest';
 const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+
+const PROVIDER = ANTHROPIC_API_KEY ? 'claude' : 'gemini';
 
 const cacheDir = path.join(__dirname, '..', 'cache');
 const outputPath = path.join(cacheDir, 'institutional-analysis.json');
@@ -31,13 +36,24 @@ Reglas:
   "aumenta la probabilidad de").
 - Conectá el régimen de gamma (gamma_regime) con el resto: Short Gamma amplifica
   movimientos (los dealers compran en subas y venden en bajas), Long Gamma los
-  amortigua (compran en bajas, venden en subas). Usá esa lente para interpretar
-  si el flujo institucional de hoy es más o menos probable que se traduzca en
-  movimiento de precio.
+  amortigua (compran en bajas, venden en subas). Contextualizá el régimen con
+  spot_change_1d_pct (¿está operando en un rally o en una corrección?), y con
+  put_wall/call_wall (los strikes donde se concentra el gamma - úsalos como
+  niveles de referencia de soporte/resistencia estructural) y el put/call ratio
+  del vencimiento más cercano (>1 = sesgo defensivo/cobertura, <1 = sesgo alcista).
+- Usá los niveles absolutos de mercado_riesgo (VIX, DXY, US10Y, HY OAS, IG OAS),
+  no solo el score comprimido de institutional_flow_score - un componente en 0
+  puede significar "genuinamente neutral" o "dos movimientos que se cancelaron",
+  y los niveles + deltas de 7d son los que permiten distinguir eso. Compará
+  hy_oas contra ig_oas (hy_ig_spread_differential): si ese diferencial se
+  amplía, el mercado de crédito está precificando más riesgo idiosincrático en
+  high yield específicamente, no un deterioro genérico.
 - Mencioná los montos reales de flujo ETF (etf_flows) en dólares cuando sean
   relevantes, no solo el score agregado.
-- Basate ÚNICAMENTE en los datos que te paso. Si algo no está en los datos, no lo
-  inventes ni lo asumas.
+- Basate ÚNICAMENTE en los datos que te paso. Si algo no está en los datos (por
+  ejemplo, estructura de plazos del VIX u open interest por strike más allá de
+  las paredes de gamma), no lo inventes ni lo asumas - decí que no está
+  disponible si es directamente relevante para la conclusión.
 - Si las señales son contradictorias entre sí (ej: liquidez subiendo pero VIX
   subiendo también), decilo explícitamente - eso es información valiosa, no un
   error a esconder.
@@ -83,21 +99,35 @@ function buildGammaSnapshot() {
   const today = sorted[sorted.length - 1];
   const yesterday = sorted.length > 1 ? sorted[sorted.length - 2] : null;
 
+  // Put/call ratio + gamma walls come from the forward-looking cache (per-
+  // expiration, not per-day history) - nearest expiration's p_c_ratio is the
+  // closest free equivalent to "OI en strikes clave" without pulling a full
+  // options chain into this script.
+  const forward = loadJson(path.join(cacheDir, 'gamma-forward-SPY.json'), null);
+  const nearestExp = forward?.expirations?.length > 0
+    ? [...forward.expirations].sort((a, b) => (a.dte ?? 0) - (b.dte ?? 0))[0]
+    : null;
+
   return {
     ticker: 'SPY',
     fecha: today.date,
     spot: today.spot,
+    spot_change_1d_pct: yesterday ? ((today.spot - yesterday.spot) / yesterday.spot) * 100 : null,
     regimen: today.net_gex >= 0 ? 'LONG_GAMMA' : 'SHORT_GAMMA',
     net_gex: today.net_gex,
     net_gex_delta_1d: yesterday ? today.net_gex - yesterday.net_gex : null,
     ema3_net_gex: today.ema3_net_gex,
-    king_node: today.king_node
+    king_node: today.king_node,
+    put_wall: forward?.putWall ?? null,
+    call_wall: forward?.callWall ?? null,
+    p_c_ratio_vencimiento_cercano: nearestExp?.p_c_ratio ?? null
   };
 }
 
 function buildPayload() {
   const flowScoreHistory = loadJson(path.join(cacheDir, 'institutional-flow-score.json'), []);
   const fedLiquidity = loadJson(path.join(cacheDir, 'fed-liquidity.json'), []);
+  const marketRisk = loadJson(path.join(cacheDir, 'market-risk.json'), []);
   const cot = loadJson(path.join(cacheDir, 'cot-positioning.json'), []);
   const alerts = loadJson(path.join(cacheDir, 'fund-flow-alerts.json'), []);
 
@@ -106,6 +136,9 @@ function buildPayload() {
 
   const latestLiquidity = fedLiquidity[fedLiquidity.length - 1];
   const weekAgoLiquidity = fedLiquidity.length > 0 ? weekAgoEntry(fedLiquidity) : null;
+
+  const latestRisk = marketRisk[marketRisk.length - 1];
+  const weekAgoRisk = marketRisk.length > 0 ? weekAgoEntry(marketRisk) : null;
 
   const cotByInstrument = new Map();
   for (const entry of cot) {
@@ -132,6 +165,23 @@ function buildPayload() {
       label: latestScore.label,
       components: latestScore.components
     },
+    // Raw levels + 7d deltas, not just the compressed -2..+2 score - the
+    // score alone can't tell the model whether "dollar: 0" means genuinely
+    // flat or two offsetting moves that netted out.
+    mercado_riesgo: latestRisk ? {
+      vix: latestRisk.vix,
+      vix_delta_7d: weekAgoRisk ? latestRisk.vix - weekAgoRisk.vix : null,
+      hy_oas: latestRisk.hy_oas,
+      hy_oas_delta_7d: weekAgoRisk ? latestRisk.hy_oas - weekAgoRisk.hy_oas : null,
+      ig_oas: latestRisk.ig_oas,
+      ig_oas_delta_7d: weekAgoRisk && latestRisk.ig_oas != null && weekAgoRisk.ig_oas != null
+        ? latestRisk.ig_oas - weekAgoRisk.ig_oas : null,
+      hy_ig_spread_differential: latestRisk.ig_oas != null ? latestRisk.hy_oas - latestRisk.ig_oas : null,
+      dxy: latestRisk.dxy,
+      dxy_delta_7d: weekAgoRisk ? latestRisk.dxy - weekAgoRisk.dxy : null,
+      us10y: latestRisk.us10y,
+      us10y_delta_7d: weekAgoRisk ? latestRisk.us10y - weekAgoRisk.us10y : null
+    } : null,
     gamma_regime: buildGammaSnapshot(),
     etf_flows: {
       spy_net_flow: latestScore.inputs?.spy_net_flow ?? null,
@@ -153,9 +203,7 @@ function buildPayload() {
   };
 }
 
-async function callLLM(payload) {
-  const userContent = `Datos de hoy:\n${JSON.stringify(payload, null, 2)}\n\nGenerá el análisis institucional de hoy con estos datos.`;
-
+async function callGemini(userContent) {
   const res = await fetch(`${GEMINI_ENDPOINT}?key=${GEMINI_API_KEY}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -177,9 +225,44 @@ async function callLLM(payload) {
   return text.trim();
 }
 
+async function callClaude(userContent) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01'
+    },
+    body: JSON.stringify({
+      model: CLAUDE_MODEL,
+      max_tokens: 1600,
+      system: SYSTEM_PROMPT,
+      messages: [{ role: 'user', content: userContent }]
+    })
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Claude API HTTP ${res.status}: ${errText}`);
+  }
+
+  const json = await res.json();
+  // Sonnet 5 uses extended thinking by default, so content[] can include a
+  // leading "thinking" block before the actual "text" block - find it by type
+  // rather than assuming content[0].
+  const textBlock = json.content?.find(b => b.type === 'text');
+  if (!textBlock?.text) throw new Error(`Claude response missing text: ${JSON.stringify(json)}`);
+  return textBlock.text.trim();
+}
+
+async function callLLM(payload) {
+  const userContent = `Datos de hoy:\n${JSON.stringify(payload, null, 2)}\n\nGenerá el análisis institucional de hoy con estos datos.`;
+  return PROVIDER === 'claude' ? callClaude(userContent) : callGemini(userContent);
+}
+
 async function run() {
-  if (!GEMINI_API_KEY) {
-    console.error('GEMINI_API_KEY missing from .env - get a free key at https://aistudio.google.com/apikey');
+  if (!ANTHROPIC_API_KEY && !GEMINI_API_KEY) {
+    console.error('Missing both ANTHROPIC_API_KEY and GEMINI_API_KEY in .env - need at least one.');
     process.exit(1);
   }
 
@@ -190,11 +273,12 @@ async function run() {
   }
 
   const narrative = await callLLM(payload);
+  const modelUsed = PROVIDER === 'claude' ? CLAUDE_MODEL : GEMINI_MODEL;
 
   const entry = {
     date: payload.fecha,
     narrative,
-    model: GEMINI_MODEL,
+    model: modelUsed,
     generated_at: new Date().toISOString(),
     inputs: payload
   };
@@ -205,7 +289,7 @@ async function run() {
   withoutToday.sort((a, b) => a.date.localeCompare(b.date));
   fs.writeFileSync(outputPath, JSON.stringify(withoutToday, null, 2), 'utf8');
 
-  console.log(`Institutional analysis for ${entry.date} (${GEMINI_MODEL}):\n${narrative}`);
+  console.log(`Institutional analysis for ${entry.date} (${modelUsed}):\n${narrative}`);
 }
 
 run().catch(err => {

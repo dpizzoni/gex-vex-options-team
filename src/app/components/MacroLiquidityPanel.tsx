@@ -99,56 +99,69 @@ function SingleMetricChart({ label, color, data, formatValue }: {
           {formatValue(min)} — {formatValue(max)}
         </span>
       </div>
-      <svg
-        width={`${CHART_WIDTH_PERCENT}%`}
-        height={SINGLE_CHART_HEIGHT + 4}
-        viewBox={`0 0 ${width} ${SINGLE_CHART_HEIGHT + 4}`}
-        preserveAspectRatio="none"
-        style={{ display: 'block', overflow: 'visible' }}
-      >
-        <line x1={0} x2={width} y1={0} y2={0} stroke="rgba(255,255,255,0.06)" strokeWidth={1} />
-        <line x1={0} x2={width} y1={SINGLE_CHART_HEIGHT} y2={SINGLE_CHART_HEIGHT} stroke="rgba(255,255,255,0.06)" strokeWidth={1} />
-        <path d={path} fill="none" stroke={color} strokeWidth={1.75} />
+      <div style={{ position: 'relative', width: `${CHART_WIDTH_PERCENT}%` }}>
+        <svg
+          width="100%"
+          height={SINGLE_CHART_HEIGHT + 4}
+          viewBox={`0 0 ${width} ${SINGLE_CHART_HEIGHT + 4}`}
+          preserveAspectRatio="none"
+          style={{ display: 'block', overflow: 'visible' }}
+        >
+          <line x1={0} x2={width} y1={0} y2={0} stroke="rgba(255,255,255,0.06)" strokeWidth={1} />
+          <line x1={0} x2={width} y1={SINGLE_CHART_HEIGHT} y2={SINGLE_CHART_HEIGHT} stroke="rgba(255,255,255,0.06)" strokeWidth={1} />
+          <path d={path} fill="none" stroke={color} strokeWidth={1.75} />
 
-        {points.map((p, i) => (
-          <rect
-            key={p.date}
-            x={i * slotWidth}
-            y={0}
-            width={slotWidth}
-            height={SINGLE_CHART_HEIGHT}
-            fill="transparent"
-            onMouseEnter={() => setHoveredIndex(i)}
-            onMouseLeave={() => setHoveredIndex(null)}
-            style={{ cursor: 'pointer' }}
-          />
-        ))}
+          {points.map((p, i) => (
+            <rect
+              key={p.date}
+              x={i * slotWidth}
+              y={0}
+              width={slotWidth}
+              height={SINGLE_CHART_HEIGHT}
+              fill="transparent"
+              onMouseEnter={() => setHoveredIndex(i)}
+              onMouseLeave={() => setHoveredIndex(null)}
+              style={{ cursor: 'pointer' }}
+            />
+          ))}
+
+          {hovered && (
+            <>
+              <line x1={hovered.x} x2={hovered.x} y1={0} y2={SINGLE_CHART_HEIGHT} stroke="rgba(255,255,255,0.25)" strokeDasharray="2,2" />
+              <circle cx={hovered.x} cy={hovered.y} r={2.5} fill={color} />
+            </>
+          )}
+        </svg>
 
         {hovered && (
-          <>
-            <line x1={hovered.x} x2={hovered.x} y1={0} y2={SINGLE_CHART_HEIGHT} stroke="rgba(255,255,255,0.25)" strokeDasharray="2,2" />
-            <circle cx={hovered.x} cy={hovered.y} r={2.5} fill={color} />
-            <foreignObject x={Math.min(Math.max(hovered.x - 60, 0), width - 120)} y={-46} width={120} height={42} style={{ pointerEvents: 'none', overflow: 'visible' }}>
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <div style={{
-                  backgroundColor: 'rgba(10, 16, 35, 0.97)',
-                  border: `1px solid ${color}`,
-                  borderRadius: '6px',
-                  padding: '4px 8px',
-                  fontFamily: 'monospace',
-                  fontSize: '10px',
-                  lineHeight: 1.4,
-                  width: 'max-content',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
-                }}>
-                  <div style={{ color: 'rgba(255,255,255,0.6)' }}>{hovered.date}</div>
-                  <div style={{ color, fontWeight: 700 }}>{formatValue(hovered.value)}</div>
-                </div>
-              </div>
-            </foreignObject>
-          </>
+          <div
+            style={{
+              position: 'absolute',
+              left: `${(hovered.x / width) * 100}%`,
+              top: 0,
+              transform: 'translate(-50%, calc(-100% - 8px))',
+              pointerEvents: 'none',
+              display: 'flex',
+              justifyContent: 'center'
+            }}
+          >
+            <div style={{
+              backgroundColor: 'rgba(10, 16, 35, 0.97)',
+              border: `1px solid ${color}`,
+              borderRadius: '6px',
+              padding: '4px 8px',
+              fontFamily: 'monospace',
+              fontSize: '10px',
+              lineHeight: 1.4,
+              width: 'max-content',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
+            }}>
+              <div style={{ color: 'rgba(255,255,255,0.6)' }}>{hovered.date}</div>
+              <div style={{ color, fontWeight: 700 }}>{formatValue(hovered.value)}</div>
+            </div>
+          </div>
         )}
-      </svg>
+      </div>
     </div>
   );
 }

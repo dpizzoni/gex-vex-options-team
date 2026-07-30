@@ -211,9 +211,6 @@ function MetricBars({
 const SECTOR_WEEKS_WINDOW = 12;
 const WEEKLY_BAR_WIDTH = 5;
 const WEEKLY_BAR_GAP = 2;
-const DAILY_BAR_WIDTH = 2;
-const DAILY_BAR_GAP = 1;
-const WEEK_SECTION_GAP = 6;
 
 type DayPoint = { date: string; value: number };
 type WeekGroup = { weekStart: string; total: number; days: DayPoint[] };
@@ -247,11 +244,11 @@ function groupByWeek(series: DayPoint[]): WeekGroup[] {
 
 type HoverInfo = { x: number; title: string; lines: { label: string; value: number }[] };
 
-// Weekly bars for everything except the most recent week, which breaks down
-// into individual daily bars instead - the recent week is where day-to-day
-// detail actually matters for spotting an accumulation/distribution streak
-// starting, while older weeks are more useful summarized. Hovering a weekly
-// bar shows the day-by-day breakdown that got collapsed into it.
+// All weeks - including the current, in-progress one - render as the same
+// compressed weekly bar. Hovering any bar shows the day-by-day breakdown
+// that got collapsed into it, so the detail is still there without making
+// the current week look structurally different (which read as confusing to
+// anyone unfamiliar with how this chart was built).
 function SectorFlowBars({ history }: { history: SectorFlowEntry[] }) {
   const [hovered, setHovered] = useState<HoverInfo | null>(null);
 
@@ -261,17 +258,10 @@ function SectorFlowBars({ history }: { history: SectorFlowEntry[] }) {
   }
 
   const weeks = groupByWeek(daily).slice(-SECTOR_WEEKS_WINDOW);
-  const pastWeeks = weeks.slice(0, -1);
-  const currentWeek = weeks[weeks.length - 1];
-
-  const maxAbs = Math.max(
-    ...pastWeeks.map(w => Math.abs(w.total)),
-    ...currentWeek.days.map(d => Math.abs(d.value)),
-    1
-  );
+  const maxAbs = Math.max(...weeks.map(w => Math.abs(w.total)), 1);
 
   let cursor = 0;
-  const weekBars = pastWeeks.map(w => {
+  const weekBars = weeks.map(w => {
     const x = cursor;
     cursor += WEEKLY_BAR_WIDTH + WEEKLY_BAR_GAP;
     const barHeight = Math.max(1, (Math.abs(w.total) / maxAbs) * (CHART_HEIGHT / 2));
@@ -279,25 +269,11 @@ function SectorFlowBars({ history }: { history: SectorFlowEntry[] }) {
     return { ...w, x, barHeight, y };
   });
 
-  const dividerX = cursor + WEEK_SECTION_GAP / 2;
-  cursor += WEEK_SECTION_GAP;
-
-  const dayBars = currentWeek.days.map(d => {
-    const x = cursor;
-    cursor += DAILY_BAR_WIDTH + DAILY_BAR_GAP;
-    const barHeight = Math.max(1, (Math.abs(d.value) / maxAbs) * (CHART_HEIGHT / 2));
-    const y = d.value >= 0 ? CHART_HEIGHT / 2 - barHeight : CHART_HEIGHT / 2;
-    return { ...d, x, barHeight, y };
-  });
-
   const width = cursor;
 
   return (
     <svg width={width} height={CHART_HEIGHT} style={{ display: 'block', flexShrink: 0, overflow: 'visible' }}>
       <line x1={0} y1={CHART_HEIGHT / 2} x2={width} y2={CHART_HEIGHT / 2} stroke="rgba(255,255,255,0.08)" strokeWidth={1} />
-      {weekBars.length > 0 && dayBars.length > 0 && (
-        <line x1={dividerX} x2={dividerX} y1={0} y2={CHART_HEIGHT} stroke="rgba(167,139,250,0.4)" strokeDasharray="2,2" />
-      )}
       {weekBars.map(w => (
         <React.Fragment key={w.weekStart}>
           <rect
@@ -315,21 +291,6 @@ function SectorFlowBars({ history }: { history: SectorFlowEntry[] }) {
             style={{ cursor: 'pointer' }}
           />
           <rect x={w.x} y={w.y} width={WEEKLY_BAR_WIDTH} height={w.barHeight} fill={w.total >= 0 ? '#00e676' : '#ff2a6d'} style={{ pointerEvents: 'none' }} />
-        </React.Fragment>
-      ))}
-      {dayBars.map(d => (
-        <React.Fragment key={d.date}>
-          <rect
-            x={d.x - 1}
-            y={0}
-            width={DAILY_BAR_WIDTH + 2}
-            height={CHART_HEIGHT}
-            fill="transparent"
-            onMouseEnter={() => setHovered({ x: d.x + DAILY_BAR_WIDTH / 2, title: d.date, lines: [{ label: '', value: d.value }] })}
-            onMouseLeave={() => setHovered(null)}
-            style={{ cursor: 'pointer' }}
-          />
-          <rect x={d.x} y={d.y} width={DAILY_BAR_WIDTH} height={d.barHeight} fill={d.value >= 0 ? '#00e676' : '#ff2a6d'} style={{ pointerEvents: 'none' }} />
         </React.Fragment>
       ))}
 
@@ -613,7 +574,7 @@ export default function FundFlowPanel({ sectorFlow, marketTide, cotPositioning, 
         {/* Sector Flow */}
         <div style={{ ...colStyle, minWidth: '320px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <h4 style={colHeaderStyle}>FLUJO NETO POR SECTOR (ETF, {SECTOR_WEEKS_WINDOW}SEM + ÚLT. SEMANA DIARIA)</h4>
+            <h4 style={colHeaderStyle}>FLUJO NETO POR SECTOR (ETF, {SECTOR_WEEKS_WINDOW}SEM)</h4>
             <FundFlowAlertsBell alerts={fundFlowAlerts} />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -624,7 +585,7 @@ export default function FundFlowPanel({ sectorFlow, marketTide, cotPositioning, 
                   <span style={sectorLabelStyle}>{SECTOR_LABELS[s.ticker] ?? ''}</span>
                 </span>
                 <SectorFlowBars history={s.history} />
-                <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flex: '0 0 auto', marginLeft: 'auto' }}>
+                <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flex: '0 0 auto' }}>
                   <span
                     style={{
                       fontFamily: 'monospace',
@@ -742,9 +703,13 @@ const titleStyle: React.CSSProperties = {
   color: '#a78bfa'
 };
 
+// Sector Flow's row content (ticker + weekly bars + value) has a fixed,
+// fairly narrow natural width - giving it an equal 1fr column like COT left
+// a wide dead gap between the bars and the $ values. Capping it lets COT
+// (which actually benefits from more room) take the rest.
 const gridStyle: React.CSSProperties = {
   display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+  gridTemplateColumns: 'minmax(320px, 400px) minmax(320px, 1fr)',
   gap: '24px'
 };
 

@@ -1,9 +1,9 @@
 [
   {
     "date": "2026-07-28",
-    "narrative": "**Liquidez y crédito**\nNet liquidity cae 69.9bn en 7d, pero no por RRP (+0.85bn) sino por reconstrucción de TGA (+73.4bn) — drenaje técnico, no huida de reservas. WALCL sigue expandiéndose (+4.35bn). En crédito, HY OAS sube más que IG (2.84 vs 0.81, diferencial 2.03) — el estrés es idiosincrático en high yield, no un deterioro sistémico de crédito.\n\n**Gamma y spot**\nSPY en SHORT_GAMMA con net_gex en -2.32M y profundizándose (ema3 más negativo), spot cayendo -0.59% intradía — el posicionamiento de dealers amplifica la baja, vendiendo en la corrección. Put wall en 730 (spot 736.49) queda como referencia de soporte estructural inmediato; call wall en 750. P/C ratio 1.4565 confirma sesgo defensivo fuerte en el vencimiento cercano, coherente con VIX subiendo (+1.16 en 7d, 18.21 nivel).\n\n**Contradicción de señales**\nEl score compone -2 (Distribution) pero breadth aporta +2 mientras liquidity y vix restan — score comprimido esconde una divergencia real: mercado amplio sostiene fortaleza técnica mientras liquidez/vol se deterioran. Flujo ETF total +12.75M (QQQ lidera con +7.1M) contrasta con rotación sectorial clara: XLF y XLP en distribución silenciosa (-8.95M y -2.35M), SPY y XLK en acumulación silenciosa.",
+    "narrative": "SPY cae 1.54% en un régimen SHORT_GAMMA (net GEX -2.32M), lo que amplifica la corrección: dealers vendiendo en la baja empujan el spot hacia el put wall de 725, nivel a vigilar como soporte estructural inmediato; el call wall en 750 queda lejos y pierde relevancia como techo de corto plazo. El p/c ratio de 1.46 confirma sesgo defensivo fuerte en el vencimiento cercano, consistente con cobertura activa más que con posicionamiento direccional bajista puro. La liquidez neta cae 69.9bn en 7 días (TGA subiendo 73.4bn drena el sistema) mientras VIX sube a 18.21 (+1.16) — ambas señales alineadas hacia menor apetito de riesgo, sin contradicción. Crédito no confirma pánico: HY OAS en 2.84 (+0.15) e IG OAS en 0.81 (+0.03) con diferencial HY-IG de 2.03, ampliándose levemente pero sin señal de estrés sistémico, más bien deterioro idiosincrático acotado en high yield. COT semanal muestra apalancados aumentando +41,276 contratos netos en ES pero asset managers reduciendo -12,116, divergencia que sugiere especuladores comprando el dip mientras el dinero real se retira; en VX, asset managers suman +1,790 (cobertura de cola) y leveraged money recorta -7,091. El ranking sectorial de 5 días muestra a XLF como líder absoluto de entradas (+52.35M) pese a la alerta de QUIET_DISTRIBUTION de los últimos 3 días (-8.95M), señal de que el flujo se revirtió recientemente después de una racha previa fuerte; XLV lidera las salidas (-11.75M) de forma sostenida. SPY acumula silenciosamente (+8.7M en 3 días) mientras el mercado corrige, compatible con manos fuertes comprando debilidad en el índice amplio. El cuadro es mixto: liquidez y VIX se deterioran, pero crédito se mantiene contenido y hay acumulación selectiva en SPY/XLK, lo que reduce la probabilidad de una corrección sistémica y aumenta la de un ajuste técnico de corto plazo amplificado por gamma negativo.\n\nEl dinero institucional está rotando desde XLV y XLF (distribución reciente) hacia SPY y XLK, sin mostrar pánico generalizado sino reposicionamiento sectorial defensivo.",
     "model": "claude-sonnet-5",
-    "generated_at": "2026-07-30T04:11:00.404Z",
+    "generated_at": "2026-07-30T04:20:05.964Z",
     "inputs": {
       "fecha": "2026-07-28",
       "liquidez": {
@@ -45,14 +45,14 @@
       "gamma_regime": {
         "ticker": "SPY",
         "fecha": "2026-07-29",
-        "spot": 736.49,
-        "spot_change_1d_pct": -0.589855033339633,
+        "spot": 729.46,
+        "spot_change_1d_pct": -1.5387522608859943,
         "regimen": "SHORT_GAMMA",
         "net_gex": -2319072,
         "net_gex_delta_1d": 224525,
         "ema3_net_gex": -2422753,
         "king_node": null,
-        "put_wall": 730,
+        "put_wall": 725,
         "call_wall": 750,
         "p_c_ratio_vencimiento_cercano": 1.4565
       },
@@ -60,7 +60,79 @@
         "spy_net_flow": 3050000,
         "qqq_net_flow": 7100000,
         "iwm_net_flow": 2600000,
-        "total_net_flow": 12750000
+        "total_net_flow": 12750000,
+        "ranking_sectorial_5d": [
+          {
+            "ticker": "XLF",
+            "net_flow_1d": 29650000,
+            "net_flow_5d": 52350000
+          },
+          {
+            "ticker": "SPY",
+            "net_flow_1d": 3050000,
+            "net_flow_5d": 15250000
+          },
+          {
+            "ticker": "QQQ",
+            "net_flow_1d": 7100000,
+            "net_flow_5d": 7250000
+          },
+          {
+            "ticker": "XLB",
+            "net_flow_1d": 200000,
+            "net_flow_5d": 4050000
+          },
+          {
+            "ticker": "XLK",
+            "net_flow_1d": 300000,
+            "net_flow_5d": 2250000
+          },
+          {
+            "ticker": "XLU",
+            "net_flow_1d": -100000,
+            "net_flow_5d": 1000000
+          },
+          {
+            "ticker": "XLC",
+            "net_flow_1d": -500000,
+            "net_flow_5d": 850000
+          },
+          {
+            "ticker": "XLRE",
+            "net_flow_1d": 250000,
+            "net_flow_5d": 350000
+          },
+          {
+            "ticker": "XLY",
+            "net_flow_1d": 100000,
+            "net_flow_5d": -1100000
+          },
+          {
+            "ticker": "IWM",
+            "net_flow_1d": 2600000,
+            "net_flow_5d": -2300000
+          },
+          {
+            "ticker": "XLP",
+            "net_flow_1d": 400000,
+            "net_flow_5d": -3200000
+          },
+          {
+            "ticker": "XLI",
+            "net_flow_1d": -1400000,
+            "net_flow_5d": -3300000
+          },
+          {
+            "ticker": "XLE",
+            "net_flow_1d": -50000,
+            "net_flow_5d": -4000000
+          },
+          {
+            "ticker": "XLV",
+            "net_flow_1d": -450000,
+            "net_flow_5d": -11750000
+          }
+        ]
       },
       "cot_semanal": [
         {

@@ -49,7 +49,16 @@ Reglas:
   amplía, el mercado de crédito está precificando más riesgo idiosincrático en
   high yield específicamente, no un deterioro genérico.
 - Mencioná los montos reales de flujo ETF (etf_flows) en dólares cuando sean
-  relevantes, no solo el score agregado.
+  relevantes, no solo el score agregado. Usá ranking_sectorial_5d (ordenado de
+  mayor entrada a mayor salida de dinero) para identificar rotación real entre
+  sectores/índices, no solo el neto total.
+- La ÚLTIMA línea del análisis tiene que ser una conclusión de una sola
+  oración, explícita y concreta, con el patrón "el dinero institucional está
+  [entrando/saliendo/rotando] desde <sector/activo de ranking_sectorial_5d o
+  mercado_riesgo> hacia <otro>" (o "no muestra rotación clara, está
+  [acumulando/distribuyendo] de forma generalizada" si el ranking no muestra
+  una rotación nítida). Esta conclusión va DESPUÉS del análisis técnico, como
+  cierre - no reemplaza el resto de la estructura, la corona.
 - Basate ÚNICAMENTE en los datos que te paso. Si algo no está en los datos (por
   ejemplo, estructura de plazos del VIX u open interest por strike más allá de
   las paredes de gamma), no lo inventes ni lo asumas - decí que no está
@@ -124,6 +133,25 @@ function buildGammaSnapshot() {
   };
 }
 
+// All tracked ETFs (indices + sectors), ranked by 5-day cumulative net flow -
+// this is what lets the agent name an actual rotation ("saliendo de X hacia
+// Y") instead of just reporting the SPY+QQQ+IWM aggregate.
+const FLOW_TICKERS = ['SPY', 'QQQ', 'IWM', 'XLB', 'XLC', 'XLE', 'XLF', 'XLI', 'XLK', 'XLP', 'XLRE', 'XLU', 'XLV', 'XLY'];
+
+function buildSectorFlowRanking() {
+  const rows = [];
+  for (const ticker of FLOW_TICKERS) {
+    const history = loadJson(path.join(cacheDir, `fund-flow-${ticker}.json`), []);
+    if (history.length === 0) continue;
+    const sorted = [...history].sort((a, b) => a.date.localeCompare(b.date));
+    const latest = sorted[sorted.length - 1];
+    const last5 = sorted.slice(-5);
+    const net_flow_5d = last5.reduce((sum, r) => sum + (r.net_flow ?? 0), 0);
+    rows.push({ ticker, net_flow_1d: latest.net_flow ?? null, net_flow_5d });
+  }
+  return rows.sort((a, b) => b.net_flow_5d - a.net_flow_5d);
+}
+
 function buildPayload() {
   const flowScoreHistory = loadJson(path.join(cacheDir, 'institutional-flow-score.json'), []);
   const fedLiquidity = loadJson(path.join(cacheDir, 'fed-liquidity.json'), []);
@@ -187,7 +215,11 @@ function buildPayload() {
       spy_net_flow: latestScore.inputs?.spy_net_flow ?? null,
       qqq_net_flow: latestScore.inputs?.qqq_net_flow ?? null,
       iwm_net_flow: latestScore.inputs?.iwm_net_flow ?? null,
-      total_net_flow: latestScore.inputs?.etf_net_flow_total ?? null
+      total_net_flow: latestScore.inputs?.etf_net_flow_total ?? null,
+      // Ranked by net_flow_5d descending: first entries = mayor entrada de
+      // dinero acumulada, últimas entradas = mayor salida - úsalo para
+      // identificar rotación sectorial, no solo el agregado de índices.
+      ranking_sectorial_5d: buildSectorFlowRanking()
     },
     cot_semanal: Array.from(cotByInstrument.values()).map(c => ({
       instrumento: c.instrument,
@@ -235,7 +267,11 @@ async function callClaude(userContent) {
     },
     body: JSON.stringify({
       model: CLAUDE_MODEL,
-      max_tokens: 1600,
+      max_tokens: 1000,
+      // This is a short formatting/synthesis task, not a reasoning-heavy one -
+      // extended thinking (on by default for Sonnet 5) was eating the token
+      // budget itself and truncating the actual narrative mid-sentence.
+      thinking: { type: 'disabled' },
       system: SYSTEM_PROMPT,
       messages: [{ role: 'user', content: userContent }]
     })
@@ -247,9 +283,8 @@ async function callClaude(userContent) {
   }
 
   const json = await res.json();
-  // Sonnet 5 uses extended thinking by default, so content[] can include a
-  // leading "thinking" block before the actual "text" block - find it by type
-  // rather than assuming content[0].
+  // find() instead of content[0] for resilience even with thinking disabled -
+  // cheap insurance against future response-shape changes.
   const textBlock = json.content?.find(b => b.type === 'text');
   if (!textBlock?.text) throw new Error(`Claude response missing text: ${JSON.stringify(json)}`);
   return textBlock.text.trim();

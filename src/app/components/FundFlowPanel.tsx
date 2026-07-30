@@ -372,6 +372,50 @@ function cotChangeSeries(entries: CotEntry[], field: 'asset_mgr_net_change' | 'l
     .map(e => ({ date: e.date, value: e[field] }));
 }
 
+function CotAlertChip({ alert }: { alert: CotAlert }) {
+  const [hovered, setHovered] = useState(false);
+  const color = alert.kind === 'divergence' ? '#fbbf24' : '#a78bfa';
+
+  return (
+    <div style={{ position: 'relative' }} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
+      <div
+        style={{
+          ...cotAlertChipStyle,
+          borderColor: alert.kind === 'divergence' ? 'rgba(251,191,36,0.4)' : 'rgba(167,139,250,0.4)',
+          color,
+          cursor: 'help'
+        }}
+      >
+        {alert.kind === 'divergence' ? '⚠' : '📊'} {alert.text}
+      </div>
+      {hovered && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '100%',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            marginTop: '6px',
+            width: '260px',
+            backgroundColor: 'rgba(10, 16, 35, 0.98)',
+            border: `1px solid ${color}`,
+            borderRadius: '6px',
+            padding: '8px 10px',
+            fontSize: '0.7rem',
+            lineHeight: 1.5,
+            color: 'rgba(255,255,255,0.8)',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
+            zIndex: 30,
+            pointerEvents: 'none'
+          }}
+        >
+          {alert.description}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function CotInfoModal({ onClose }: { onClose: () => void }) {
   // Portal to document.body: same backdrop-filter stacking-context issue as
   // the other panels' info modals.
@@ -452,7 +496,12 @@ function CotInfoModal({ onClose }: { onClose: () => void }) {
   );
 }
 
-type CotAlert = { kind: 'divergence' | 'extreme'; text: string };
+type CotAlert = { kind: 'divergence' | 'extreme'; text: string; description: string };
+
+const COT_ALERT_DESCRIPTIONS: Record<CotAlert['kind'], string> = {
+  divergence: 'Asset Managers ("dinero real") y Leveraged Funds ("dinero especulativo/apalancado") movieron su posición neta en direcciones opuestas esta semana, cada uno por más que su movimiento semanal típico. Señala que el mercado se está moviendo por convicción táctica de corto plazo, no por convicción institucional de fondo (o viceversa).',
+  extreme: 'El posicionamiento neto actual es el máximo o mínimo de las últimas 52 semanas — señal clásica de posicionamiento "cargado" hacia un lado, que históricamente deja poco margen para que ese mismo grupo siga empujando en la misma dirección y aumenta la probabilidad de una reversión.'
+};
 
 // Two rules-based signals from the 52-week COT window - complementary to
 // gamma-regime (options/dealers) and fund-flow (ETF $/price) alerts because
@@ -494,16 +543,17 @@ function computeCotAlerts(entries: CotEntry[]): CotAlert[] {
     const lmDir = latest.lev_money_net_change > 0 ? 'suma' : 'reduce';
     alerts.push({
       kind: 'divergence',
-      text: `Asset Mgr ${amDir} mientras Leveraged Funds ${lmDir} — posicionamiento divergente esta semana`
+      text: `Asset Mgr ${amDir} mientras Leveraged Funds ${lmDir} — posicionamiento divergente esta semana`,
+      description: COT_ALERT_DESCRIPTIONS.divergence
     });
   }
 
   const amNets = sorted.map(e => e.asset_mgr_net);
   const lmNets = sorted.map(e => e.lev_money_net);
-  if (latest.asset_mgr_net === Math.max(...amNets)) alerts.push({ kind: 'extreme', text: 'Asset Mgr en máximo de 52 semanas' });
-  if (latest.asset_mgr_net === Math.min(...amNets)) alerts.push({ kind: 'extreme', text: 'Asset Mgr en mínimo de 52 semanas' });
-  if (latest.lev_money_net === Math.max(...lmNets)) alerts.push({ kind: 'extreme', text: 'Leveraged Funds en máximo de 52 semanas' });
-  if (latest.lev_money_net === Math.min(...lmNets)) alerts.push({ kind: 'extreme', text: 'Leveraged Funds en mínimo de 52 semanas' });
+  if (latest.asset_mgr_net === Math.max(...amNets)) alerts.push({ kind: 'extreme', text: 'Asset Mgr en máximo de 52 semanas', description: COT_ALERT_DESCRIPTIONS.extreme });
+  if (latest.asset_mgr_net === Math.min(...amNets)) alerts.push({ kind: 'extreme', text: 'Asset Mgr en mínimo de 52 semanas', description: COT_ALERT_DESCRIPTIONS.extreme });
+  if (latest.lev_money_net === Math.max(...lmNets)) alerts.push({ kind: 'extreme', text: 'Leveraged Funds en máximo de 52 semanas', description: COT_ALERT_DESCRIPTIONS.extreme });
+  if (latest.lev_money_net === Math.min(...lmNets)) alerts.push({ kind: 'extreme', text: 'Leveraged Funds en mínimo de 52 semanas', description: COT_ALERT_DESCRIPTIONS.extreme });
 
   return alerts;
 }
@@ -779,19 +829,8 @@ export default function FundFlowPanel({ sectorFlow, marketTide, cotPositioning, 
                     <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem' }}>{c.date}</span>
                   </div>
                   {alerts.length > 0 && (
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px' }}>
-                      {alerts.map((a, i) => (
-                        <div
-                          key={i}
-                          style={{
-                            ...cotAlertChipStyle,
-                            borderColor: a.kind === 'divergence' ? 'rgba(251,191,36,0.4)' : 'rgba(167,139,250,0.4)',
-                            color: a.kind === 'divergence' ? '#fbbf24' : '#a78bfa'
-                          }}
-                        >
-                          {a.kind === 'divergence' ? '⚠' : '📊'} {a.text}
-                        </div>
-                      ))}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginLeft: '80px', gap: '3px' }}>
+                      {alerts.map((a, i) => <CotAlertChip key={i} alert={a} />)}
                     </div>
                   )}
                   <div style={cotMetricBlockStyle}>

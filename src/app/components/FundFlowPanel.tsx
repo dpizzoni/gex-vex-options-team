@@ -245,12 +245,29 @@ function groupByWeek(series: DayPoint[]): WeekGroup[] {
 
 type HoverInfo = { x: number; title: string; lines: { label: string; value: number }[] };
 
+// Shared calendar-week axis across every sector column: the union of ISO
+// weeks (Monday keys) seen in ANY sector's history, capped to the last
+// SECTOR_WEEKS_WINDOW. Without this, each sector's bars were positioned by
+// their own local index (`groupByWeek(...).slice(-N)`), so a sector missing
+// a single week (gap in capture, later listing, etc.) shifted every bar
+// after it out of phase with the other columns - making the same calendar
+// week land in different x positions per row and defeating the point of
+// comparing rotation across sectors visually.
+function sharedWeekKeys(allHistories: SectorFlowEntry[][]): string[] {
+  const keys = new Set<string>();
+  for (const history of allHistories) {
+    const daily = dedupedFlowSeries(history).map(d => ({ date: d.date, value: d.net_flow }));
+    for (const w of groupByWeek(daily)) keys.add(w.weekStart);
+  }
+  return Array.from(keys).sort().slice(-SECTOR_WEEKS_WINDOW);
+}
+
 // All weeks - including the current, in-progress one - render as the same
 // compressed weekly bar. Hovering any bar shows the day-by-day breakdown
 // that got collapsed into it, so the detail is still there without making
 // the current week look structurally different (which read as confusing to
 // anyone unfamiliar with how this chart was built).
-function SectorFlowBars({ history }: { history: SectorFlowEntry[] }) {
+function SectorFlowBars({ history, weekKeys }: { history: SectorFlowEntry[]; weekKeys: string[] }) {
   const [hovered, setHovered] = useState<HoverInfo | null>(null);
 
   const daily: DayPoint[] = dedupedFlowSeries(history).map(d => ({ date: d.date, value: d.net_flow }));
@@ -258,7 +275,11 @@ function SectorFlowBars({ history }: { history: SectorFlowEntry[] }) {
     return <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)' }}>Sin historial</span>;
   }
 
-  const weeks = groupByWeek(daily).slice(-SECTOR_WEEKS_WINDOW);
+  const byWeekStart = new Map(groupByWeek(daily).map(w => [w.weekStart, w]));
+  // Every column renders a bar (even a flat zero one) for each shared week
+  // key, so week N is always at the same x offset regardless of which weeks
+  // this particular sector actually has data for.
+  const weeks: WeekGroup[] = weekKeys.map(weekStart => byWeekStart.get(weekStart) ?? { weekStart, total: 0, days: [] });
   const maxAbs = Math.max(...weeks.map(w => Math.abs(w.total)), 1);
 
   let cursor = 0;
@@ -744,6 +765,7 @@ export default function FundFlowPanel({ sectorFlow, marketTide, cotPositioning, 
     return a.ticker.localeCompare(b.ticker);
   });
   const netTide = marketTide ? marketTide.net_call_premium + marketTide.net_put_premium : null;
+  const sectorWeekKeys = sharedWeekKeys(sortedSectors.map(s => s.history));
 
   const COT_INSTRUMENT_ORDER: CotEntry['instrument'][] = ['ES', 'NQ', 'VX'];
   const cotByInstrument = new Map<string, CotEntry[]>();
@@ -796,7 +818,7 @@ export default function FundFlowPanel({ sectorFlow, marketTide, cotPositioning, 
                   {s.ticker}
                   <span style={sectorLabelStyle}>{SECTOR_LABELS[s.ticker] ?? ''}</span>
                 </span>
-                <SectorFlowBars history={s.history} />
+                <SectorFlowBars history={s.history} weekKeys={sectorWeekKeys} />
                 {(() => {
                   const l = s.latest;
                   const pctChange = l?.last != null && l?.prev_close ? ((l.last - l.prev_close) / l.prev_close) * 100 : null;
@@ -1001,12 +1023,20 @@ const sectorTickerStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'baseline',
   gap: '6px',
-  fontWeight: 700
+  fontWeight: 700,
+  // A fixed flex-basis alone doesn't stop a single unbreakable long word
+  // (e.g. "Communication", "Discretionary") from forcing this box wider than
+  // 88px, since a box can't render smaller than its content's min-content
+  // width unless overflow is non-visible - and that overflow pushed every
+  // sector's weekly bars sibling out of alignment with each other.
+  overflow: 'hidden',
+  minWidth: 0
 };
 
 const sectorLabelStyle: React.CSSProperties = {
   fontWeight: 400,
   fontSize: '0.7rem',
+  overflowWrap: 'break-word',
   color: 'rgba(255,255,255,0.4)'
 };
 

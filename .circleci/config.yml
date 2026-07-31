@@ -11,10 +11,15 @@ version: 2.1
 # de "Parameters" (JSON) para que dispare solo su workflow:
 #
 #   Horario UTC (L-V)   Parameters              Dispara
-#   10:31               {"trigger": "intraday"} gamma-intraday (solo gamma-refresh)
+#   10:31               {"trigger": "morning"}  morning-close (gamma-refresh-morning → fund-flow-refresh, encadenados)
 #   15:00               {"trigger": "intraday"} gamma-intraday (solo gamma-refresh)
 #   20:30 (cierre)      {"trigger": "close"}     daily-close (gamma → fund-flow/COT, encadenados)
 #   21:30               {"trigger": "macro"}     macro-liquidity (Fed Liquidity + Flow Score → análisis institucional, encadenados)
+#
+# El Scheduled Pipeline de 10:31 UTC ya existía (antes disparaba solo
+# gamma-intraday con {"trigger": "intraday"}) - hay que editar su Parameters
+# a {"trigger": "morning"} para que ahora dispare también el fund-flow de la
+# mañana; no hace falta crear un 5to Scheduled Pipeline.
 #
 # El workflow `macro-liquidity` en sí ya encadena macro-liquidity-refresh →
 # institutional-analysis-refresh vía `requires:` (no hace falta un 5to
@@ -213,6 +218,16 @@ workflows:
       equal: ["intraday", << pipeline.parameters.trigger >>]
     jobs:
       - gamma-refresh
+
+  morning-close:
+    when:
+      equal: ["morning", << pipeline.parameters.trigger >>]
+    jobs:
+      - gamma-refresh:
+          name: gamma-refresh-morning
+      - fund-flow-refresh:
+          requires:
+            - gamma-refresh-morning
 
   daily-close:
     when:

@@ -31,7 +31,12 @@ async function ghFetch(path: string, headers: GhHeaders) {
 // Insights aggregates with a multi-hour lag - right after a fresh run it
 // still returns stale/empty data, which silently fell back to the frozen
 // GitHub Actions conclusion above.
-async function latestCircleCIWorkflowRun(workflowName: string) {
+// `jobNames` are the specific CircleCI job names to look for (e.g.
+// "gamma-refresh", "gamma-refresh-close"), not workflow names - the
+// `daily-close` workflow bundles gamma-refresh-close together with
+// fund-flow-refresh, so checking workflow-level status would flag Gamma
+// Regime as failed whenever fund-flow-refresh fails on its own.
+async function latestCircleCIJobRun(jobNames: string[]) {
   const token = process.env.CIRCLECI_TOKEN;
   if (!token) return null;
   const headers = { "Circle-Token": token };
@@ -50,9 +55,18 @@ async function latestCircleCIWorkflowRun(workflowName: string) {
     });
     if (!workflowsRes.ok) continue;
     const workflows = (await workflowsRes.json())?.items ?? [];
-    const workflow = workflows.find((w: { name: string }) => w.name === workflowName);
-    if (workflow) {
-      return { ranAt: workflow.created_at as string, status: workflow.status as string };
+
+    for (const workflow of workflows) {
+      const jobsRes = await fetch(`https://circleci.com/api/v2/workflow/${workflow.id}/job`, {
+        headers,
+        cache: "no-store",
+      });
+      if (!jobsRes.ok) continue;
+      const jobs = (await jobsRes.json())?.items ?? [];
+      const job = jobs.find((j: { name: string }) => jobNames.includes(j.name));
+      if (job) {
+        return { ranAt: (job.started_at ?? workflow.created_at) as string, status: job.status as string };
+      }
     }
   }
   return null;
@@ -93,27 +107,42 @@ export async function GET() {
   };
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  const [gexVexCommit, gammaCommit, fundFlowCommit, dailyRun, intradayRun, fundFlowRun, gammaCircleCIRun] =
-    await Promise.all([
-      latestCommitFor(["chore(data): daily UW capture & dealer update"], headers),
-      latestCommitFor(
-        ["chore(data): daily gamma regime capture", "chore(data): intraday gamma regime refresh"],
-        headers
-      ),
-      latestCommitFor(["chore(data): daily fund-flow & COT capture"], headers),
-      latestRunConclusion("daily-update.yml", headers),
-      latestRunConclusion("gamma-intraday.yml", headers),
-      latestRunConclusion("fund-flow-daily.yml", headers),
-      latestCircleCIWorkflowRun("gamma-regime"),
-    ]);
+  const [
+    gexVexCommit,
+    gammaCommit,
+    fundFlowCommit,
+    dailyRun,
+    intradayRun,
+    fundFlowRun,
+    gammaCircleCIRun,
+    fundFlowCircleCIRun,
+  ] = await Promise.all([
+    latestCommitFor(["chore(data): daily UW capture & dealer update"], headers),
+    latestCommitFor(
+      ["chore(data): daily gamma regime capture", "chore(data): intraday gamma regime refresh"],
+      headers
+    ),
+    latestCommitFor(["chore(data): daily fund-flow & COT capture"], headers),
+    latestRunConclusion("daily-update.yml", headers),
+    latestRunConclusion("gamma-intraday.yml", headers),
+    latestRunConclusion("fund-flow-daily.yml", headers),
+    latestCircleCIJobRun(["gamma-refresh", "gamma-refresh-close", "gamma-refresh-morning"]),
+    latestCircleCIJobRun(["fund-flow-refresh"]),
+  ]);
 
-  // Gamma Regime now runs on CircleCI (gammaCircleCIRun). Fall back to the
-  // old GitHub Actions conclusion only if CIRCLECI_TOKEN isn't configured yet.
+  // Gamma Regime and Fund Flow now run on CircleCI (see .circleci/config.yml).
+  // Fall back to the old GitHub Actions conclusion only if CIRCLECI_TOKEN
+  // isn't configured yet - both GH workflows have their `schedule:` disabled,
+  // so their `conclusion` would otherwise stay frozen on a stale run forever.
   const gammaFailed = gammaCircleCIRun
     ? gammaCircleCIRun.status === "failed" || gammaCircleCIRun.status === "error"
     : [dailyRun, intradayRun]
         .filter((r): r is NonNullable<typeof r> => r != null)
         .sort((a, b) => new Date(b.ranAt).getTime() - new Date(a.ranAt).getTime())[0]?.conclusion === "failure";
+
+  const fundFlowFailed = fundFlowCircleCIRun
+    ? fundFlowCircleCIRun.status === "failed" || fundFlowCircleCIRun.status === "error"
+    : fundFlowRun?.conclusion === "failure";
 
   return NextResponse.json({
     gexVex: {
@@ -126,7 +155,7 @@ export async function GET() {
     },
     fundFlow: {
       ranAt: fundFlowCommit?.ranAt ?? null,
-      failed: fundFlowRun?.conclusion === "failure",
+      failed: fundFlowFailed,
     },
   });
 }

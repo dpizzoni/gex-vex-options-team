@@ -66,17 +66,20 @@ function checkTicker(ticker, existingAlerts) {
   const allPositive = window.every(e => e.net_flow > 0);
   if (!allNegative && !allPositive) return [];
 
-  // Price context: compare the capture-day `last` at the start vs. the end of
-  // the same window (approximates "price over the streak", using whatever
-  // daily snapshots exist for those tickers rather than requiring an exact
-  // date match, since `date` and `net_flow_date` don't line up 1:1 yet).
-  // Filtered to rows that actually have `last`: uw-fetch-fund-flow.js also
-  // backfills flow-only rows with no snapshot fields at all, and mixing
-  // those into a plain index-based slice would drift the window away from
-  // "the last few real trading-day snapshots" as more history accumulates.
+  // Price context: compare `last` at the start vs. the end of the exact same
+  // net_flow_date window (not just the last STREAK_LENGTH price rows by
+  // position) - fund-flow-refresh now runs multiple times a day (morning,
+  // intraday, close, see .circleci/config.yml), so "today"'s row can hold an
+  // intraday snapshot from a run hours before net_flow itself catches up
+  // (net_flow_date still mirrors yesterday until tonight's close). A
+  // position-based slice would silently swap in that partial-day price and
+  // drift the price window out of sync with which days the flow streak
+  // actually covers, giving a different price_change_pct depending on what
+  // time of day this script happened to run.
   const priceHistory = history.filter(h => h.last != null).sort((a, b) => a.date.localeCompare(b.date));
-  const startPrice = priceHistory[Math.max(0, priceHistory.length - STREAK_LENGTH)]?.last;
-  const endPrice = priceHistory[priceHistory.length - 1]?.last;
+  const priceAtOrBefore = (dateStr) => [...priceHistory].reverse().find(h => h.date <= dateStr)?.last;
+  const startPrice = priceAtOrBefore(window[0].net_flow_date);
+  const endPrice = priceAtOrBefore(window[window.length - 1].net_flow_date);
   if (startPrice == null || endPrice == null || startPrice === 0) return [];
   const priceChangePct = (endPrice - startPrice) / startPrice;
 

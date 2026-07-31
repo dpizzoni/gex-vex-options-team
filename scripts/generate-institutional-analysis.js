@@ -75,7 +75,23 @@ chatbot conversacional: sos un analista que escribe una nota de research.
   estructurales); Leveraged Funds = dinero especulativo/apalancado
   (posiciones tácticas de corto plazo). Ambos moviéndose en la misma
   dirección refuerza la lectura; en direcciones opuestas, señala qué tipo de
-  dinero está realmente detrás del movimiento.
+  dinero está realmente detrás del movimiento. El array trae los TRES
+  instrumentos (ES, NQ, VX) - revisalos todos, no solo ES: VX es el más
+  informativo para detectar hedging (ej. Asset Managers sumando VX mientras
+  reducen ES es "dinero real vendiendo equity y comprando cobertura", una
+  lectura que ES solo no te da), y NQ puede confirmar o divergir de ES en
+  cuanto a qué tan generalizado es el posicionamiento.
+
+## Chequeo de plausibilidad entre tickers correlacionados
+Antes de tomar un dato de rotacion_precio_hoy como válido, comparalo contra
+tickers con overlap estructural conocido (ej. XLK es el mayor peso dentro de
+QQQ; SPY y los 11 sectoriales deberían sumar aproximadamente al índice). Un
+mismo día con XLK subiendo fuerte mientras QQQ cae (o viceversa) es
+estadísticamente improbable en un mercado real - señalalo explícitamente
+como posible ruido/error de captura en vez de construir la hipótesis de
+rotación sobre un dato que no pasa el sanity check. No dejes de usar el
+resto de los datos de ese ticker si son plausibles; solo marcá el punto
+específico que no cuadra.
 
 ## Integridad de los datos
 - Basate ÚNICAMENTE en los datos que te paso. Si algo no está (ej. estructura
@@ -94,7 +110,11 @@ Una sola oración con el patrón "el dinero institucional está
 ranking_sectorial_5d o mercado_riesgo), o "no muestra rotación clara, está
 [acumulando/distribuyendo] de forma generalizada" si no hay rotación nítida.
 Va después del análisis técnico, como cierre - no reemplaza el resto de la
-estructura.`;
+estructura. Tiene que ser consistente con las salvedades que planteaste en
+el cuerpo: si ya señalaste que la señal de un ticker es poco confiable (ej.
+contradicha por una alerta reciente), no lo nombres en esta oración como
+si fuera limpia - usá el patrón alternativo de "sin rotación clara" antes
+que contradecirte a vos mismo en la última línea.`;
 
 function loadJson(filePath, fallback) {
   if (!fs.existsSync(filePath)) return fallback;
@@ -397,7 +417,16 @@ async function run() {
   console.log(`Institutional analysis for ${entry.date} (${modelUsed}):\n${narrative}`);
 }
 
-run().catch(err => {
-  console.error('Failed to generate institutional analysis:', err.message);
-  process.exit(1);
-});
+// Exported so scripts/export-cowork-prompt.js can reuse the exact live
+// SYSTEM_PROMPT without duplicating/hand-copying it (and drifting out of
+// sync with what production actually sends the LLM). Guarded by
+// require.main so `require`-ing this file for that doesn't also fire off a
+// real LLM call.
+module.exports = { SYSTEM_PROMPT, buildPayload };
+
+if (require.main === module) {
+  run().catch(err => {
+    console.error('Failed to generate institutional analysis:', err.message);
+    process.exit(1);
+  });
+}

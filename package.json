@@ -26,7 +26,8 @@
     "macro:daily": "node scripts/fetch-fed-liquidity.js",
     "score:daily": "node scripts/fetch-market-risk.js && node scripts/compute-institutional-flow-score.js",
     "macro:full": "npm run macro:daily && npm run score:daily",
-    "analysis:daily": "node scripts/generate-institutional-analysis.js"
+    "analysis:daily": "node scripts/generate-institutional-analysis.js",
+    "cowork:export": "node scripts/export-cowork-prompt.js"
   },
   "dependencies": {
     "dotenv": "^17.4.2",

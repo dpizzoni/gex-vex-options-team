@@ -12,7 +12,7 @@ version: 2.1
 #
 #   Horario UTC (L-V)   Parameters              Dispara
 #   10:31               {"trigger": "morning"}  morning-close (gamma-refresh-morning → fund-flow-refresh, encadenados)
-#   15:00               {"trigger": "intraday"} gamma-intraday (solo gamma-refresh)
+#   15:00               {"trigger": "intraday"} gamma-intraday (gamma-refresh-intraday → fund-flow-refresh, encadenados)
 #   20:30 (cierre)      {"trigger": "close"}     daily-close (gamma → fund-flow/COT, encadenados)
 #   21:30               {"trigger": "macro"}     macro-liquidity (Fed Liquidity + Flow Score → análisis institucional, encadenados)
 #
@@ -217,7 +217,11 @@ workflows:
     when:
       equal: ["intraday", << pipeline.parameters.trigger >>]
     jobs:
-      - gamma-refresh
+      - gamma-refresh:
+          name: gamma-refresh-intraday
+      - fund-flow-refresh:
+          requires:
+            - gamma-refresh-intraday
 
   morning-close:
     when:

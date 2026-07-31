@@ -126,7 +126,7 @@ export async function GET() {
     latestRunConclusion("daily-update.yml", headers),
     latestRunConclusion("gamma-intraday.yml", headers),
     latestRunConclusion("fund-flow-daily.yml", headers),
-    latestCircleCIJobRun(["gamma-refresh", "gamma-refresh-close", "gamma-refresh-morning"]),
+    latestCircleCIJobRun(["gamma-refresh", "gamma-refresh-close", "gamma-refresh-morning", "gamma-refresh-intraday"]),
     latestCircleCIJobRun(["fund-flow-refresh"]),
   ]);
 

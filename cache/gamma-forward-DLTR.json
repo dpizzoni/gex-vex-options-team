@@ -1,50 +1,9 @@
 {
   "ticker": "DLTR",
-  "date": "2026-07-31",
+  "date": "2026-08-03",
   "spot": 127.21,
-  "expirations": [
-    {
-      "expiration": "2026-08-07",
-      "dte": 7,
-      "call_gex": 1635,
-      "put_gex": -1822,
-      "net_gex": -187,
-      "p_c_ratio": 1.1146
-    },
-    {
-      "expiration": "2026-08-14",
-      "dte": 14,
-      "call_gex": 1290,
-      "put_gex": -867,
-      "net_gex": 423,
-      "p_c_ratio": 0.672
-    },
-    {
-      "expiration": "2026-08-21",
-      "dte": 21,
-      "call_gex": 17476,
-      "put_gex": -15689,
-      "net_gex": 1787,
-      "p_c_ratio": 0.8977
-    },
-    {
-      "expiration": "2026-08-28",
-      "dte": 28,
-      "call_gex": 2331,
-      "put_gex": -174,
-      "net_gex": 2157,
-      "p_c_ratio": 0.0748
-    },
-    {
-      "expiration": "2026-09-04",
-      "dte": 35,
-      "call_gex": 63,
-      "put_gex": -16,
-      "net_gex": 47,
-      "p_c_ratio": 0.2569
-    }
-  ],
-  "putWall": 115,
-  "callWall": 135,
-  "limitedData": false
+  "expirations": [],
+  "putWall": null,
+  "callWall": null,
+  "limitedData": true
 }

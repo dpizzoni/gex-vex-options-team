@@ -1,50 +1,9 @@
 {
   "ticker": "FTNT",
-  "date": "2026-07-31",
+  "date": "2026-08-03",
   "spot": 161.95,
-  "expirations": [
-    {
-      "expiration": "2026-08-07",
-      "dte": 7,
-      "call_gex": 11118,
-      "put_gex": -2792,
-      "net_gex": 8325,
-      "p_c_ratio": 0.2512
-    },
-    {
-      "expiration": "2026-08-14",
-      "dte": 14,
-      "call_gex": 3025,
-      "put_gex": -807,
-      "net_gex": 2218,
-      "p_c_ratio": 0.2668
-    },
-    {
-      "expiration": "2026-08-21",
-      "dte": 21,
-      "call_gex": 12559,
-      "put_gex": -19919,
-      "net_gex": -7360,
-      "p_c_ratio": 1.5861
-    },
-    {
-      "expiration": "2026-08-28",
-      "dte": 28,
-      "call_gex": 327,
-      "put_gex": -341,
-      "net_gex": -14,
-      "p_c_ratio": 1.0427
-    },
-    {
-      "expiration": "2026-09-04",
-      "dte": 35,
-      "call_gex": 356,
-      "put_gex": -58,
-      "net_gex": 298,
-      "p_c_ratio": 0.1632
-    }
-  ],
-  "putWall": 155,
-  "callWall": 165,
-  "limitedData": false
+  "expirations": [],
+  "putWall": null,
+  "callWall": null,
+  "limitedData": true
 }

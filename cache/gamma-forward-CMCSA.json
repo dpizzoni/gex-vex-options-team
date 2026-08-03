@@ -1,50 +1,9 @@
 {
   "ticker": "CMCSA",
-  "date": "2026-07-31",
+  "date": "2026-08-03",
   "spot": 23.96,
-  "expirations": [
-    {
-      "expiration": "2026-08-07",
-      "dte": 7,
-      "call_gex": 169377,
-      "put_gex": -126870,
-      "net_gex": 42507,
-      "p_c_ratio": 0.749
-    },
-    {
-      "expiration": "2026-08-14",
-      "dte": 14,
-      "call_gex": 50355,
-      "put_gex": -56667,
-      "net_gex": -6312,
-      "p_c_ratio": 1.1254
-    },
-    {
-      "expiration": "2026-08-21",
-      "dte": 21,
-      "call_gex": 690045,
-      "put_gex": -913807,
-      "net_gex": -223762,
-      "p_c_ratio": 1.3243
-    },
-    {
-      "expiration": "2026-08-28",
-      "dte": 28,
-      "call_gex": 17239,
-      "put_gex": -13481,
-      "net_gex": 3759,
-      "p_c_ratio": 0.782
-    },
-    {
-      "expiration": "2026-09-04",
-      "dte": 35,
-      "call_gex": 14893,
-      "put_gex": -5820,
-      "net_gex": 9073,
-      "p_c_ratio": 0.3908
-    }
-  ],
-  "putWall": 20,
-  "callWall": 30,
-  "limitedData": false
+  "expirations": [],
+  "putWall": null,
+  "callWall": null,
+  "limitedData": true
 }

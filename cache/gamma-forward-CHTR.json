@@ -1,50 +1,9 @@
 {
   "ticker": "CHTR",
-  "date": "2026-07-31",
+  "date": "2026-08-03",
   "spot": 144.98,
-  "expirations": [
-    {
-      "expiration": "2026-08-07",
-      "dte": 7,
-      "call_gex": 4592,
-      "put_gex": -3285,
-      "net_gex": 1308,
-      "p_c_ratio": 0.7153
-    },
-    {
-      "expiration": "2026-08-14",
-      "dte": 14,
-      "call_gex": 914,
-      "put_gex": -936,
-      "net_gex": -22,
-      "p_c_ratio": 1.0243
-    },
-    {
-      "expiration": "2026-08-21",
-      "dte": 21,
-      "call_gex": 23502,
-      "put_gex": -11048,
-      "net_gex": 12454,
-      "p_c_ratio": 0.4701
-    },
-    {
-      "expiration": "2026-08-28",
-      "dte": 28,
-      "call_gex": 2128,
-      "put_gex": -1827,
-      "net_gex": 301,
-      "p_c_ratio": 0.8588
-    },
-    {
-      "expiration": "2026-09-04",
-      "dte": 35,
-      "call_gex": 264,
-      "put_gex": -246,
-      "net_gex": 17,
-      "p_c_ratio": 0.9353
-    }
-  ],
-  "putWall": 140,
-  "callWall": 155,
-  "limitedData": false
+  "expirations": [],
+  "putWall": null,
+  "callWall": null,
+  "limitedData": true
 }

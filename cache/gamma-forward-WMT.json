@@ -1,50 +1,9 @@
 {
   "ticker": "WMT",
-  "date": "2026-07-31",
+  "date": "2026-08-03",
   "spot": 111.2,
-  "expirations": [
-    {
-      "expiration": "2026-08-07",
-      "dte": 7,
-      "call_gex": 95202,
-      "put_gex": -90003,
-      "net_gex": 5199,
-      "p_c_ratio": 0.9454
-    },
-    {
-      "expiration": "2026-08-14",
-      "dte": 14,
-      "call_gex": 56744,
-      "put_gex": -38471,
-      "net_gex": 18273,
-      "p_c_ratio": 0.678
-    },
-    {
-      "expiration": "2026-08-21",
-      "dte": 21,
-      "call_gex": 135764,
-      "put_gex": -403608,
-      "net_gex": -267844,
-      "p_c_ratio": 2.9729
-    },
-    {
-      "expiration": "2026-08-28",
-      "dte": 28,
-      "call_gex": 13222,
-      "put_gex": -38308,
-      "net_gex": -25086,
-      "p_c_ratio": 2.8973
-    },
-    {
-      "expiration": "2026-09-04",
-      "dte": 35,
-      "call_gex": 2861,
-      "put_gex": -1294,
-      "net_gex": 1567,
-      "p_c_ratio": 0.4522
-    }
-  ],
-  "putWall": 111,
-  "callWall": 120,
-  "limitedData": false
+  "expirations": [],
+  "putWall": null,
+  "callWall": null,
+  "limitedData": true
 }

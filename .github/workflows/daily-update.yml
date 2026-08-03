@@ -36,13 +36,18 @@ jobs:
           EVENT_NAME="${{ github.event_name }}"
           echo "Fecha de hoy (UTC): $TODAY"
           echo "Trigger event: $EVENT_NAME"
-          
-          LAST_RUN=""
-          if [ -f "capture_state.json" ]; then
-            LAST_RUN=$(date -r capture_state.json +%Y-%m-%d)
-            echo "Última ejecución detectada: $LAST_RUN"
-          fi
-          
+
+          # `date -r capture_state.json` used to read this, but actions/checkout
+          # always rewrites every file's mtime to "now" regardless of when it was
+          # actually committed - so that check read as "today" on literally every
+          # single run, including the very first of the day, silently skipping
+          # the schedule trigger every time it fired without a same-day manual
+          # workflow_dispatch run right before it. The last commit with this
+          # message is the real "when did the capture actually last succeed"
+          # signal (same idea as src/app/api/data-freshness/route.ts).
+          LAST_RUN=$(git log -1 --format=%cs --grep="^chore(data): daily UW capture & dealer update" || true)
+          echo "Última ejecución detectada: ${LAST_RUN:-ninguna}"
+
           if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
             echo "skip=false" >> $GITHUB_OUTPUT
             echo "🚀 Ejecución manual detectada. Forzando actualización de los datos."

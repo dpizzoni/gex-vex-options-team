@@ -1,9 +1,58 @@
 {
   "ticker": "FTNT",
   "date": "2026-08-03",
-  "spot": 161.95,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 160.67,
+  "expirations": [
+    {
+      "expiration": "2026-08-07",
+      "dte": 4,
+      "call_gex": 14279,
+      "put_gex": -4570,
+      "net_gex": 9709,
+      "p_c_ratio": 0.3201
+    },
+    {
+      "expiration": "2026-08-14",
+      "dte": 11,
+      "call_gex": 3235,
+      "put_gex": -1148,
+      "net_gex": 2087,
+      "p_c_ratio": 0.3547
+    },
+    {
+      "expiration": "2026-08-21",
+      "dte": 18,
+      "call_gex": 13831,
+      "put_gex": -17808,
+      "net_gex": -3977,
+      "p_c_ratio": 1.2875
+    },
+    {
+      "expiration": "2026-08-28",
+      "dte": 25,
+      "call_gex": 537,
+      "put_gex": -569,
+      "net_gex": -31,
+      "p_c_ratio": 1.0585
+    },
+    {
+      "expiration": "2026-09-04",
+      "dte": 32,
+      "call_gex": 394,
+      "put_gex": -91,
+      "net_gex": 303,
+      "p_c_ratio": 0.2308
+    },
+    {
+      "expiration": "2026-09-11",
+      "dte": 39,
+      "call_gex": 32,
+      "put_gex": -24,
+      "net_gex": 7,
+      "p_c_ratio": 0.7667
+    }
+  ],
+  "putWall": 155,
+  "callWall": 170,
+  "limitedData": false
 }

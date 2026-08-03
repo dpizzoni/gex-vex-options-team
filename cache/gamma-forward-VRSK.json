@@ -1,9 +1,18 @@
 {
   "ticker": "VRSK",
   "date": "2026-08-03",
-  "spot": 194.85,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
+  "spot": 191.985,
+  "expirations": [
+    {
+      "expiration": "2026-08-21",
+      "dte": 18,
+      "call_gex": 429,
+      "put_gex": -610,
+      "net_gex": -181,
+      "p_c_ratio": 1.4225
+    }
+  ],
+  "putWall": 190,
+  "callWall": 220,
   "limitedData": true
 }

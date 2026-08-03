@@ -1,9 +1,18 @@
 {
   "ticker": "EXC",
   "date": "2026-08-03",
-  "spot": 45.82,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
+  "spot": 45.87,
+  "expirations": [
+    {
+      "expiration": "2026-08-21",
+      "dte": 18,
+      "call_gex": 67044,
+      "put_gex": -24777,
+      "net_gex": 42267,
+      "p_c_ratio": 0.3696
+    }
+  ],
+  "putWall": 43,
+  "callWall": 50,
   "limitedData": true
 }

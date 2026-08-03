@@ -1,9 +1,58 @@
 {
   "ticker": "LLY",
   "date": "2026-08-03",
-  "spot": 1148.84,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 1126.225,
+  "expirations": [
+    {
+      "expiration": "2026-08-07",
+      "dte": 4,
+      "call_gex": 1407,
+      "put_gex": -2392,
+      "net_gex": -986,
+      "p_c_ratio": 1.7005
+    },
+    {
+      "expiration": "2026-08-14",
+      "dte": 11,
+      "call_gex": 514,
+      "put_gex": -1425,
+      "net_gex": -911,
+      "p_c_ratio": 2.7725
+    },
+    {
+      "expiration": "2026-08-21",
+      "dte": 18,
+      "call_gex": 3846,
+      "put_gex": -3421,
+      "net_gex": 425,
+      "p_c_ratio": 0.8895
+    },
+    {
+      "expiration": "2026-08-28",
+      "dte": 25,
+      "call_gex": 263,
+      "put_gex": -745,
+      "net_gex": -482,
+      "p_c_ratio": 2.8306
+    },
+    {
+      "expiration": "2026-09-04",
+      "dte": 32,
+      "call_gex": 74,
+      "put_gex": -128,
+      "net_gex": -54,
+      "p_c_ratio": 1.7347
+    },
+    {
+      "expiration": "2026-09-11",
+      "dte": 39,
+      "call_gex": 10,
+      "put_gex": -27,
+      "net_gex": -16,
+      "p_c_ratio": 2.5365
+    }
+  ],
+  "putWall": 1100,
+  "callWall": 1200,
+  "limitedData": false
 }

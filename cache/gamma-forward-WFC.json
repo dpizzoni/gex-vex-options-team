@@ -1,58 +1,9 @@
 {
   "ticker": "WFC",
-  "date": "2026-08-04",
+  "date": "2026-08-05",
   "spot": 88.39,
-  "expirations": [
-    {
-      "expiration": "2026-08-07",
-      "dte": 3,
-      "call_gex": 200976,
-      "put_gex": -67221,
-      "net_gex": 133756,
-      "p_c_ratio": 0.3345
-    },
-    {
-      "expiration": "2026-08-14",
-      "dte": 10,
-      "call_gex": 49808,
-      "put_gex": -43247,
-      "net_gex": 6561,
-      "p_c_ratio": 0.8683
-    },
-    {
-      "expiration": "2026-08-21",
-      "dte": 17,
-      "call_gex": 283742,
-      "put_gex": -189214,
-      "net_gex": 94528,
-      "p_c_ratio": 0.6669
-    },
-    {
-      "expiration": "2026-08-28",
-      "dte": 24,
-      "call_gex": 22157,
-      "put_gex": -5422,
-      "net_gex": 16735,
-      "p_c_ratio": 0.2447
-    },
-    {
-      "expiration": "2026-09-04",
-      "dte": 31,
-      "call_gex": 9758,
-      "put_gex": -612,
-      "net_gex": 9146,
-      "p_c_ratio": 0.0628
-    },
-    {
-      "expiration": "2026-09-11",
-      "dte": 38,
-      "call_gex": 304,
-      "put_gex": -207,
-      "net_gex": 97,
-      "p_c_ratio": 0.6812
-    }
-  ],
-  "putWall": 85,
-  "callWall": 90,
-  "limitedData": false
+  "expirations": [],
+  "putWall": null,
+  "callWall": null,
+  "limitedData": true
 }

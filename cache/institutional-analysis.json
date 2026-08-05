@@ -1628,5 +1628,295 @@
         }
       ]
     }
+  },
+  {
+    "date": "2026-08-05",
+    "narrative": "SPY corrige apenas -0.20% con el régimen consolidándose en Long Gamma (net_gex subiendo +246k), lo que amortigua la caída y mantiene el rango entre put wall 750 y call wall 775; el p/c ratio de 0.72 no muestra pánico de cobertura. El dato de QQQ +3.4% no pasa el sanity check contra XLK -0.53% y SPY -0.20% el mismo día (XLK es el mayor peso de QQQ) — lo señalo como probable ruido/error de captura y lo descarto para la lectura de rotación intradía. Con eso afuera, el resto del tape de hoy es defensivo: XLV y XLB suben, XLU y XLC caen, XLE se desploma -2.07% con bearish premium duplicando al bullish (8.98M vs 4.24M), coherente con crudo bajo presión. En crédito, HY OAS cae más que IG OAS (hy_ig_spread_differential 1.95, comprimiéndose), señal de apetito por riesgo en crédito que contrasta con el breadth score de -2 en el flow score. COT es la divergencia más relevante: Asset Managers suman ES, NQ y también VX (+10.225k), mientras Leveraged Funds venden VX (-15.387k) fuerte — dinero real comprando equity index pero simultáneamente comprando cobertura de volatilidad, lectura mixta que no es puramente risk-on. Las alertas de flujo confirman acumulación silenciosa en XLU y SPY, y aparecen dos entradas contradictorias para XLE (acumulación y distribución simultánea en 3 días), por lo que esa señal específica no es confiable y no debe tomarse como limpia. El ranking sectorial de 5d (rezagado a 04/08) muestra a XLY y XLU como líderes de flujo mientras XLE, QQQ y SPY lideran las salidas.\n\nEl dinero institucional no muestra rotación clara y limpia hacia un sector único: está acumulando de forma selectiva en defensivas (XLU, XLV) y distribuyendo en tecnología y energía, con la señal de XLE contaminada por alertas contradictorias que impiden confirmarla.",
+    "model": "claude-sonnet-5",
+    "generated_at": "2026-08-05T21:38:43.137Z",
+    "inputs": {
+      "fecha": "2026-08-05",
+      "liquidez": {
+        "net_liquidity": 5825.764,
+        "net_liquidity_delta_7d": 0.9260000000003856,
+        "walcl": 6738.19,
+        "walcl_delta_7d": 0,
+        "tga": 910.776,
+        "tga_delta_7d": 0,
+        "rrp": 1.65,
+        "rrp_delta_7d": -0.9260000000000002
+      },
+      "institutional_flow_score": {
+        "score": 0,
+        "label": "Neutral",
+        "components": {
+          "liquidity": 0,
+          "credit_spread": 1,
+          "dollar": 1,
+          "vix": 0,
+          "us10y": 0,
+          "breadth": -2,
+          "etf_flows": 0
+        }
+      },
+      "mercado_riesgo": {
+        "vix": 16.5,
+        "vix_delta_7d": -1.7100000000000009,
+        "hy_oas": 2.73,
+        "hy_oas_delta_7d": -0.10999999999999988,
+        "ig_oas": 0.78,
+        "ig_oas_delta_7d": -0.030000000000000027,
+        "hy_ig_spread_differential": 1.95,
+        "dxy": 119.7034,
+        "dxy_delta_7d": -0.9213000000000022,
+        "us10y": 4.63,
+        "us10y_delta_7d": 0.019999999999999574
+      },
+      "gamma_regime": {
+        "ticker": "SPY",
+        "fecha": "2026-08-05",
+        "spot": 769.79,
+        "spot_change_1d_pct": -0.19965514111989385,
+        "regimen": "LONG_GAMMA",
+        "net_gex": 1462199,
+        "net_gex_delta_1d": 246273,
+        "ema3_net_gex": 927341,
+        "king_node": null,
+        "put_wall": 750,
+        "call_wall": 775,
+        "p_c_ratio_vencimiento_cercano": 0.7158
+      },
+      "etf_flows": {
+        "spy_net_flow": -8000000,
+        "qqq_net_flow": -3000000,
+        "iwm_net_flow": 2250000,
+        "total_net_flow": -8750000,
+        "fecha_dato": "2026-08-04",
+        "ranking_sectorial_5d": [
+          {
+            "ticker": "XLY",
+            "net_flow_1d": 1400000,
+            "net_flow_5d": 4950000
+          },
+          {
+            "ticker": "XLU",
+            "net_flow_1d": 550000,
+            "net_flow_5d": 3550000
+          },
+          {
+            "ticker": "XLV",
+            "net_flow_1d": 1300000,
+            "net_flow_5d": 2650000
+          },
+          {
+            "ticker": "XLI",
+            "net_flow_1d": -950000,
+            "net_flow_5d": 950000
+          },
+          {
+            "ticker": "XLRE",
+            "net_flow_1d": 950000,
+            "net_flow_5d": 800000
+          },
+          {
+            "ticker": "XLK",
+            "net_flow_1d": -1150000,
+            "net_flow_5d": -1000000
+          },
+          {
+            "ticker": "IWM",
+            "net_flow_1d": 2250000,
+            "net_flow_5d": -1650000
+          },
+          {
+            "ticker": "XLB",
+            "net_flow_1d": -100000,
+            "net_flow_5d": -2650000
+          },
+          {
+            "ticker": "XLP",
+            "net_flow_1d": 250000,
+            "net_flow_5d": -3800000
+          },
+          {
+            "ticker": "XLC",
+            "net_flow_1d": -3000000,
+            "net_flow_5d": -4200000
+          },
+          {
+            "ticker": "XLF",
+            "net_flow_1d": -500000,
+            "net_flow_5d": -4950000
+          },
+          {
+            "ticker": "XLE",
+            "net_flow_1d": -9750000,
+            "net_flow_5d": -7100000
+          },
+          {
+            "ticker": "QQQ",
+            "net_flow_1d": -3000000,
+            "net_flow_5d": -7350000
+          },
+          {
+            "ticker": "SPY",
+            "net_flow_1d": -8000000,
+            "net_flow_5d": -21000000
+          }
+        ]
+      },
+      "rotacion_precio_hoy": {
+        "fecha": "2026-08-05",
+        "ranking": [
+          {
+            "ticker": "QQQ",
+            "pct_change_today": 3.4,
+            "volume": 53174279,
+            "bullish_premium": null,
+            "bearish_premium": null
+          },
+          {
+            "ticker": "IWM",
+            "pct_change_today": 1.85,
+            "volume": 19426595,
+            "bullish_premium": null,
+            "bearish_premium": null
+          },
+          {
+            "ticker": "XLV",
+            "pct_change_today": 1.27,
+            "volume": 15194240,
+            "bullish_premium": 2874830,
+            "bearish_premium": 2300152
+          },
+          {
+            "ticker": "XLB",
+            "pct_change_today": 1.23,
+            "volume": 12054672,
+            "bullish_premium": 862797,
+            "bearish_premium": 1125432
+          },
+          {
+            "ticker": "XLY",
+            "pct_change_today": 0.3,
+            "volume": 6113180,
+            "bullish_premium": 309014,
+            "bearish_premium": 193484
+          },
+          {
+            "ticker": "XLF",
+            "pct_change_today": 0.21,
+            "volume": 34158405,
+            "bullish_premium": 4740339,
+            "bearish_premium": 5506203
+          },
+          {
+            "ticker": "XLRE",
+            "pct_change_today": 0.07,
+            "volume": 6006182,
+            "bullish_premium": 25288,
+            "bearish_premium": 22145
+          },
+          {
+            "ticker": "XLI",
+            "pct_change_today": -0.03,
+            "volume": 5512455,
+            "bullish_premium": 20034323,
+            "bearish_premium": 5016354
+          },
+          {
+            "ticker": "XLP",
+            "pct_change_today": -0.05,
+            "volume": 7711949,
+            "bullish_premium": 519302,
+            "bearish_premium": 9373708
+          },
+          {
+            "ticker": "SPY",
+            "pct_change_today": -0.2,
+            "volume": 43789420,
+            "bullish_premium": 1137023015,
+            "bearish_premium": 1111693742
+          },
+          {
+            "ticker": "XLK",
+            "pct_change_today": -0.53,
+            "volume": 7467056,
+            "bullish_premium": 3734072,
+            "bearish_premium": 4481630
+          },
+          {
+            "ticker": "XLU",
+            "pct_change_today": -1.02,
+            "volume": 25968836,
+            "bullish_premium": 1203014,
+            "bearish_premium": 1269544
+          },
+          {
+            "ticker": "XLC",
+            "pct_change_today": -1.04,
+            "volume": 5732156,
+            "bullish_premium": 64953,
+            "bearish_premium": 122453
+          },
+          {
+            "ticker": "XLE",
+            "pct_change_today": -2.07,
+            "volume": 33115216,
+            "bullish_premium": 4239880,
+            "bearish_premium": 8977053
+          }
+        ]
+      },
+      "cot_semanal": [
+        {
+          "instrumento": "ES",
+          "asset_mgr_net_change": 15388,
+          "lev_money_net_change": 26942
+        },
+        {
+          "instrumento": "NQ",
+          "asset_mgr_net_change": 4146,
+          "lev_money_net_change": 13627
+        },
+        {
+          "instrumento": "VX",
+          "asset_mgr_net_change": 10225,
+          "lev_money_net_change": -15387
+        }
+      ],
+      "fund_flow_alerts": [
+        {
+          "ticker": "XLB",
+          "type": "QUIET_DISTRIBUTION",
+          "streak_days": 3,
+          "net_flow_total": -2350000
+        },
+        {
+          "ticker": "XLU",
+          "type": "QUIET_ACCUMULATION",
+          "streak_days": 3,
+          "net_flow_total": 4200000
+        },
+        {
+          "ticker": "XLE",
+          "type": "QUIET_ACCUMULATION",
+          "streak_days": 3,
+          "net_flow_total": 12400000
+        },
+        {
+          "ticker": "SPY",
+          "type": "QUIET_ACCUMULATION",
+          "streak_days": 3,
+          "net_flow_total": 5600000
+        },
+        {
+          "ticker": "XLE",
+          "type": "QUIET_DISTRIBUTION",
+          "streak_days": 3,
+          "net_flow_total": -9850000
+        }
+      ]
+    }
   }
 ]

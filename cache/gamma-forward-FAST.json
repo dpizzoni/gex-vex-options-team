@@ -1,9 +1,18 @@
 {
   "ticker": "FAST",
   "date": "2026-08-06",
-  "spot": 49.99,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
+  "spot": 50.52,
+  "expirations": [
+    {
+      "expiration": "2026-08-21",
+      "dte": 15,
+      "call_gex": 152549,
+      "put_gex": -14225,
+      "net_gex": 138324,
+      "p_c_ratio": 0.0932
+    }
+  ],
+  "putWall": 42.5,
+  "callWall": 52.5,
   "limitedData": true
 }

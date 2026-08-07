@@ -275,14 +275,20 @@ export default function InstitutionalFlowScorePanel({ history, loading }: Instit
       {recent.length > 1 && (
         <div style={{ paddingTop: '6px' }}>
           <h4 style={colHeaderStyle}>SCORE (ÚLTIMOS {recent.length} DÍAS)</h4>
-          <div style={{ display: 'flex', gap: '4px', alignItems: 'flex-end', height: '32px', padding: '4px 6px', backgroundColor: 'rgba(0,0,0,0.15)', borderRadius: '6px' }}>
+          <div style={{ display: 'flex', gap: '4px', alignItems: 'center', height: '36px', padding: '4px 6px', backgroundColor: 'rgba(0,0,0,0.15)', borderRadius: '6px' }}>
             {recent.map(e => {
-              const h = Math.max(4, (Math.abs(e.score) / MAX_ABS_SCORE) * 28);
+              const h = Math.max(3, (Math.abs(e.score) / MAX_ABS_SCORE) * 14);
               const c = labelColor(e.label);
               return (
-                <div key={e.date} title={`${e.date}: ${e.score}`} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: '0 0 24px' }}>
-                  <div style={{ width: '100%', height: '28px', display: 'flex', alignItems: e.score >= 0 ? 'flex-end' : 'flex-start' }}>
-                    <div style={{ width: '100%', height: `${h}px`, backgroundColor: c, borderRadius: '2px', boxShadow: `0 0 4px ${c}60` }} />
+                <div key={e.date} title={`${e.date}: ${e.score}`} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: '0 0 24px' }}>
+                  <div style={{ width: '100%', height: '28px', position: 'relative' }}>
+                    {/* Zero line */}
+                    <div style={{ position: 'absolute', top: '14px', left: 0, right: 0, height: '1px', backgroundColor: 'rgba(255,255,255,0.08)', zIndex: 1 }} />
+                    {e.score >= 0 ? (
+                      <div style={{ position: 'absolute', bottom: '14px', left: 0, width: '100%', height: `${h}px`, backgroundColor: c, borderRadius: '2px 2px 0 0', boxShadow: `0 0 4px ${c}60`, zIndex: 2 }} />
+                    ) : (
+                      <div style={{ position: 'absolute', top: '14px', left: 0, width: '100%', height: `${h}px`, backgroundColor: c, borderRadius: '0 0 2px 2px', boxShadow: `0 0 4px ${c}60`, zIndex: 2 }} />
+                    )}
                   </div>
                 </div>
               );

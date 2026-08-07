@@ -111,11 +111,15 @@ export async function GET() {
     gexVexCommit,
     gammaCommit,
     fundFlowCommit,
+    macroCommit,
+    analysisCommit,
     dailyRun,
     intradayRun,
     fundFlowRun,
     gammaCircleCIRun,
     fundFlowCircleCIRun,
+    macroCircleCIRun,
+    analysisCircleCIRun,
   ] = await Promise.all([
     latestCommitFor(["chore(data): daily UW capture & dealer update"], headers),
     latestCommitFor(
@@ -123,11 +127,15 @@ export async function GET() {
       headers
     ),
     latestCommitFor(["chore(data): daily fund-flow & COT capture"], headers),
+    latestCommitFor(["chore(data): daily macro liquidity & institutional flow score refresh"], headers),
+    latestCommitFor(["chore(data): daily institutional analysis"], headers),
     latestRunConclusion("daily-update.yml", headers),
     latestRunConclusion("gamma-intraday.yml", headers),
     latestRunConclusion("fund-flow-daily.yml", headers),
     latestCircleCIJobRun(["gamma-refresh", "gamma-refresh-close", "gamma-refresh-morning", "gamma-refresh-intraday"]),
     latestCircleCIJobRun(["fund-flow-refresh"]),
+    latestCircleCIJobRun(["macro-liquidity-refresh"]),
+    latestCircleCIJobRun(["institutional-analysis-refresh"]),
   ]);
 
   // Gamma Regime and Fund Flow now run on CircleCI (see .circleci/config.yml).
@@ -144,6 +152,16 @@ export async function GET() {
     ? fundFlowCircleCIRun.status === "failed" || fundFlowCircleCIRun.status === "error"
     : fundFlowRun?.conclusion === "failure";
 
+  // Macro Liquidity/Flow Score and Institutional Analysis run only on
+  // CircleCI (macro-liquidity workflow, ~21:30 UTC) - no legacy GitHub
+  // Actions run to fall back to, unlike gamma/fund-flow above.
+  const macroFailed = macroCircleCIRun
+    ? macroCircleCIRun.status === "failed" || macroCircleCIRun.status === "error"
+    : false;
+  const analysisFailed = analysisCircleCIRun
+    ? analysisCircleCIRun.status === "failed" || analysisCircleCIRun.status === "error"
+    : false;
+
   return NextResponse.json({
     gexVex: {
       ranAt: gexVexCommit?.ranAt ?? null,
@@ -156,6 +174,14 @@ export async function GET() {
     fundFlow: {
       ranAt: fundFlowCommit?.ranAt ?? null,
       failed: fundFlowFailed,
+    },
+    macro: {
+      ranAt: macroCommit?.ranAt ?? null,
+      failed: macroFailed,
+    },
+    analysis: {
+      ranAt: analysisCommit?.ranAt ?? null,
+      failed: analysisFailed,
     },
   });
 }

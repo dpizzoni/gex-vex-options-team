@@ -157,6 +157,8 @@ export default function Home() {
   const [gexVexMeta, setGexVexMeta] = useState<{ ranAt: Date | null; failed: boolean }>({ ranAt: null, failed: false });
   const [gammaRegimeMeta, setGammaRegimeMeta] = useState<{ ranAt: Date | null; failed: boolean }>({ ranAt: null, failed: false });
   const [fundFlowMeta, setFundFlowMeta] = useState<{ ranAt: Date | null; failed: boolean }>({ ranAt: null, failed: false });
+  const [macroMeta, setMacroMeta] = useState<{ ranAt: Date | null; failed: boolean }>({ ranAt: null, failed: false });
+  const [analysisMeta, setAnalysisMeta] = useState<{ ranAt: Date | null; failed: boolean }>({ ranAt: null, failed: false });
 
   // Fund Flow & COT Positioning panel state
   const [sectorFlow, setSectorFlow] = useState<SectorFlowSeries[]>([]);
@@ -242,6 +244,8 @@ export default function Home() {
       setGexVexMeta({ ranAt: data.gexVex?.ranAt ? new Date(data.gexVex.ranAt) : null, failed: !!data.gexVex?.failed });
       setGammaRegimeMeta({ ranAt: data.gammaRegime?.ranAt ? new Date(data.gammaRegime.ranAt) : null, failed: !!data.gammaRegime?.failed });
       setFundFlowMeta({ ranAt: data.fundFlow?.ranAt ? new Date(data.fundFlow.ranAt) : null, failed: !!data.fundFlow?.failed });
+      setMacroMeta({ ranAt: data.macro?.ranAt ? new Date(data.macro.ranAt) : null, failed: !!data.macro?.failed });
+      setAnalysisMeta({ ranAt: data.analysis?.ranAt ? new Date(data.analysis.ranAt) : null, failed: !!data.analysis?.failed });
     }).catch(err => {
       console.error("Data freshness fetch failed", err);
     });
@@ -1737,8 +1741,8 @@ ${blockSoportesResistencias}`;
 
           {/* Status / Active Exps aligned Right */}
           <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-            {(gexVexMeta.ranAt || gammaRegimeMeta.ranAt || fundFlowMeta.ranAt) && (() => {
-              const hasUpdateError = gexVexMeta.failed || gammaRegimeMeta.failed || fundFlowMeta.failed;
+            {(gexVexMeta.ranAt || gammaRegimeMeta.ranAt || fundFlowMeta.ranAt || macroMeta.ranAt || analysisMeta.ranAt) && (() => {
+              const hasUpdateError = gexVexMeta.failed || gammaRegimeMeta.failed || fundFlowMeta.failed || macroMeta.failed || analysisMeta.failed;
               return (
               <div 
                 style={{ position: 'relative' }}
@@ -1806,6 +1810,24 @@ ${blockSoportesResistencias}`;
                       >
                         Última Act. Fund Flow: {fundFlowMeta.ranAt.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' })}
                         {fundFlowMeta.failed && ' ⚠️'}
+                      </span>
+                    )}
+                    {macroMeta.ranAt && (
+                      <span
+                        style={{ fontSize: '0.65rem', color: macroMeta.failed ? '#ff2a6d' : '#94a3b8' }}
+                        title="Última corrida completada de Fed Liquidity + Institutional Flow Score (macro-liquidity-refresh, ~21:30 UTC)"
+                      >
+                        Última Act. Macro: {macroMeta.ranAt.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' })}
+                        {macroMeta.failed && ' ⚠️'}
+                      </span>
+                    )}
+                    {analysisMeta.ranAt && (
+                      <span
+                        style={{ fontSize: '0.65rem', color: analysisMeta.failed ? '#ff2a6d' : '#94a3b8' }}
+                        title="Última corrida completada de Análisis Institucional (LLM) (institutional-analysis-refresh, encadenado tras Macro)"
+                      >
+                        Última Act. Análisis: {analysisMeta.ranAt.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' })}
+                        {analysisMeta.failed && ' ⚠️'}
                       </span>
                     )}
                   </div>

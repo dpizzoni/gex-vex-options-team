@@ -142,15 +142,18 @@ export async function GET() {
   // Fall back to the old GitHub Actions conclusion only if CIRCLECI_TOKEN
   // isn't configured yet - both GH workflows have their `schedule:` disabled,
   // so their `conclusion` would otherwise stay frozen on a stale run forever.
+  const latestGammaRun = [dailyRun, intradayRun]
+    .filter((r): r is NonNullable<typeof r> => r != null)
+    .sort((a, b) => new Date(b.ranAt).getTime() - new Date(a.ranAt).getTime())[0];
   const gammaFailed = gammaCircleCIRun
     ? gammaCircleCIRun.status === "failed" || gammaCircleCIRun.status === "error"
-    : [dailyRun, intradayRun]
-        .filter((r): r is NonNullable<typeof r> => r != null)
-        .sort((a, b) => new Date(b.ranAt).getTime() - new Date(a.ranAt).getTime())[0]?.conclusion === "failure";
+    : latestGammaRun?.conclusion === "failure" &&
+      (!gammaCommit || new Date(latestGammaRun.ranAt).getTime() > new Date(gammaCommit.ranAt).getTime());
 
   const fundFlowFailed = fundFlowCircleCIRun
     ? fundFlowCircleCIRun.status === "failed" || fundFlowCircleCIRun.status === "error"
-    : fundFlowRun?.conclusion === "failure";
+    : fundFlowRun?.conclusion === "failure" &&
+      (!fundFlowCommit || new Date(fundFlowRun.ranAt).getTime() > new Date(fundFlowCommit.ranAt).getTime());
 
   // Macro Liquidity/Flow Score and Institutional Analysis run only on
   // CircleCI (macro-liquidity workflow, ~21:30 UTC) - no legacy GitHub
@@ -162,10 +165,19 @@ export async function GET() {
     ? analysisCircleCIRun.status === "failed" || analysisCircleCIRun.status === "error"
     : false;
 
+  // A failed run only means something if it's newer than the last successful
+  // commit - daily-update.yml now has a `concurrency` guard, but a stale
+  // failed run (e.g. the duplicate-trigger race that guard fixed) shouldn't
+  // keep flashing the warning forever just because it's still the "latest
+  // completed run" GitHub reports.
+  const gexVexFailed =
+    dailyRun?.conclusion === "failure" &&
+    (!gexVexCommit || new Date(dailyRun.ranAt).getTime() > new Date(gexVexCommit.ranAt).getTime());
+
   return NextResponse.json({
     gexVex: {
       ranAt: gexVexCommit?.ranAt ?? null,
-      failed: dailyRun?.conclusion === "failure",
+      failed: gexVexFailed,
     },
     gammaRegime: {
       ranAt: gammaCommit?.ranAt ?? null,

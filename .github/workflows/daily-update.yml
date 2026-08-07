@@ -15,6 +15,20 @@ on:
     - cron: '31 10 * * 1-5'
   workflow_dispatch: # Esto agrega un botón en GitHub para que puedas forzar la ejecución manualmente
 
+# Evita que el disparo por schedule (nativo de GitHub, con posible demora de
+# varios minutos bajo carga) corra en paralelo con el workflow_dispatch de
+# Vercel Cron del mismo horario. Sin esto, check_today no alcanza a ver el
+# commit del primer run cuando el segundo arranca, ambos capturan casi los
+# mismos archivos de cache/dealer/, y el segundo termina pisando un rebase
+# fallido (checkout se niega a sobrescribir sus propios archivos untracked)
+# seguido de un push non-fast-forward. cancel-in-progress: false porque
+# cancelar a mitad de una captura de ~1h dejaría el cache a medio escribir;
+# el run duplicado simplemente espera en cola y, al arrancar, check_today ya
+# encuentra el commit fresco y se saltea solo.
+concurrency:
+  group: daily-update-oi
+  cancel-in-progress: false
+
 # Damos permiso al bot para que pueda hacer commit y push con los JSON nuevos
 permissions:
   contents: write

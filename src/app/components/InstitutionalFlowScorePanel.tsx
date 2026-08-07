@@ -72,8 +72,8 @@ function ComponentBar({ value }: { value: number }) {
   const pct = (Math.abs(value) / max) * 50;
   const color = value > 0 ? '#00e676' : value < 0 ? '#ff2a6d' : 'rgba(255,255,255,0.2)';
   return (
-    <div style={{ position: 'relative', height: '8px', width: '100px', backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: '4px', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: '1px', backgroundColor: 'rgba(255,255,255,0.2)' }} />
+    <div style={{ position: 'relative', height: '8px', width: '100px', backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: '4px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.05)' }}>
+      <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: '1px', backgroundColor: 'rgba(255,255,255,0.25)', zIndex: 2 }} />
       <div
         style={{
           position: 'absolute',
@@ -81,7 +81,8 @@ function ComponentBar({ value }: { value: number }) {
           bottom: 0,
           width: `${pct}%`,
           backgroundColor: color,
-          left: value >= 0 ? '50%' : `${50 - pct}%`
+          left: value >= 0 ? '50%' : `${50 - pct}%`,
+          boxShadow: value !== 0 ? `0 0 6px ${color}80` : 'none'
         }}
       />
     </div>
@@ -89,8 +90,6 @@ function ComponentBar({ value }: { value: number }) {
 }
 
 function FlowScoreInfoModal({ onClose }: { onClose: () => void }) {
-  // Portal to document.body: same backdrop-filter stacking-context issue as
-  // the other panels' info/history modals.
   return createPortal(
     <div style={infoOverlayStyle} onClick={onClose}>
       <div style={infoModalStyle} onClick={e => e.stopPropagation()}>
@@ -157,8 +156,9 @@ export default function InstitutionalFlowScorePanel({ history, loading }: Instit
   if (loading) {
     return (
       <div style={panelContainerStyle}>
+        <div style={topGlowBarStyle} />
         <div style={headerStyle}>
-          <Gauge size={18} style={{ color: '#a78bfa' }} />
+          <Gauge size={18} style={{ color: '#a78bfa', filter: 'drop-shadow(0 0 6px rgba(167,139,250,0.5))' }} />
           <h3 style={titleStyle}>INSTITUTIONAL FLOW SCORE</h3>
         </div>
         <div style={loadingContainerStyle}>
@@ -173,8 +173,9 @@ export default function InstitutionalFlowScorePanel({ history, loading }: Instit
   if (history.length === 0) {
     return (
       <div style={panelContainerStyle}>
+        <div style={topGlowBarStyle} />
         <div style={headerStyle}>
-          <Gauge size={18} style={{ color: '#a78bfa' }} />
+          <Gauge size={18} style={{ color: '#a78bfa', filter: 'drop-shadow(0 0 6px rgba(167,139,250,0.5))' }} />
           <h3 style={titleStyle}>INSTITUTIONAL FLOW SCORE</h3>
         </div>
         <div style={errorContainerStyle}>
@@ -192,66 +193,96 @@ export default function InstitutionalFlowScorePanel({ history, loading }: Instit
   const color = labelColor(latest.label);
   const recent = history.slice(-10);
 
+  const percent = (latest.score + MAX_ABS_SCORE) / (2 * MAX_ABS_SCORE);
+  const clampedPercent = Math.max(0, Math.min(1, percent));
+  const rotation = clampedPercent * 180 - 90;
+
   return (
     <div style={panelContainerStyle}>
+      <div style={topGlowBarStyle} />
       <div style={headerStyle}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Gauge size={18} style={{ color: '#a78bfa' }} />
+          <Gauge size={18} style={{ color: '#a78bfa', filter: 'drop-shadow(0 0 6px rgba(167,139,250,0.5))' }} />
           <h3 style={titleStyle}>INSTITUTIONAL FLOW SCORE</h3>
           <button onClick={() => setShowInfo(true)} style={infoButtonStyle} aria-label="¿Qué significan estos datos?">
-            <Info size={14} />
+            <Info size={13} />
           </button>
         </div>
-        <div style={{ ...badgeStyle, backgroundColor: `${color}1a`, color, borderColor: color }}>
+        <div style={{
+          ...badgeStyle,
+          backgroundColor: `${color}1a`,
+          color,
+          borderColor: `${color}60`,
+          boxShadow: `0 0 10px ${color}20`
+        }}>
           {labelEs(latest.label)}
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '32px', alignItems: 'center', flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', minWidth: '140px' }}>
-          <div style={{ fontSize: '2.5rem', fontWeight: 800, fontFamily: 'monospace', color }}>
-            {latest.score >= 0 ? '+' : ''}{latest.score}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '24px', padding: '10px 0' }}>
+        
+        {/* Left: Gauge Meter (no subcontainer) */}
+        <div style={{ position: 'relative', width: '220px', height: '160px', display: 'flex', justifyContent: 'center', flexShrink: 0 }}>
+          <svg width="220" height="140" viewBox="0 0 220 140" style={{ overflow: 'visible' }}>
+            <defs>
+              <linearGradient id="flowGauge" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#ff2a6d" />
+                <stop offset="50%" stopColor="#fbbf24" />
+                <stop offset="100%" stopColor="#00e676" />
+              </linearGradient>
+            </defs>
+            {/* Background Track */}
+            <path d="M 30 110 A 80 80 0 0 1 190 110" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="16" strokeLinecap="round" />
+            
+            {/* Colored Gradient Arc */}
+            <path d="M 30 110 A 80 80 0 0 1 190 110" fill="none" stroke="url(#flowGauge)" strokeWidth="16" strokeLinecap="round" style={{ filter: 'drop-shadow(0 0 8px rgba(251,191,36,0.3))' }} />
+            
+            {/* Labels for bounds */}
+            <text x="30" y="134" fill="rgba(255,255,255,0.4)" fontSize="11" fontFamily="monospace" textAnchor="middle" fontWeight="bold">-{MAX_ABS_SCORE}</text>
+            <text x="190" y="134" fill="rgba(255,255,255,0.4)" fontSize="11" fontFamily="monospace" textAnchor="middle" fontWeight="bold">+{MAX_ABS_SCORE}</text>
+            
+            {/* Needle */}
+            <g transform={`translate(110, 110) rotate(${rotation})`}>
+              <polygon points="-4,0 4,0 0,-74" fill="#ffffff" style={{ filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.6))' }} />
+              <circle cx="0" cy="0" r="6" fill="#ffffff" />
+              <circle cx="0" cy="0" r="2" fill="#0a1023" />
+            </g>
+          </svg>
+          
+          <div style={{ position: 'absolute', bottom: '0', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div style={{ fontSize: '2.8rem', fontWeight: 800, fontFamily: 'monospace', color, textShadow: `0 0 24px ${color}60`, lineHeight: 1 }}>
+              {latest.score >= 0 ? '+' : ''}{latest.score}
+            </div>
           </div>
-          <div style={{ width: '140px', height: '10px', backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: '5px', overflow: 'hidden', position: 'relative' }}>
-            <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: '2px', backgroundColor: 'rgba(255,255,255,0.25)' }} />
-            <div
-              style={{
-                position: 'absolute',
-                top: 0,
-                bottom: 0,
-                backgroundColor: color,
-                width: `${(Math.abs(latest.score) / MAX_ABS_SCORE) * 50}%`,
-                left: latest.score >= 0 ? '50%' : `${50 - (Math.abs(latest.score) / MAX_ABS_SCORE) * 50}%`
-              }}
-            />
-          </div>
-          <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)' }}>rango: -{MAX_ABS_SCORE} a +{MAX_ABS_SCORE}</span>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1, minWidth: '260px' }}>
+        {/* Right: Breakdown List */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
           {COMPONENT_ORDER.map(key => (
-            <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.75rem' }}>
-              <span style={{ color: 'rgba(255,255,255,0.6)', flex: '0 0 190px' }}>{COMPONENT_LABELS[key]}</span>
-              <ComponentBar value={latest.components[key]} />
-              <span style={{ fontFamily: 'monospace', fontWeight: 700, color: latest.components[key] > 0 ? '#00e676' : latest.components[key] < 0 ? '#ff2a6d' : 'rgba(255,255,255,0.4)', minWidth: '28px', textAlign: 'right' }}>
-                {latest.components[key] >= 0 ? '+' : ''}{latest.components[key]}
-              </span>
+            <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.73rem', backgroundColor: 'rgba(255,255,255,0.02)', padding: '6px 10px', borderRadius: '6px' }}>
+              <span style={{ color: 'rgba(255,255,255,0.7)', flex: '1', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{COMPONENT_LABELS[key]}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+                <ComponentBar value={latest.components[key]} />
+                <span style={{ fontFamily: 'monospace', fontWeight: 700, color: latest.components[key] > 0 ? '#00e676' : latest.components[key] < 0 ? '#ff2a6d' : 'rgba(255,255,255,0.4)', width: '24px', textAlign: 'right' }}>
+                  {latest.components[key] >= 0 ? '+' : ''}{latest.components[key]}
+                </span>
+              </div>
             </div>
           ))}
         </div>
       </div>
 
       {recent.length > 1 && (
-        <div>
+        <div style={{ paddingTop: '6px' }}>
           <h4 style={colHeaderStyle}>SCORE (ÚLTIMOS {recent.length} DÍAS)</h4>
-          <div style={{ display: 'flex', gap: '6px', alignItems: 'flex-end', height: '36px' }}>
+          <div style={{ display: 'flex', gap: '4px', alignItems: 'flex-end', height: '32px', padding: '4px 6px', backgroundColor: 'rgba(0,0,0,0.15)', borderRadius: '6px' }}>
             {recent.map(e => {
-              const h = Math.max(4, (Math.abs(e.score) / MAX_ABS_SCORE) * 36);
+              const h = Math.max(4, (Math.abs(e.score) / MAX_ABS_SCORE) * 28);
               const c = labelColor(e.label);
               return (
-                <div key={e.date} title={`${e.date}: ${e.score}`} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1 }}>
-                  <div style={{ width: '100%', height: '36px', display: 'flex', alignItems: e.score >= 0 ? 'flex-end' : 'flex-start' }}>
-                    <div style={{ width: '100%', height: `${h}px`, backgroundColor: c, borderRadius: '2px' }} />
+                <div key={e.date} title={`${e.date}: ${e.score}`} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: '0 0 24px' }}>
+                  <div style={{ width: '100%', height: '28px', display: 'flex', alignItems: e.score >= 0 ? 'flex-end' : 'flex-start' }}>
+                    <div style={{ width: '100%', height: `${h}px`, backgroundColor: c, borderRadius: '2px', boxShadow: `0 0 4px ${c}60` }} />
                   </div>
                 </div>
               );
@@ -260,7 +291,7 @@ export default function InstitutionalFlowScorePanel({ history, loading }: Instit
         </div>
       )}
 
-      <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', textAlign: 'right' }}>
+      <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.35)', textAlign: 'right', marginTop: '4px' }}>
         al {latest.date} · modelo cuantitativo, no es IA
       </div>
 
@@ -269,39 +300,53 @@ export default function InstitutionalFlowScorePanel({ history, loading }: Instit
   );
 }
 
+const topGlowBarStyle: React.CSSProperties = {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  height: '2px',
+  background: 'linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.6), transparent)',
+  pointerEvents: 'none'
+};
+
 const panelContainerStyle: React.CSSProperties = {
-  backgroundColor: 'rgba(10, 16, 35, 0.6)',
+  backgroundColor: 'rgba(13, 20, 38, 0.75)',
   borderWidth: '1px',
   borderStyle: 'solid',
   borderColor: 'rgba(255, 255, 255, 0.08)',
-  borderRadius: '12px',
-  padding: '20px',
+  borderRadius: '14px',
+  padding: '16px',
   display: 'flex',
   flexDirection: 'column',
-  gap: '20px',
+  gap: '14px',
   backdropFilter: 'blur(16px)',
+  boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.36)',
   color: '#fff',
-  margin: '0 1rem 1rem 1rem'
+  boxSizing: 'border-box',
+  position: 'relative',
+  overflow: 'hidden'
 };
 
 const headerStyle: React.CSSProperties = {
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  borderBottom: '1px solid rgba(255,255,255,0.06)',
-  paddingBottom: '12px'
+  borderBottom: '1px solid rgba(255,255,255,0.07)',
+  paddingBottom: '10px'
 };
 
 const titleStyle: React.CSSProperties = {
   margin: 0,
-  fontSize: '1rem',
+  fontSize: '0.92rem',
   fontWeight: 800,
-  letterSpacing: '0.05em',
-  color: '#a78bfa'
+  letterSpacing: '0.06em',
+  color: '#a78bfa',
+  textShadow: '0 0 12px rgba(167,139,250,0.25)'
 };
 
 const badgeStyle: React.CSSProperties = {
-  fontSize: '0.75rem',
+  fontSize: '0.72rem',
   fontWeight: 800,
   padding: '4px 10px',
   borderRadius: '20px',
@@ -310,16 +355,28 @@ const badgeStyle: React.CSSProperties = {
   letterSpacing: '0.05em'
 };
 
+const heroScoreBoxStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '8px',
+  padding: '12px',
+  backgroundColor: 'rgba(255, 255, 255, 0.02)',
+  border: '1px solid rgba(255, 255, 255, 0.04)',
+  borderRadius: '10px'
+};
+
 const colHeaderStyle: React.CSSProperties = {
-  margin: '0 0 8px 0',
-  fontSize: '0.75rem',
+  margin: '0 0 6px 0',
+  fontSize: '0.68rem',
   fontWeight: 800,
-  color: 'rgba(255,255,255,0.4)',
+  color: 'rgba(255,255,255,0.45)',
   letterSpacing: '0.08em'
 };
 
 const loadingContainerStyle: React.CSSProperties = {
-  height: '100px',
+  height: '200px',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center'
@@ -359,22 +416,24 @@ const infoButtonStyle: React.CSSProperties = {
   background: 'rgba(255,255,255,0.06)',
   border: '1px solid rgba(255,255,255,0.15)',
   borderRadius: '50%',
-  color: 'rgba(255,255,255,0.5)',
+  color: 'rgba(255,255,255,0.6)',
   cursor: 'pointer',
   width: '20px',
   height: '20px',
-  padding: 0
+  padding: 0,
+  transition: 'all 0.2s ease'
 };
 
 const infoOverlayStyle: React.CSSProperties = {
   position: 'fixed',
   inset: 0,
-  backgroundColor: 'rgba(0,0,0,0.6)',
+  backgroundColor: 'rgba(0,0,0,0.65)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   zIndex: 1000,
-  padding: '20px'
+  padding: '20px',
+  backdropFilter: 'blur(4px)'
 };
 
 const infoModalStyle: React.CSSProperties = {

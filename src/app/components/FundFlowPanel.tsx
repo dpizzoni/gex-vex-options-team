@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { Activity, AlertCircle, Bell, Info, X } from 'lucide-react';
+import { Activity, AlertCircle, Bell, BellRing, Info, X, Waves, BarChart2, TrendingUp } from 'lucide-react';
 
 export interface SectorFlowEntry {
   date: string;
@@ -62,7 +62,7 @@ interface FundFlowPanelProps {
 const BAR_WIDTH = 2;
 const BAR_GAP = 1;
 const MONTH_GAP = 4;
-const CHART_HEIGHT = 40;
+const CHART_HEIGHT = 30;
 
 // Same dedupe-by-net_flow_date idea as scripts/check-fund-flow-shifts.js:
 // a date can appear more than once in the raw history (its own backfilled
@@ -318,51 +318,65 @@ function SectorFlowBars({ history, weekKeys }: { history: SectorFlowEntry[]; wee
 
       {hovered && (() => {
         const maxAbs = Math.max(...hovered.lines.map(l => Math.abs(l.value)), 1);
-        const colWidth = 64;
-        const barAreaHeight = 100;
-        const tooltipWidth = hovered.lines.length * colWidth + 18;
-        const tooltipHeight = 18 + 20 + barAreaHeight + 18 + 12;
+        const colWidth = 54;
+        const barAreaHeight = 90;
+        const tooltipWidth = hovered.lines.length * colWidth + 16;
+        const tooltipHeight = 190; // Extra padding to avoid clipping
         return (
           <foreignObject
-            x={hovered.x - tooltipWidth / 2}
-            y={-(tooltipHeight + 12)}
+            x={-tooltipWidth + 16}
+            y={-(tooltipHeight / 2) + CHART_HEIGHT / 2}
             width={tooltipWidth}
             height={tooltipHeight}
             style={{ pointerEvents: 'none', overflow: 'visible' }}
           >
             <div style={{ display: 'flex', justifyContent: 'center' }}>
               <div style={{
-                backgroundColor: 'rgba(10, 16, 35, 0.97)',
-                border: '1px solid #a78bfa',
-                borderRadius: '8px',
-                padding: '10px 12px',
+                backgroundColor: 'rgba(13, 20, 38, 0.85)',
+                backdropFilter: 'blur(16px)',
+                border: '1px solid rgba(167, 139, 250, 0.25)',
+                borderRadius: '10px',
+                padding: '10px 8px',
                 fontFamily: 'monospace',
-                boxShadow: '0 4px 16px rgba(0,0,0,0.5)'
+                boxShadow: 'inset 0 1px 0 rgba(167, 139, 250, 0.4), 0 16px 48px rgba(0,0,0,0.6)'
               }}>
-                <div style={{ color: 'rgba(255,255,255,0.6)', fontWeight: 700, fontSize: '0.75rem', marginBottom: '8px' }}>{hovered.title}</div>
-                <div style={{ display: 'flex', gap: '6px' }}>
+                <div style={{ color: 'rgba(255,255,255,0.8)', fontWeight: 800, fontSize: '0.7rem', marginBottom: '6px', paddingBottom: '6px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                  {hovered.title}
+                </div>
+                <div style={{ display: 'flex', position: 'relative' }}>
+                  {/* Continuous zero axis */}
+                  <div style={{ position: 'absolute', left: 0, right: 0, top: 14 + 4 + barAreaHeight / 2, height: '1px', backgroundColor: 'rgba(255,255,255,0.15)', pointerEvents: 'none', zIndex: 0 }} />
+                  
                   {hovered.lines.map((l, i) => {
                     const color = l.value >= 0 ? '#00e676' : '#ff2a6d';
                     const barH = Math.max(3, (Math.abs(l.value) / maxAbs) * (barAreaHeight / 2));
+                    const isTotal = i === 0;
                     return (
-                      <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: `${colWidth}px` }}>
-                        <div style={{ color, fontWeight: 700, fontSize: '0.75rem', height: '16px', whiteSpace: 'nowrap' }}>{formatMoney(l.value)}</div>
-                        <div style={{ position: 'relative', width: '100%', height: `${barAreaHeight}px` }}>
-                          <div style={{ position: 'absolute', left: 0, right: 0, top: barAreaHeight / 2, height: '1px', backgroundColor: 'rgba(255,255,255,0.15)' }} />
+                      <div key={i} style={{ 
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', width: `${colWidth}px`,
+                        backgroundColor: isTotal ? 'rgba(255,255,255,0.04)' : 'transparent',
+                        borderRadius: isTotal ? '6px' : '0',
+                        padding: '4px 0',
+                        position: 'relative',
+                        zIndex: 1
+                      }}>
+                        <div style={{ color, fontWeight: 800, fontSize: '0.68rem', height: '14px', whiteSpace: 'nowrap' }}>{formatMoney(l.value)}</div>
+                        <div style={{ position: 'relative', width: '100%', height: `${barAreaHeight}px`, marginTop: '4px' }}>
                           <div
                             style={{
                               position: 'absolute',
                               left: '50%',
                               transform: 'translateX(-50%)',
                               top: l.value >= 0 ? barAreaHeight / 2 - barH : barAreaHeight / 2,
-                              width: '26px',
+                              width: isTotal ? '24px' : '14px',
                               height: `${barH}px`,
                               backgroundColor: color,
-                              borderRadius: '3px'
+                              borderRadius: '2px',
+                              opacity: isTotal ? 1 : 0.85
                             }}
                           />
                         </div>
-                        <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.7rem', fontWeight: 700, height: '16px', marginTop: '4px' }}>{l.label || ' '}</div>
+                        <div style={{ color: isTotal ? '#a78bfa' : 'rgba(255,255,255,0.5)', fontSize: '0.65rem', fontWeight: 800, height: '14px', marginTop: '4px' }}>{l.label || ' '}</div>
                       </div>
                     );
                   })}
@@ -376,7 +390,7 @@ function SectorFlowBars({ history, weekKeys }: { history: SectorFlowEntry[]; wee
   );
 }
 
-const COT_CHART_HEIGHT = 76;
+const COT_CHART_HEIGHT = 44;
 const COT_BAR_WIDTH = 3;
 const COT_BAR_GAP = 3;
 
@@ -671,7 +685,11 @@ function FundFlowAlertsBell({ alerts }: { alerts: FundFlowAlert[] }) {
   return (
     <div ref={containerRef} style={{ position: 'relative' }}>
       <button onClick={handleToggle} style={bellButtonStyle} aria-label="Señales de divergencia precio/flujo">
-        <Bell size={14} color={unreadCount > 0 ? '#fbbf24' : '#a1a1aa'} />
+        {unreadCount > 0 ? (
+          <BellRing size={14} color="#fbbf24" />
+        ) : (
+          <Bell size={14} color="#a1a1aa" />
+        )}
         {unreadCount > 0 && (
           <span style={bellBadgeStyle}>{unreadCount > 9 ? '9+' : unreadCount}</span>
         )}
@@ -716,6 +734,7 @@ export default function FundFlowPanel({ sectorFlow, marketTide, cotPositioning, 
   if (loading) {
     return (
       <div style={panelContainerStyle}>
+        <div style={topGlowBarStyle} />
         <div style={headerStyle}>
           <Activity size={18} style={{ color: '#a78bfa' }} />
           <h3 style={titleStyle}>FUND FLOW & POSICIONAMIENTO</h3>
@@ -732,6 +751,7 @@ export default function FundFlowPanel({ sectorFlow, marketTide, cotPositioning, 
   if (sectorFlow.length === 0 && !marketTide) {
     return (
       <div style={panelContainerStyle}>
+        <div style={topGlowBarStyle} />
         <div style={headerStyle}>
           <Activity size={18} style={{ color: '#a78bfa' }} />
           <h3 style={titleStyle}>FUND FLOW & POSICIONAMIENTO</h3>
@@ -767,6 +787,92 @@ export default function FundFlowPanel({ sectorFlow, marketTide, cotPositioning, 
   const netTide = marketTide ? marketTide.net_call_premium + marketTide.net_put_premium : null;
   const sectorWeekKeys = sharedWeekKeys(sortedSectors.map(s => s.history));
 
+
+
+  return (
+    <div style={panelContainerStyle}>
+      <div style={topGlowBarStyle} />
+      <div style={headerStyle}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Activity size={18} style={{ color: '#a78bfa' }} />
+          <h3 style={titleStyle}>FUND FLOW & POSICIONAMIENTO</h3>
+        </div>
+        <FundFlowAlertsBell alerts={fundFlowAlerts} />
+      </div>
+
+      <div style={gridStyle}>
+        {/* Sector Flow */}
+        <div style={{ ...colStyle, borderRight: 'none', paddingRight: 0, minWidth: '320px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <h4 style={colHeaderStyle}>FLUJO NETO POR SECTOR (ETF, {SECTOR_WEEKS_WINDOW}SEM)</h4>
+            {marketTide && (
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '0.7rem', backgroundColor: 'rgba(255,255,255,0.03)', padding: '2px 8px', borderRadius: '6px' }}>
+                <span style={{ color: 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <Waves size={12} />
+                  Market Tide ({marketTide.date}):
+                </span>
+                <span style={{ color: netTide !== null && netTide >= 0 ? '#00e676' : '#ff2a6d', fontWeight: 700, fontFamily: 'monospace', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  {netTide !== null && netTide >= 0 ? <TrendingUp size={12} /> : null}
+                  {formatMoney(netTide)}
+                </span>
+              </div>
+            )}
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {sortedSectors.map((s, idx) => (
+              <div key={s.ticker} style={{ ...sectorRowStyle, borderBottom: idx < sortedSectors.length - 1 ? '1px dashed rgba(255,255,255,0.05)' : 'none', paddingBottom: '10px', paddingTop: idx === 0 ? '0' : '4px' }}>
+                <span style={{ ...sectorTickerStyle, flex: '1' }}>
+                  {s.ticker}
+                  <span style={sectorLabelStyle}>{SECTOR_LABELS[s.ticker] ?? ''}</span>
+                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
+                  <SectorFlowBars history={s.history} weekKeys={sectorWeekKeys} />
+                  {(() => {
+                    const l = s.latest;
+                    const pctChange = l?.last != null && l?.prev_close ? ((l.last - l.prev_close) / l.prev_close) * 100 : null;
+                    const bullish = l?.bullish_premium ?? null;
+                    const bearish = l?.bearish_premium ?? null;
+                    const totalPrem = bullish != null && bearish != null ? bullish + bearish : null;
+                    const bullPct = totalPrem ? (bullish! / totalPrem) * 100 : null;
+                    return (
+                      <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '3px', flex: '0 0 110px', textAlign: 'right' }}>
+                        <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '0.8rem', alignSelf: 'flex-end', color: pctChange == null ? 'rgba(255,255,255,0.3)' : pctChange >= 0 ? '#00e676' : '#ff2a6d' }}>
+                          {pctChange == null ? 'N/D' : `${pctChange >= 0 ? '+' : ''}${pctChange.toFixed(2)}%`}
+                        </span>
+                        {bullPct != null && (
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '4px', width: '100%' }}>
+                            <span style={{ flex: 1, height: '6px', borderRadius: '3px', overflow: 'hidden', display: 'flex' }}>
+                              <span style={{ width: `${100 - bullPct}%`, backgroundColor: '#ff2a6d' }} />
+                              <span style={{ width: `${bullPct}%`, backgroundColor: '#00e676' }} />
+                            </span>
+                            <span style={{ fontSize: '0.65rem', color: '#00e676', fontFamily: 'monospace', fontWeight: 800, flexShrink: 0 }}>{bullPct.toFixed(0)}%</span>
+                          </span>
+                        )}
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '3px', fontSize: '0.65rem', color: '#fbbf24', opacity: 0.8 }}>
+                          <BarChart2 size={10} />
+                          <span style={{ fontFamily: 'monospace' }}>{formatShares(l?.volume)}</span>
+                        </span>
+                      </span>
+                    );
+                  })()}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+export function CotPositioningPanel({ cotPositioning }: { cotPositioning: CotEntry[] }) {
+  const [showCotInfo, setShowCotInfo] = useState(false);
+  
+  if (!cotPositioning || cotPositioning.length === 0) {
+    return null;
+  }
+
   const COT_INSTRUMENT_ORDER: CotEntry['instrument'][] = ['ES', 'NQ', 'VX'];
   const cotByInstrument = new Map<string, CotEntry[]>();
   for (const entry of cotPositioning) {
@@ -786,164 +892,154 @@ export default function FundFlowPanel({ sectorFlow, marketTide, cotPositioning, 
   });
 
   return (
-    <div style={panelContainerStyle}>
-      <div style={headerStyle}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Activity size={18} style={{ color: '#a78bfa' }} />
-          <h3 style={titleStyle}>FUND FLOW & POSICIONAMIENTO</h3>
+    <div style={{ ...panelContainerStyle, padding: '12px 14px', marginBottom: 0 }}>
+      <div style={topGlowBarStyle} />
+      <div style={cotCardHeaderStyle}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <h4 style={{ ...colHeaderStyle, margin: 0, color: '#a78bfa' }}>COT (CFTC, SEMANAL, 52W)</h4>
+          <button onClick={() => setShowCotInfo(true)} style={infoButtonStyle} aria-label="¿Qué significan estos datos?">
+            <Info size={12} />
+          </button>
         </div>
-        {marketTide && (
-          <div style={{ display: 'flex', gap: '16px', fontSize: '0.75rem' }}>
-            <span style={{ color: 'rgba(255,255,255,0.5)' }}>
-              Market Tide ({marketTide.date}):
-            </span>
-            <span style={{ color: netTide !== null && netTide >= 0 ? '#00e676' : '#ff2a6d', fontWeight: 700, fontFamily: 'monospace' }}>
-              {formatMoney(netTide)}
-            </span>
-          </div>
-        )}
+        <span style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.4)' }}>Posicionamiento Especulador vs Institucional</span>
       </div>
-
-      <div style={gridStyle}>
-        {/* Sector Flow */}
-        <div style={{ ...colStyle, minWidth: '320px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <h4 style={colHeaderStyle}>FLUJO NETO POR SECTOR (ETF, {SECTOR_WEEKS_WINDOW}SEM)</h4>
-            <FundFlowAlertsBell alerts={fundFlowAlerts} />
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {sortedSectors.map(s => (
-              <div key={s.ticker} style={sectorRowStyle}>
-                <span style={{ ...sectorTickerStyle, flex: '0 0 88px' }}>
-                  {s.ticker}
-                  <span style={sectorLabelStyle}>{SECTOR_LABELS[s.ticker] ?? ''}</span>
-                </span>
-                <SectorFlowBars history={s.history} weekKeys={sectorWeekKeys} />
-                {(() => {
-                  const l = s.latest;
-                  const pctChange = l?.last != null && l?.prev_close ? ((l.last - l.prev_close) / l.prev_close) * 100 : null;
-                  const bullish = l?.bullish_premium ?? null;
-                  const bearish = l?.bearish_premium ?? null;
-                  const totalPrem = bullish != null && bearish != null ? bullish + bearish : null;
-                  const bullPct = totalPrem ? (bullish! / totalPrem) * 100 : null;
-                  return (
-                    <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '3px', flex: '0 0 110px', textAlign: 'right', marginLeft: 'auto' }}>
-                      <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '0.75rem', alignSelf: 'center', color: pctChange == null ? 'rgba(255,255,255,0.3)' : pctChange >= 0 ? '#00e676' : '#ff2a6d' }}>
-                        {pctChange == null ? 'N/D' : `${pctChange >= 0 ? '+' : ''}${pctChange.toFixed(2)}%`}
-                      </span>
-                      {bullPct != null && (
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px', width: '100%' }}>
-                          <span style={{ flex: 1, height: '6px', borderRadius: '3px', overflow: 'hidden', display: 'flex' }}>
-                            <span style={{ width: `${100 - bullPct}%`, backgroundColor: '#ff2a6d' }} />
-                            <span style={{ width: `${bullPct}%`, backgroundColor: '#00e676' }} />
-                          </span>
-                          <span style={{ fontSize: '0.6rem', color: '#00e676', fontFamily: 'monospace', fontWeight: 700, flexShrink: 0 }}>{bullPct.toFixed(0)}%</span>
-                        </span>
-                      )}
-                      <span style={{ fontSize: '0.62rem', color: '#fbbf24' }}>vol {formatShares(l?.volume)}</span>
-                    </span>
-                  );
-                })()}
+      {showCotInfo && <CotInfoModal onClose={() => setShowCotInfo(false)} />}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        {cotInstruments.map(({ instrument, latest: c, assetMgrSeries, levMoneySeries, alerts }) => {
+          const badgeColor = instrument === 'ES' ? '#a78bfa' : instrument === 'NQ' ? '#38bdf8' : '#f43f5e';
+          const fullName = instrument === 'ES' ? 'E-mini S&P 500' : instrument === 'NQ' ? 'Nasdaq 100 E-mini' : 'VIX Futures';
+          return (
+            <div key={instrument} style={cotCardStyle}>
+              <div style={cotCardHeaderStyle}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{
+                    backgroundColor: `${badgeColor}20`,
+                    color: badgeColor,
+                    border: `1px solid ${badgeColor}40`,
+                    padding: '2px 8px',
+                    borderRadius: '4px',
+                    fontWeight: 800,
+                    fontSize: '0.75rem',
+                    fontFamily: 'monospace'
+                  }}>
+                    {instrument}
+                  </span>
+                  <span style={{ fontWeight: 600, fontSize: '0.8rem', color: '#e2e8f0' }}>{fullName}</span>
+                  <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.7rem' }}>• {c.date}</span>
+                </div>
+                {alerts.length > 0 && (
+                  <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                    {alerts.map((a, i) => <CotAlertChip key={i} alert={a} />)}
+                  </div>
+                )}
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* COT Positioning */}
-        <div style={{ ...colStyle, borderRight: 'none' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <h4 style={colHeaderStyle}>COT (CFTC, SEMANAL, 52W)</h4>
-            <button onClick={() => setShowCotInfo(true)} style={infoButtonStyle} aria-label="¿Qué significan estos datos?">
-              <Info size={12} />
-            </button>
-          </div>
-          {showCotInfo && <CotInfoModal onClose={() => setShowCotInfo(false)} />}
-          {cotInstruments.length === 0 ? (
-            <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)' }}>Sin reporte todavía.</div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {cotInstruments.map(({ instrument, latest: c, assetMgrSeries, levMoneySeries, alerts }) => (
-                <div key={instrument} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}>
-                    <span style={{ fontWeight: 700, marginLeft: '50px' }}>{instrument}</span>
-                    <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem' }}>{c.date}</span>
+              
+              <div style={cotCardBodyStyle}>
+                {/* Asset Managers Row */}
+                <div style={cotMetricBlockStyle}>
+                  <span style={{ ...labelStyle, fontSize: '0.7rem', whiteSpace: 'nowrap' }}>Asset Mgr</span>
+                  <div style={{ width: '100%', minWidth: 0, display: 'flex', alignItems: 'center' }}>
+                    <MetricBars
+                      series={assetMgrSeries}
+                      formatValue={formatContracts}
+                      responsive
+                      widthPercent={100}
+                      height={COT_CHART_HEIGHT}
+                      barWidth={COT_BAR_WIDTH}
+                      barGap={COT_BAR_GAP}
+                    />
                   </div>
-                  {alerts.length > 0 && (
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginLeft: '80px', gap: '3px' }}>
-                      {alerts.map((a, i) => <CotAlertChip key={i} alert={a} />)}
-                    </div>
-                  )}
-                  <div style={cotMetricBlockStyle}>
-                    <div style={cotMetricHeaderStyle}>
-                      <span style={{ ...labelStyle, marginLeft: '75px' }}>Asset Mgr</span>
-                      <span style={{ display: 'flex', gap: '8px', alignItems: 'baseline' }}>
-                        <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '0.8rem', color: c.asset_mgr_net >= 0 ? '#00e676' : '#ff2a6d' }}>
-                          {c.asset_mgr_net.toLocaleString()}
-                        </span>
-                        <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)' }}>
-                          ({formatContracts(c.asset_mgr_net_change)})
-                        </span>
-                      </span>
-                    </div>
-                    <div style={{ paddingLeft: '90px' }}>
-                      <MetricBars
-                        series={assetMgrSeries}
-                        formatValue={formatContracts}
-                        responsive
-                        widthPercent={85}
-                        height={COT_CHART_HEIGHT}
-                        barWidth={COT_BAR_WIDTH}
-                        barGap={COT_BAR_GAP}
-                      />
-                    </div>
-                  </div>
-                  <div style={cotMetricBlockStyle}>
-                    <div style={cotMetricHeaderStyle}>
-                      <span style={{ ...labelStyle, marginLeft: '75px' }}>Leveraged Funds</span>
-                      <span style={{ display: 'flex', gap: '8px', alignItems: 'baseline' }}>
-                        <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '0.8rem', color: c.lev_money_net >= 0 ? '#00e676' : '#ff2a6d' }}>
-                          {c.lev_money_net.toLocaleString()}
-                        </span>
-                        <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)' }}>
-                          ({formatContracts(c.lev_money_net_change)})
-                        </span>
-                      </span>
-                    </div>
-                    <div style={{ paddingLeft: '90px' }}>
-                      <MetricBars
-                        series={levMoneySeries}
-                        formatValue={formatContracts}
-                        responsive
-                        widthPercent={85}
-                        height={COT_CHART_HEIGHT}
-                        barWidth={COT_BAR_WIDTH}
-                        barGap={COT_BAR_GAP}
-                      />
-                    </div>
+                  <div style={{ display: 'flex', gap: '6px', alignItems: 'center', justifyContent: 'flex-end' }}>
+                    <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '0.75rem', color: c.asset_mgr_net >= 0 ? '#00e676' : '#ff2a6d' }}>
+                      {c.asset_mgr_net.toLocaleString()}
+                    </span>
+                    <span style={{
+                      fontSize: '0.65rem',
+                      fontFamily: 'monospace',
+                      fontWeight: 600,
+                      padding: '1px 4px',
+                      borderRadius: '3px',
+                      backgroundColor: c.asset_mgr_net_change >= 0 ? 'rgba(0, 230, 118, 0.12)' : 'rgba(255, 42, 109, 0.12)',
+                      color: c.asset_mgr_net_change >= 0 ? '#00e676' : '#ff2a6d',
+                      minWidth: '55px',
+                      textAlign: 'right'
+                    }}>
+                      {formatContracts(c.asset_mgr_net_change)}
+                    </span>
                   </div>
                 </div>
-              ))}
+
+                {/* Leveraged Funds Row */}
+                <div style={cotMetricBlockStyle}>
+                  <span style={{ ...labelStyle, fontSize: '0.7rem', whiteSpace: 'nowrap' }}>Lev Funds</span>
+                  <div style={{ width: '100%', minWidth: 0, display: 'flex', alignItems: 'center' }}>
+                    <MetricBars
+                      series={levMoneySeries}
+                      formatValue={formatContracts}
+                      responsive
+                      widthPercent={100}
+                      height={COT_CHART_HEIGHT}
+                      barWidth={COT_BAR_WIDTH}
+                      barGap={COT_BAR_GAP}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', gap: '6px', alignItems: 'center', justifyContent: 'flex-end' }}>
+                    <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '0.75rem', color: c.lev_money_net >= 0 ? '#00e676' : '#ff2a6d' }}>
+                      {c.lev_money_net.toLocaleString()}
+                    </span>
+                    <span style={{
+                      fontSize: '0.65rem',
+                      fontFamily: 'monospace',
+                      fontWeight: 600,
+                      padding: '1px 4px',
+                      borderRadius: '3px',
+                      backgroundColor: c.lev_money_net_change >= 0 ? 'rgba(0, 230, 118, 0.12)' : 'rgba(255, 42, 109, 0.12)',
+                      color: c.lev_money_net_change >= 0 ? '#00e676' : '#ff2a6d',
+                      minWidth: '55px',
+                      textAlign: 'right'
+                    }}>
+                      {formatContracts(c.lev_money_net_change)}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
-          )}
-        </div>
+          );
+        })}
       </div>
     </div>
   );
 }
 
 const panelContainerStyle: React.CSSProperties = {
-  backgroundColor: 'rgba(10, 16, 35, 0.6)',
+  backgroundColor: 'rgba(13, 20, 38, 0.75)',
   borderWidth: '1px',
   borderStyle: 'solid',
   borderColor: 'rgba(255, 255, 255, 0.08)',
-  borderRadius: '12px',
-  padding: '20px',
+  borderRadius: '14px',
+  padding: '16px',
   display: 'flex',
   flexDirection: 'column',
-  gap: '20px',
+  gap: '14px',
   backdropFilter: 'blur(16px)',
+  boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.36)',
   color: '#fff',
-  margin: '0 1rem 1rem 1rem'
+  margin: '0 0 1rem 0',
+  boxSizing: 'border-box',
+  position: 'relative'
+};
+
+const topGlowBarStyle: React.CSSProperties = {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  height: '2px',
+  background: 'linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.6), transparent)',
+  pointerEvents: 'none',
+  zIndex: 10,
+  borderTopLeftRadius: '14px',
+  borderTopRightRadius: '14px'
 };
 
 const headerStyle: React.CSSProperties = {
@@ -951,7 +1047,7 @@ const headerStyle: React.CSSProperties = {
   justifyContent: 'space-between',
   alignItems: 'center',
   borderBottom: '1px solid rgba(255,255,255,0.06)',
-  paddingBottom: '12px'
+  paddingBottom: '8px'
 };
 
 const titleStyle: React.CSSProperties = {
@@ -967,17 +1063,17 @@ const titleStyle: React.CSSProperties = {
 // a wide dead gap between the bars and the $ values. Capping it lets COT
 // (which actually benefits from more room) take the rest.
 const gridStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'minmax(320px, 400px) minmax(320px, 1fr)',
-  gap: '24px'
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '16px'
 };
 
 const colStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
-  gap: '10px',
+  gap: '8px',
   borderRight: '1px solid rgba(255, 255, 255, 0.06)',
-  paddingRight: '16px'
+  paddingRight: '12px'
 };
 
 const colHeaderStyle: React.CSSProperties = {
@@ -986,6 +1082,30 @@ const colHeaderStyle: React.CSSProperties = {
   fontWeight: 800,
   color: 'rgba(255,255,255,0.4)',
   letterSpacing: '0.08em'
+};
+
+const cotCardStyle: React.CSSProperties = {
+  backgroundColor: 'rgba(255, 255, 255, 0.02)',
+  border: '1px solid rgba(255, 255, 255, 0.06)',
+  borderRadius: '8px',
+  padding: '16px 16px',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '12px'
+};
+
+const cotCardHeaderStyle: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
+  paddingBottom: '10px'
+};
+
+const cotCardBodyStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '16px'
 };
 
 const sectorRowStyle: React.CSSProperties = {
@@ -1007,15 +1127,18 @@ const cotAlertChipStyle: React.CSSProperties = {
 };
 
 const cotMetricBlockStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '4px'
+  display: 'grid',
+  gridTemplateColumns: '70px 1fr 135px',
+  gap: '8px',
+  alignItems: 'center',
+  flex: 1,
+  minWidth: 0
 };
 
 const cotMetricHeaderStyle: React.CSSProperties = {
   display: 'flex',
   justifyContent: 'space-between',
-  alignItems: 'baseline',
+  alignItems: 'center',
   fontSize: '0.75rem'
 };
 

@@ -24,6 +24,7 @@
     "fund-flow:daily": "node scripts/uw-fetch-fund-flow.js && node scripts/fetch-cot-report.js && node scripts/check-fund-flow-shifts.js",
     "fund-flow:check-shifts": "node scripts/check-fund-flow-shifts.js",
     "macro:daily": "node scripts/fetch-fed-liquidity.js",
+    "rs:daily": "node scripts/fetch-relative-strength.js",
     "score:daily": "node scripts/fetch-market-risk.js && node scripts/compute-institutional-flow-score.js",
     "macro:full": "npm run macro:daily && npm run score:daily",
     "analysis:daily": "node scripts/generate-institutional-analysis.js",
@@ -31,6 +32,9 @@
   },
   "dependencies": {
     "dotenv": "^17.4.2",
+    "exceljs": "^4.4.0",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
     "lucide-react": "^1.17.0",
     "next": "^15.1.0",
     "react": "19.2.4",

@@ -12,6 +12,7 @@ export default function GammaRegimePanel({ regimeData, loading, minHistoryCount 
   if (loading) {
     return (
       <div style={panelContainerStyle}>
+        <div style={topGlowBarStyle} />
         <div style={headerStyle}>
           <Activity size={18} style={titleIconStyle} />
           <h3 style={titleStyle}>GAMMA REGIME ENGINE</h3>
@@ -28,6 +29,7 @@ export default function GammaRegimePanel({ regimeData, loading, minHistoryCount 
   if (!regimeData) {
     return (
       <div style={panelContainerStyle}>
+        <div style={topGlowBarStyle} />
         <div style={headerStyle}>
           <Activity size={18} style={titleIconStyle} />
           <h3 style={titleStyle}>GAMMA REGIME ENGINE</h3>
@@ -93,6 +95,7 @@ export default function GammaRegimePanel({ regimeData, loading, minHistoryCount 
 
   return (
     <div style={{ ...panelContainerStyle, borderColor: borderHighlight, boxShadow: `0 8px 32px 0 ${bgGlow}` }}>
+      <div style={topGlowBarStyle} />
       {/* Panel Header */}
       <div style={headerStyle}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -221,20 +224,32 @@ export default function GammaRegimePanel({ regimeData, loading, minHistoryCount 
 
 // Inline Styles
 const panelContainerStyle: React.CSSProperties = {
-  backgroundColor: 'rgba(10, 16, 35, 0.6)',
+  backgroundColor: 'rgba(13, 20, 38, 0.75)',
   borderWidth: '1px',
   borderStyle: 'solid',
   borderColor: 'rgba(255, 255, 255, 0.08)',
-  borderRadius: '12px',
-  padding: '20px',
+  borderRadius: '14px',
+  padding: '16px',
   display: 'flex',
   flexDirection: 'column',
-  gap: '20px',
+  gap: '14px',
   backdropFilter: 'blur(16px)',
-  transition: 'all 0.3s ease',
+  boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.36)',
   color: '#fff',
   height: '100%',
-  marginTop: '0px'
+  boxSizing: 'border-box',
+  position: 'relative',
+  overflow: 'hidden'
+};
+
+const topGlowBarStyle: React.CSSProperties = {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  height: '2px',
+  background: 'linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.6), transparent)',
+  pointerEvents: 'none'
 };
 
 const headerStyle: React.CSSProperties = {

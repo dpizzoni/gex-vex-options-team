@@ -27,6 +27,7 @@ export default function GammaRegimeChart({ history, forwardExpirations, symbol, 
   if (!history || history.length === 0) {
     return (
       <div style={containerStyle}>
+        <div style={topGlowBarStyle} />
         <div style={noDataStyle}>No hay historial disponible para graficar.</div>
       </div>
     );
@@ -34,21 +35,21 @@ export default function GammaRegimeChart({ history, forwardExpirations, symbol, 
 
   // Combine dimensions
   const svgWidth = 800;
-  const svgHeight = 350;
+  const svgHeight = 260;
 
   const paddingLeft = 65;
   // Widened to fit the forward-only price axis (callWall/spot/putWall) alongside
   // the existing past-only spot axis without the two overlapping.
   const paddingRight = 125;
-  const paddingTop = 30;
-  const paddingBottom = 40;
+  const paddingTop = 15;
+  const paddingBottom = 20;
 
   const chartWidth = svgWidth - paddingLeft - paddingRight;
   const chartHeight = svgHeight - paddingTop - paddingBottom;
 
   // Stability panel sub-height
-  const stabilityHeight = 40;
-  const mainChartHeight = chartHeight - stabilityHeight - 15;
+  const stabilityHeight = 28;
+  const mainChartHeight = chartHeight - stabilityHeight - 10;
 
   // The regime engine needs the full history for its rolling calculations, but the
   // chart only has room to draw a limited window of bars (like the UW reference chart).
@@ -175,22 +176,9 @@ export default function GammaRegimeChart({ history, forwardExpirations, symbol, 
     }
   }
 
-  const activeContainerStyle: React.CSSProperties = isFullScreen
-    ? {
-        ...containerStyle,
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
-        zIndex: 9999,
-        borderRadius: 0,
-        backgroundColor: '#0a1023', // Solid background for full screen so nothing bleeds through
-      }
-    : containerStyle;
-
   return (
-    <div style={activeContainerStyle}>
+    <div style={isFullScreen ? { ...containerStyle, position: 'fixed', top: '20px', left: '20px', right: '20px', bottom: '20px', zIndex: 9999, height: 'auto', boxShadow: '0 20px 60px rgba(0,0,0,0.8)' } : containerStyle}>
+      <div style={topGlowBarStyle} />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '10px' }}>
         <div style={{ ...titleStyle, borderBottom: 'none', paddingBottom: 0 }}>GAMMA REGIME CHART ({symbol})</div>
         <button
@@ -662,19 +650,33 @@ export default function GammaRegimeChart({ history, forwardExpirations, symbol, 
 
 // Styles
 const containerStyle: React.CSSProperties = {
-  backgroundColor: 'rgba(10, 16, 35, 0.6)',
-  border: '1px solid rgba(255, 255, 255, 0.08)',
-  borderRadius: '12px',
-  padding: '20px',
+  backgroundColor: 'rgba(13, 20, 38, 0.75)',
+  borderWidth: '1px',
+  borderStyle: 'solid',
+  borderColor: 'rgba(255, 255, 255, 0.08)',
+  borderRadius: '14px',
+  padding: '16px',
   display: 'flex',
   flexDirection: 'column',
-  gap: '15px',
+  gap: '14px',
   backdropFilter: 'blur(16px)',
+  boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.36)',
   color: '#fff',
   height: '100%',
-  marginTop: '0px',
+  boxSizing: 'border-box',
   position: 'relative',
+  overflow: 'hidden',
   zIndex: 10
+};
+
+const topGlowBarStyle: React.CSSProperties = {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  height: '2px',
+  background: 'linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.6), transparent)',
+  pointerEvents: 'none'
 };
 
 const titleStyle: React.CSSProperties = {
@@ -683,7 +685,7 @@ const titleStyle: React.CSSProperties = {
   letterSpacing: '0.05em',
   color: '#a78bfa',
   borderBottom: '1px solid rgba(255,255,255,0.06)',
-  paddingBottom: '10px'
+  paddingBottom: '8px'
 };
 
 const svgStyle: React.CSSProperties = {
@@ -692,7 +694,7 @@ const svgStyle: React.CSSProperties = {
 };
 
 const noDataStyle: React.CSSProperties = {
-  padding: '40px',
+  padding: '20px',
   textAlign: 'center',
   color: 'rgba(255,255,255,0.4)',
   fontStyle: 'italic',
@@ -702,9 +704,9 @@ const noDataStyle: React.CSSProperties = {
 const legendStyle: React.CSSProperties = {
   display: 'flex',
   flexWrap: 'wrap',
-  gap: '16px',
+  gap: '10px',
   justifyContent: 'center',
-  paddingTop: '10px',
+  paddingTop: '6px',
   borderTop: '1px solid rgba(255,255,255,0.06)',
   fontSize: '0.75rem',
   color: 'rgba(255,255,255,0.6)'

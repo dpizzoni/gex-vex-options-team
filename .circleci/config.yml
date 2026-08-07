@@ -150,6 +150,41 @@ jobs:
       - push_cache:
           commit_message: "chore(data): daily fund-flow & COT capture"
 
+  relative-strength-refresh:
+    docker:
+      - image: cimg/node:22.11
+    resource_class: small
+    steps:
+      - checkout
+
+      # Same re-sync as fund-flow-refresh/institutional-analysis-refresh: this
+      # job needs the cache that fund-flow-refresh just pushed, not the
+      # pipeline's original checkout.
+      - run:
+          name: 🔄 Sincronizar con el push del job anterior
+          command: git fetch origin main && git reset --hard origin/main
+
+      - restore_cache:
+          keys:
+            - v1-node-{{ checksum "package-lock.json" }}
+            - v1-node-
+
+      - run:
+          name: 📦 Instalar dependencias Node
+          command: npm install
+
+      - save_cache:
+          key: v1-node-{{ checksum "package-lock.json" }}
+          paths:
+            - node_modules
+
+      - run:
+          name: 📈 Actualizar Fuerza Relativa (Yahoo Finance)
+          command: npm run rs:daily
+
+      - push_cache:
+          commit_message: "chore(data): daily relative strength refresh"
+
   macro-liquidity-refresh:
     docker:
       - image: cimg/node:22.11
@@ -242,6 +277,9 @@ workflows:
       - fund-flow-refresh:
           requires:
             - gamma-refresh-close
+      - relative-strength-refresh:
+          requires:
+            - fund-flow-refresh
 
   macro-liquidity:
     when:

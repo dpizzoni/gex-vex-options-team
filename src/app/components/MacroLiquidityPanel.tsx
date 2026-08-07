@@ -64,11 +64,12 @@ const LIQUIDITY_SERIES: { key: LiquiditySeriesKey; label: string; color: string 
 // RRP/TGA invisible next to WALCL's trillions, and normalizing to 0-100%
 // hid the real shape of small day-to-day moves. Stacking separately trades
 // direct overlay-comparison for readable per-metric detail.
-function SingleMetricChart({ label, color, data, formatValue }: {
+function SingleMetricChart({ label, color, data, formatValue, chartId }: {
   label: string;
   color: string;
   data: { date: string; value: number }[];
   formatValue: (v: number) => string;
+  chartId: string;
 }) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
@@ -84,23 +85,28 @@ function SingleMetricChart({ label, color, data, formatValue }: {
 
   const points = data.map((d, i) => ({
     x: (i / (data.length - 1)) * width,
-    y: SINGLE_CHART_HEIGHT - ((d.value - min) / range) * SINGLE_CHART_HEIGHT,
+    y: SINGLE_CHART_HEIGHT - ((d.value - min) / range) * (SINGLE_CHART_HEIGHT - 6) - 3,
     date: d.date,
     value: d.value
   }));
+
   const path = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(2)} ${p.y.toFixed(2)}`).join(' ');
+  const areaPath = `${path} L ${width} ${SINGLE_CHART_HEIGHT} L 0 ${SINGLE_CHART_HEIGHT} Z`;
   const slotWidth = width / data.length;
   const hovered = hoveredIndex !== null ? points[hoveredIndex] : null;
 
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '2px' }}>
-        <span style={{ fontSize: '0.72rem', fontWeight: 800, color }}>{label}</span>
-        <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: color, display: 'inline-block', boxShadow: `0 0 6px ${color}` }} />
+          <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#e2e8f0', letterSpacing: '0.03em' }}>{label}</span>
+        </div>
+        <span style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace' }}>
           {formatValue(min)} — {formatValue(max)}
         </span>
       </div>
-      <div style={{ position: 'relative', width: `${CHART_WIDTH_PERCENT}%` }}>
+      <div style={{ position: 'relative', width: `${CHART_WIDTH_PERCENT}%`, backgroundColor: 'rgba(0,0,0,0.15)', borderRadius: '6px', padding: '4px', border: '1px solid rgba(255,255,255,0.03)' }}>
         <svg
           width="100%"
           height={SINGLE_CHART_HEIGHT + 4}
@@ -108,9 +114,17 @@ function SingleMetricChart({ label, color, data, formatValue }: {
           preserveAspectRatio="none"
           style={{ display: 'block', overflow: 'visible' }}
         >
-          <line x1={0} x2={width} y1={0} y2={0} stroke="rgba(255,255,255,0.06)" strokeWidth={1} />
+          <defs>
+            <linearGradient id={`grad-${chartId}`} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={color} stopOpacity={0.28} />
+              <stop offset="100%" stopColor={color} stopOpacity={0.0} />
+            </linearGradient>
+          </defs>
+          <line x1={0} x2={width} y1={SINGLE_CHART_HEIGHT / 2} y2={SINGLE_CHART_HEIGHT / 2} stroke="rgba(255,255,255,0.04)" strokeDasharray="3,3" strokeWidth={1} />
           <line x1={0} x2={width} y1={SINGLE_CHART_HEIGHT} y2={SINGLE_CHART_HEIGHT} stroke="rgba(255,255,255,0.06)" strokeWidth={1} />
-          <path d={path} fill="none" stroke={color} strokeWidth={1.75} />
+
+          <path d={areaPath} fill={`url(#grad-${chartId})`} />
+          <path d={path} fill="none" stroke={color} strokeWidth={2} style={{ filter: `drop-shadow(0 2px 4px ${color}40)` }} />
 
           {points.map((p, i) => (
             <rect
@@ -128,8 +142,8 @@ function SingleMetricChart({ label, color, data, formatValue }: {
 
           {hovered && (
             <>
-              <line x1={hovered.x} x2={hovered.x} y1={0} y2={SINGLE_CHART_HEIGHT} stroke="rgba(255,255,255,0.25)" strokeDasharray="2,2" />
-              <circle cx={hovered.x} cy={hovered.y} r={2.5} fill={color} />
+              <line x1={hovered.x} x2={hovered.x} y1={0} y2={SINGLE_CHART_HEIGHT} stroke="rgba(255,255,255,0.3)" strokeDasharray="2,2" />
+              <circle cx={hovered.x} cy={hovered.y} r={3.5} fill={color} stroke="#0b1021" strokeWidth={1.5} />
             </>
           )}
         </svg>
@@ -140,14 +154,15 @@ function SingleMetricChart({ label, color, data, formatValue }: {
               position: 'absolute',
               left: `${(hovered.x / width) * 100}%`,
               top: 0,
-              transform: 'translate(-50%, calc(-100% - 8px))',
+              transform: 'translate(-50%, calc(-100% - 6px))',
               pointerEvents: 'none',
               display: 'flex',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              zIndex: 20
             }}
           >
             <div style={{
-              backgroundColor: 'rgba(10, 16, 35, 0.97)',
+              backgroundColor: 'rgba(10, 16, 35, 0.96)',
               border: `1px solid ${color}`,
               borderRadius: '6px',
               padding: '4px 8px',
@@ -155,7 +170,7 @@ function SingleMetricChart({ label, color, data, formatValue }: {
               fontSize: '10px',
               lineHeight: 1.4,
               width: 'max-content',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
+              boxShadow: '0 4px 14px rgba(0,0,0,0.6)'
             }}>
               <div style={{ color: 'rgba(255,255,255,0.6)' }}>{hovered.date}</div>
               <div style={{ color, fontWeight: 700 }}>{formatValue(hovered.value)}</div>
@@ -169,10 +184,11 @@ function SingleMetricChart({ label, color, data, formatValue }: {
 
 function LiquidityChartsStack({ history }: { history: FedLiquidityEntry[] }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
       {LIQUIDITY_SERIES.map(s => (
         <SingleMetricChart
           key={s.key}
+          chartId={s.key}
           label={s.label}
           color={s.color}
           data={history.map(h => ({ date: h.date, value: h[s.key] }))}
@@ -184,9 +200,6 @@ function LiquidityChartsStack({ history }: { history: FedLiquidityEntry[] }) {
 }
 
 function LiquidityInfoModal({ onClose }: { onClose: () => void }) {
-  // Portal to document.body: this panel's own container uses backdrop-filter,
-  // which creates a stacking context that would trap a fixed-position overlay
-  // behind later sibling panels (same issue fixed in InstitutionalAnalystPanel).
   return createPortal(
     <div style={infoOverlayStyle} onClick={onClose}>
       <div style={infoModalStyle} onClick={e => e.stopPropagation()}>
@@ -254,8 +267,9 @@ export default function MacroLiquidityPanel({ history, loading }: MacroLiquidity
   if (loading) {
     return (
       <div style={panelContainerStyle}>
+        <div style={topGlowBarStyle} />
         <div style={headerStyle}>
-          <Droplets size={18} style={{ color: '#a78bfa' }} />
+          <Droplets size={18} style={{ color: '#a78bfa', filter: 'drop-shadow(0 0 6px rgba(167,139,250,0.5))' }} />
           <h3 style={titleStyle}>FED LIQUIDITY MONITOR</h3>
         </div>
         <div style={loadingContainerStyle}>
@@ -270,8 +284,9 @@ export default function MacroLiquidityPanel({ history, loading }: MacroLiquidity
   if (history.length === 0) {
     return (
       <div style={panelContainerStyle}>
+        <div style={topGlowBarStyle} />
         <div style={headerStyle}>
-          <Droplets size={18} style={{ color: '#a78bfa' }} />
+          <Droplets size={18} style={{ color: '#a78bfa', filter: 'drop-shadow(0 0 6px rgba(167,139,250,0.5))' }} />
           <h3 style={titleStyle}>FED LIQUIDITY MONITOR</h3>
         </div>
         <div style={errorContainerStyle}>
@@ -297,64 +312,66 @@ export default function MacroLiquidityPanel({ history, loading }: MacroLiquidity
 
   return (
     <div style={panelContainerStyle}>
+      <div style={topGlowBarStyle} />
       <div style={headerStyle}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Droplets size={18} style={{ color: '#a78bfa' }} />
+          <Droplets size={18} style={{ color: '#a78bfa', filter: 'drop-shadow(0 0 6px rgba(167,139,250,0.5))' }} />
           <h3 style={titleStyle}>FED LIQUIDITY MONITOR</h3>
           <button onClick={() => setShowInfo(true)} style={infoButtonStyle} aria-label="¿Qué significan estos datos?">
-            <Info size={14} />
+            <Info size={13} />
           </button>
         </div>
         <div style={{
           ...regimeBadgeStyle,
-          backgroundColor: isExpanding ? 'rgba(0,230,118,0.1)' : 'rgba(255,42,109,0.1)',
+          backgroundColor: isExpanding ? 'rgba(0,230,118,0.12)' : 'rgba(255,42,109,0.12)',
           color: isExpanding ? '#00e676' : '#ff2a6d',
-          borderColor: isExpanding ? '#00e676' : '#ff2a6d'
+          borderColor: isExpanding ? 'rgba(0,230,118,0.4)' : 'rgba(255,42,109,0.4)',
+          boxShadow: isExpanding ? '0 0 10px rgba(0,230,118,0.15)' : '0 0 10px rgba(255,42,109,0.15)'
         }}>
           {isExpanding ? '🟢 LIQUIDEZ AUMENTANDO' : '🔴 LIQUIDEZ DRENÁNDOSE'}
         </div>
       </div>
 
       <div style={gridStyle}>
-        <div style={colStyle}>
+        <div style={cardStatStyle}>
           <h4 style={colHeaderStyle}>FED BALANCE (WALCL)</h4>
           <div style={bigValueStyle}>{formatBillions(latest.walcl)}</div>
-          <div style={{ fontSize: '0.75rem', color: walclDelta !== null && walclDelta >= 0 ? '#00e676' : '#ff2a6d', fontFamily: 'monospace' }}>
+          <div style={{ fontSize: '0.72rem', fontWeight: 700, color: walclDelta !== null && walclDelta >= 0 ? '#00e676' : '#ff2a6d', fontFamily: 'monospace' }}>
             {formatDelta(walclDelta)} (7d)
           </div>
         </div>
 
-        <div style={colStyle}>
-          <h4 style={colHeaderStyle}>TREASURY GENERAL ACCOUNT</h4>
+        <div style={cardStatStyle}>
+          <h4 style={colHeaderStyle}>TREASURY GEN. (TGA)</h4>
           <div style={bigValueStyle}>{formatBillions(latest.tga)}</div>
-          <div style={{ fontSize: '0.75rem', color: tgaDelta !== null && tgaDelta <= 0 ? '#00e676' : '#ff2a6d', fontFamily: 'monospace' }}>
+          <div style={{ fontSize: '0.72rem', fontWeight: 700, color: tgaDelta !== null && tgaDelta <= 0 ? '#00e676' : '#ff2a6d', fontFamily: 'monospace' }}>
             {formatDelta(tgaDelta)} (7d)
           </div>
         </div>
 
-        <div style={colStyle}>
+        <div style={cardStatStyle}>
           <h4 style={colHeaderStyle}>REVERSE REPO (RRP)</h4>
           <div style={bigValueStyle}>{formatBillions(latest.rrp)}</div>
-          <div style={{ fontSize: '0.75rem', color: rrpDelta !== null && rrpDelta <= 0 ? '#00e676' : '#ff2a6d', fontFamily: 'monospace' }}>
+          <div style={{ fontSize: '0.72rem', fontWeight: 700, color: rrpDelta !== null && rrpDelta <= 0 ? '#00e676' : '#ff2a6d', fontFamily: 'monospace' }}>
             {formatDelta(rrpDelta)} (7d)
           </div>
         </div>
 
-        <div style={{ ...colStyle, borderRight: 'none' }}>
-          <h4 style={colHeaderStyle}>NET LIQUIDITY (FED − TGA − RRP)</h4>
-          <div style={{ ...bigValueStyle, color: '#a78bfa' }}>{formatBillions(latest.net_liquidity)}</div>
-          <div style={{ fontSize: '0.75rem', color: isExpanding ? '#00e676' : '#ff2a6d', fontFamily: 'monospace' }}>
+        <div style={{ ...cardStatStyle, borderColor: 'rgba(167,139,250,0.3)', backgroundColor: 'rgba(167,139,250,0.06)' }}>
+          <h4 style={{ ...colHeaderStyle, color: '#a78bfa' }}>NET LIQUIDITY</h4>
+          <div style={{ ...bigValueStyle, color: '#a78bfa', textShadow: '0 0 10px rgba(167,139,250,0.3)' }}>{formatBillions(latest.net_liquidity)}</div>
+          <div style={{ fontSize: '0.72rem', fontWeight: 700, color: isExpanding ? '#00e676' : '#ff2a6d', fontFamily: 'monospace' }}>
             {formatDelta(netDelta)} (7d)
           </div>
         </div>
       </div>
 
-      <div>
-        <h4 style={colHeaderStyle}>LIQUIDEZ FED — 4 MÉTRICAS (90D, ESCALA PROPIA)</h4>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
+        <h4 style={sectionSubtitleStyle}>LIQUIDEZ FED — 4 MÉTRICAS (90D, ESCALA PROPIA)</h4>
         <LiquidityChartsStack history={recentHistory} />
       </div>
 
-      <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', textAlign: 'right' }}>
+      <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.35)', textAlign: 'right', marginTop: 'auto', paddingTop: '4px' }}>
         al {latest.date} · fuente: FRED (WALCL, RRPONTSYD, WTREGEN)
       </div>
 
@@ -363,39 +380,54 @@ export default function MacroLiquidityPanel({ history, loading }: MacroLiquidity
   );
 }
 
+const topGlowBarStyle: React.CSSProperties = {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  height: '2px',
+  background: 'linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.6), transparent)',
+  pointerEvents: 'none'
+};
+
 const panelContainerStyle: React.CSSProperties = {
-  backgroundColor: 'rgba(10, 16, 35, 0.6)',
+  backgroundColor: 'rgba(13, 20, 38, 0.75)',
   borderWidth: '1px',
   borderStyle: 'solid',
   borderColor: 'rgba(255, 255, 255, 0.08)',
-  borderRadius: '12px',
-  padding: '20px',
+  borderRadius: '14px',
+  padding: '16px',
   display: 'flex',
   flexDirection: 'column',
-  gap: '20px',
+  gap: '14px',
   backdropFilter: 'blur(16px)',
+  boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.36)',
   color: '#fff',
-  margin: '0 1rem 1rem 1rem'
+  height: '100%',
+  boxSizing: 'border-box',
+  position: 'relative',
+  overflow: 'hidden'
 };
 
 const headerStyle: React.CSSProperties = {
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  borderBottom: '1px solid rgba(255,255,255,0.06)',
-  paddingBottom: '12px'
+  borderBottom: '1px solid rgba(255,255,255,0.07)',
+  paddingBottom: '10px'
 };
 
 const titleStyle: React.CSSProperties = {
   margin: 0,
-  fontSize: '1rem',
+  fontSize: '0.92rem',
   fontWeight: 800,
-  letterSpacing: '0.05em',
-  color: '#a78bfa'
+  letterSpacing: '0.06em',
+  color: '#a78bfa',
+  textShadow: '0 0 12px rgba(167,139,250,0.25)'
 };
 
 const regimeBadgeStyle: React.CSSProperties = {
-  fontSize: '0.75rem',
+  fontSize: '0.72rem',
   fontWeight: 800,
   padding: '4px 10px',
   borderRadius: '20px',
@@ -406,35 +438,46 @@ const regimeBadgeStyle: React.CSSProperties = {
 
 const gridStyle: React.CSSProperties = {
   display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-  gap: '24px'
+  gridTemplateColumns: 'repeat(2, 1fr)',
+  gap: '10px'
 };
 
-const colStyle: React.CSSProperties = {
+const cardStatStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
-  gap: '6px',
-  borderRight: '1px solid rgba(255, 255, 255, 0.06)',
-  paddingRight: '16px'
+  gap: '4px',
+  backgroundColor: 'rgba(255, 255, 255, 0.03)',
+  border: '1px solid rgba(255, 255, 255, 0.05)',
+  borderRadius: '10px',
+  padding: '10px 12px'
 };
 
 const colHeaderStyle: React.CSSProperties = {
   margin: 0,
-  fontSize: '0.75rem',
+  fontSize: '0.68rem',
   fontWeight: 800,
-  color: 'rgba(255,255,255,0.4)',
+  color: 'rgba(255,255,255,0.45)',
+  letterSpacing: '0.08em'
+};
+
+const sectionSubtitleStyle: React.CSSProperties = {
+  margin: '4px 0 2px 0',
+  fontSize: '0.7rem',
+  fontWeight: 800,
+  color: 'rgba(255,255,255,0.5)',
   letterSpacing: '0.08em'
 };
 
 const bigValueStyle: React.CSSProperties = {
-  fontSize: '1.4rem',
-  fontWeight: 700,
+  fontSize: '1.25rem',
+  fontWeight: 800,
   fontFamily: 'monospace',
-  color: '#fff'
+  color: '#fff',
+  letterSpacing: '-0.02em'
 };
 
 const loadingContainerStyle: React.CSSProperties = {
-  height: '100px',
+  height: '200px',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center'
@@ -474,22 +517,24 @@ const infoButtonStyle: React.CSSProperties = {
   background: 'rgba(255,255,255,0.06)',
   border: '1px solid rgba(255,255,255,0.15)',
   borderRadius: '50%',
-  color: 'rgba(255,255,255,0.5)',
+  color: 'rgba(255,255,255,0.6)',
   cursor: 'pointer',
   width: '20px',
   height: '20px',
-  padding: 0
+  padding: 0,
+  transition: 'all 0.2s ease'
 };
 
 const infoOverlayStyle: React.CSSProperties = {
   position: 'fixed',
   inset: 0,
-  backgroundColor: 'rgba(0,0,0,0.6)',
+  backgroundColor: 'rgba(0,0,0,0.65)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   zIndex: 1000,
-  padding: '20px'
+  padding: '20px',
+  backdropFilter: 'blur(4px)'
 };
 
 const infoModalStyle: React.CSSProperties = {

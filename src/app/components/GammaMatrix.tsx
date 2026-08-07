@@ -346,7 +346,8 @@ export default function GammaMatrix({
         </div>
       </div>
 
-      <div className={styles.scrollWrapper} ref={scrollRef} onScroll={onScroll}>
+      <div className={styles.scrollContainer}>
+        <div className={styles.scrollWrapper} ref={scrollRef} onScroll={onScroll}>
         <table className={styles.matrixTable}>
           <thead>
             <tr>
@@ -438,6 +439,7 @@ export default function GammaMatrix({
             })}
           </tbody>
         </table>
+      </div>
       </div>
     </div>
   );

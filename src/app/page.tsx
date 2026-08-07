@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { createPortal } from "react-dom";
 import { 
   RefreshCw, 
   TrendingUp, 
@@ -18,7 +19,10 @@ import {
   Check,
   FileText,
   Eye,
-  Search
+  Search,
+  Bot,
+  CheckCircle,
+  AlertCircle
 } from "lucide-react";
 import styles from "./page.module.css";
 import GammaMatrix, { MatrixRawData } from "./components/GammaMatrix";
@@ -26,10 +30,11 @@ import { calcT, calcGamma, calcVanna, sanitizeIV, findGammaFlip } from "@/lib/ge
 import GammaRegimePanel from "./components/GammaRegimePanel";
 import GammaRegimeChart from "./components/GammaRegimeChart";
 import NotificationBell from "./components/NotificationBell";
-import FundFlowPanel, { SectorFlowSeries, MarketTideEntry, CotEntry, FundFlowAlert } from "./components/FundFlowPanel";
+import FundFlowPanel, { SectorFlowSeries, MarketTideEntry, CotEntry, FundFlowAlert, CotPositioningPanel } from "./components/FundFlowPanel";
 import MacroLiquidityPanel, { FedLiquidityEntry } from "./components/MacroLiquidityPanel";
 import InstitutionalFlowScorePanel, { FlowScoreEntry } from "./components/InstitutionalFlowScorePanel";
 import InstitutionalAnalystPanel, { InstitutionalAnalysisEntry } from "./components/InstitutionalAnalystPanel";
+import RelativeStrengthPanel, { RelativeStrengthData } from "./components/RelativeStrengthPanel";
 import { computeGammaRegime } from "@/lib/gamma-regime-engine";
 
 // The 11 SPDR sector ETFs + SPY (SECTOR_TICKERS in uw-fetch-fund-flow.js,
@@ -140,7 +145,7 @@ export default function Home() {
   const [matrixExpMode, setMatrixExpMode] = useState<"SINGLE" | "MULTI">("SINGLE");
   const [matrixSelectedExps, setMatrixSelectedExps] = useState<string[]>([]);
   const [matrixRelevantOnly, setMatrixRelevantOnly] = useState<boolean>(false);
-  const [matrixStrikeWindow, setMatrixStrikeWindow] = useState<10 | 20 | 30 | 0>(10);
+  const [matrixStrikeWindow, setMatrixStrikeWindow] = useState<number>(14);
   const [matrixRawData, setMatrixRawData] = useState<MatrixRawData[]>([]);
   const [matrixLoading, setMatrixLoading] = useState<boolean>(false);
   const [matrixDisplayFormat, setMatrixDisplayFormat] = useState<"HEATMAP" | "TABLE">("HEATMAP");
@@ -160,6 +165,10 @@ export default function Home() {
   const [fundFlowAlerts, setFundFlowAlerts] = useState<FundFlowAlert[]>([]);
   const [fundFlowLoading, setFundFlowLoading] = useState<boolean>(true);
 
+  // Relative Strength panel state
+  const [relativeStrength, setRelativeStrength] = useState<RelativeStrengthData | null>(null);
+  const [relativeStrengthLoading, setRelativeStrengthLoading] = useState<boolean>(true);
+
   // Fed Liquidity Monitor panel state
   const [fedLiquidity, setFedLiquidity] = useState<FedLiquidityEntry[]>([]);
   const [fedLiquidityLoading, setFedLiquidityLoading] = useState<boolean>(true);
@@ -171,6 +180,8 @@ export default function Home() {
   // Institutional Analyst panel state
   const [institutionalAnalysis, setInstitutionalAnalysis] = useState<InstitutionalAnalysisEntry[]>([]);
   const [institutionalAnalysisLoading, setInstitutionalAnalysisLoading] = useState<boolean>(true);
+  const [showAnalystDropdown, setShowAnalystDropdown] = useState<boolean>(false);
+  const [showUpdatesDropdown, setShowUpdatesDropdown] = useState<boolean>(false);
 
   // Analysis Panel State
   const [analysisTab, setAnalysisTab] = useState<"visual" | "text">("visual");
@@ -260,6 +271,31 @@ export default function Home() {
       setFundFlowLoading(false);
     });
   }, []);
+
+  useEffect(() => {
+    setRelativeStrengthLoading(true);
+    fetch(`/api/relative-strength?t=${Date.now()}`).then(res => res.json()).then(data => {
+      setRelativeStrength(data.universe?.length ? data : null);
+    }).catch(err => {
+      console.error("Relative strength fetch failed", err);
+    }).finally(() => {
+      setRelativeStrengthLoading(false);
+    });
+  }, []);
+
+  const refreshRelativeStrength = useCallback(async () => {
+    const res = await fetch('/api/relative-strength/refresh', { method: 'POST' });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data?.error || 'No se pudo actualizar Fuerza Relativa');
+    setRelativeStrength(data.universe?.length ? data : null);
+  }, []);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      refreshRelativeStrength().catch(err => console.error('Relative strength auto-refresh failed', err));
+    }, 60 * 60 * 1000);
+    return () => clearInterval(intervalId);
+  }, [refreshRelativeStrength]);
 
   useEffect(() => {
     setFedLiquidityLoading(true);
@@ -357,7 +393,12 @@ export default function Home() {
       if (savedMatrixSelected) setMatrixSelectedExps(JSON.parse(savedMatrixSelected));
 
       const savedStrikeWindow = localStorage.getItem("gex_vex_matrixStrikeWindow");
-      if (savedStrikeWindow) setMatrixStrikeWindow(parseInt(savedStrikeWindow) as any);
+      if (savedStrikeWindow) {
+        const val = parseInt(savedStrikeWindow);
+        setMatrixStrikeWindow(val === 10 ? 14 : val);
+      } else {
+        setMatrixStrikeWindow(14);
+      }
 
       const savedDisplayFormat = localStorage.getItem("gex_vex_matrixDisplayFormat");
       if (savedDisplayFormat) setMatrixDisplayFormat(savedDisplayFormat as any);
@@ -1696,48 +1737,147 @@ ${blockSoportesResistencias}`;
 
           {/* Status / Active Exps aligned Right */}
           <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-            {(gexVexMeta.ranAt || gammaRegimeMeta.ranAt) && (
-              <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.25, gap: '1px' }}>
-                {gexVexMeta.ranAt && (
-                  <span
-                    style={{ fontSize: '0.65rem', color: gexVexMeta.failed ? '#ff2a6d' : '#64748b', whiteSpace: 'nowrap' }}
-                    title="Última corrida completada de captura OI + Dealer Build (daily-update.yml, Etapa 2)"
-                  >
-                    Última Act. GEX-VEX: {gexVexMeta.ranAt.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' })}
-                    {gexVexMeta.failed && ' ⚠️'}
-                  </span>
-                )}
-                {gammaRegimeMeta.ranAt && (
-                  <span
-                    style={{ fontSize: '0.65rem', color: gammaRegimeMeta.failed ? '#ff2a6d' : '#64748b', whiteSpace: 'nowrap' }}
-                    title="Última corrida completada de captura Gamma Regime (gamma-intraday.yml, 3x/día)"
-                  >
-                    Última Act. Gamma Reg: {gammaRegimeMeta.ranAt.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' })}
-                    {gammaRegimeMeta.failed && ' ⚠️'}
-                  </span>
-                )}
-                {fundFlowMeta.ranAt && (
-                  <span
-                    style={{ fontSize: '0.65rem', color: fundFlowMeta.failed ? '#ff2a6d' : '#64748b', whiteSpace: 'nowrap' }}
-                    title="Última corrida completada de Fund Flow & COT (fund-flow-daily.yml, post-cierre)"
-                  >
-                    Última Act. Fund Flow: {fundFlowMeta.ranAt.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' })}
-                    {fundFlowMeta.failed && ' ⚠️'}
-                  </span>
+            {(gexVexMeta.ranAt || gammaRegimeMeta.ranAt || fundFlowMeta.ranAt) && (() => {
+              const hasUpdateError = gexVexMeta.failed || gammaRegimeMeta.failed || fundFlowMeta.failed;
+              return (
+              <div 
+                style={{ position: 'relative' }}
+                onMouseEnter={() => setShowUpdatesDropdown(true)}
+                onMouseLeave={() => setShowUpdatesDropdown(false)}
+              >
+                <div 
+                  style={{
+                    background: hasUpdateError ? "rgba(251, 191, 36, 0.15)" : (showUpdatesDropdown ? "rgba(0, 230, 118, 0.15)" : "rgba(0, 230, 118, 0.05)"),
+                    border: hasUpdateError ? "1px solid rgba(251, 191, 36, 0.4)" : (showUpdatesDropdown ? "1px solid rgba(0, 230, 118, 0.4)" : "1px solid rgba(0, 230, 118, 0.15)"),
+                    color: hasUpdateError ? "#fbbf24" : "#00e676",
+                    padding: "0.3rem 0.6rem",
+                    borderRadius: "6px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    transition: "all 0.2s",
+                    cursor: "help"
+                  }}
+                  title="Estado de actualizaciones"
+                >
+                  {hasUpdateError ? <AlertCircle size={14} /> : <CheckCircle size={14} />}
+                </div>
+                
+                {showUpdatesDropdown && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '100%',
+                    right: 0,
+                    marginTop: '0.5rem',
+                    padding: '0.75rem',
+                    background: 'rgba(15, 23, 42, 0.95)',
+                    backdropFilter: 'blur(12px)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '8px',
+                    zIndex: 100,
+                    boxShadow: '0 10px 40px rgba(0,0,0,0.8)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '6px',
+                    whiteSpace: 'nowrap'
+                  }}>
+                    {gexVexMeta.ranAt && (
+                      <span
+                        style={{ fontSize: '0.65rem', color: gexVexMeta.failed ? '#ff2a6d' : '#94a3b8' }}
+                        title="Última corrida completada de captura OI + Dealer Build (daily-update.yml, Etapa 2)"
+                      >
+                        Última Act. GEX-VEX: {gexVexMeta.ranAt.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' })}
+                        {gexVexMeta.failed && ' ⚠️'}
+                      </span>
+                    )}
+                    {gammaRegimeMeta.ranAt && (
+                      <span
+                        style={{ fontSize: '0.65rem', color: gammaRegimeMeta.failed ? '#ff2a6d' : '#94a3b8' }}
+                        title="Última corrida completada de captura Gamma Regime (gamma-intraday.yml, 3x/día)"
+                      >
+                        Última Act. Gamma Reg: {gammaRegimeMeta.ranAt.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' })}
+                        {gammaRegimeMeta.failed && ' ⚠️'}
+                      </span>
+                    )}
+                    {fundFlowMeta.ranAt && (
+                      <span
+                        style={{ fontSize: '0.65rem', color: fundFlowMeta.failed ? '#ff2a6d' : '#94a3b8' }}
+                        title="Última corrida completada de Fund Flow & COT (fund-flow-daily.yml, post-cierre)"
+                      >
+                        Última Act. Fund Flow: {fundFlowMeta.ranAt.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' })}
+                        {fundFlowMeta.failed && ' ⚠️'}
+                      </span>
+                    )}
+                  </div>
                 )}
               </div>
-            )}
-            {((viewMode === 'chain' && selectedExp) || (viewMode === 'matrix' && matrixSelectedExps.length > 0)) && (
-              <div className={styles.connectionStatus} style={{ color: "#c084fc", background: "rgba(192, 132, 252, 0.08)", padding: "0.2rem 0.6rem", borderRadius: "6px", border: "1px solid rgba(192, 132, 252, 0.2)", fontSize: "0.75rem", display: 'flex', alignItems: 'center' }}>
-                <Calendar size={14} style={{ marginRight: 6 }} />
-                <b>{viewMode === 'matrix' ? (matrixSelectedExps.length === 1 ? matrixSelectedExps[0] : `Multi (${matrixSelectedExps.length})`) : selectedExp}</b>
-              </div>
-            )}
+              );
+            })()}
+            <div style={{ position: 'relative' }}>
+              <button 
+                onClick={() => setShowAnalystDropdown(!showAnalystDropdown)}
+                style={{
+                  background: showAnalystDropdown ? "rgba(167, 139, 250, 0.2)" : "rgba(192, 132, 252, 0.08)",
+                  border: showAnalystDropdown ? "1px solid rgba(167, 139, 250, 0.4)" : "1px solid rgba(192, 132, 252, 0.2)",
+                  color: "#c084fc",
+                  padding: "0.3rem 0.8rem",
+                  borderRadius: "6px",
+                  fontSize: "0.75rem",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  transition: "all 0.2s",
+                  boxShadow: showAnalystDropdown ? "0 0 12px rgba(167, 139, 250, 0.4)" : "none"
+                }}
+              >
+                <Bot size={14} /> AI Analyst
+              </button>
+              {showAnalystDropdown && createPortal(
+                <div 
+                  onClick={() => setShowAnalystDropdown(false)}
+                  style={{
+                    position: 'fixed',
+                    top: 0, left: 0, right: 0, bottom: 0,
+                    backgroundColor: 'rgba(5, 8, 15, 0.6)',
+                    backdropFilter: 'blur(10px)',
+                    zIndex: 9999,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '2rem'
+                  }}
+                >
+                  <div 
+                    onClick={e => e.stopPropagation()}
+                    style={{
+                      position: 'relative',
+                      width: '100%',
+                      maxWidth: '650px',
+                      maxHeight: '90vh',
+                      display: 'flex',
+                      flexDirection: 'column'
+                    }}
+                  >
+                    <InstitutionalAnalystPanel
+                      history={institutionalAnalysis}
+                      loading={institutionalAnalysisLoading}
+                      onClose={() => setShowAnalystDropdown(false)}
+                    />
+                  </div>
+                </div>,
+                document.body
+              )}
+            </div>
             <div className={styles.connectionStatus} style={{ justifyContent: 'center', background: error ? "rgba(255, 42, 109, 0.08)" : "rgba(0, 230, 118, 0.08)", padding: "0.2rem 0.6rem", borderRadius: "6px", border: error ? "1px solid rgba(255, 42, 109, 0.2)" : "1px solid rgba(0, 230, 118, 0.2)", fontSize: "0.75rem", display: 'flex', alignItems: 'center' }}>
               <Activity size={12} style={{ marginRight: 6, color: error ? "#ff2a6d" : "#00e676" }} />
               <b style={{ color: error ? "#ff2a6d" : "#00e676" }}>{error ? "Offline" : "Live"}</b>
             </div>
             {lastUpdated && <span style={{ fontSize: '0.7rem', color: '#94a3b8', whiteSpace: 'nowrap' }}>{lastUpdated.toLocaleTimeString()}</span>}
+            
+
+
             <NotificationBell onSelectTicker={loadTicker} />
           </div>
         </div>
@@ -1818,6 +1958,7 @@ ${blockSoportesResistencias}`;
                 <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Window:</span>
                 <select value={matrixStrikeWindow} onChange={e => setMatrixStrikeWindow(Number(e.target.value) as any)} style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', color: '#e2e8f0', padding: '0.2rem 0.4rem', borderRadius: '4px', fontSize: '0.8rem' }}>
                   <option value={10}>±10</option>
+                  <option value={14}>±14</option>
                   <option value={20}>±20</option>
                   <option value={30}>±30</option>
                   <option value={0}>Full</option>
@@ -1977,17 +2118,43 @@ ${blockSoportesResistencias}`;
         ) : (
         <div className={styles.dualMatrixGrid}>
           {/* GEX Panel */}
-          <div className={styles.matrixPanel}>
+          <div className={styles.matrixPanel} style={{
+            backgroundColor: 'rgba(13, 20, 38, 0.75)',
+            borderWidth: '1px',
+            borderStyle: 'solid',
+            borderColor: 'rgba(255, 255, 255, 0.08)',
+            borderRadius: '14px',
+            padding: '16px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '14px',
+            backdropFilter: 'blur(16px)',
+            boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.36)',
+            color: '#fff',
+            boxSizing: 'border-box',
+            position: 'relative',
+            overflow: 'hidden'
+          }}>
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '2px',
+              background: 'linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.6), transparent)',
+              pointerEvents: 'none',
+              zIndex: 10
+            }} />
             <div className={styles.panelHeader}>
-              <div>
+              <div className={styles.panelTitleContainer}>
                 <div className={styles.panelTitle}>⚡ GEX Matrix</div>
-                <div className={styles.panelSubtitle}>Price Hedging Exposure ($ / 1% spot)</div>
+                <div className={styles.panelSubtitle}>Price Hedging ($ / 1% spot)</div>
               </div>
               {gexStats && (
                 <div className={styles.panelStats}>
                   <div className={styles.panelStatItem}>
                     <span className={styles.panelStatLabel}>King Node</span>
-                    <span className={styles.panelStatValue} style={{color: '#fbbf24'}}>{gexStats.kingNode?.strike}</span>
+                    <span className={styles.panelStatValue} style={{color: '#fbbf24'}}>{gexStats.kingNode?.strike ?? "—"}</span>
                   </div>
                   <div className={styles.panelStatItem}>
                     <span className={styles.panelStatLabel}>Net Exposure</span>
@@ -2033,9 +2200,35 @@ ${blockSoportesResistencias}`;
           </div>
 
           {/* VEX Panel */}
-          <div className={styles.matrixPanel}>
+          <div className={styles.matrixPanel} style={{
+            backgroundColor: 'rgba(13, 20, 38, 0.75)',
+            borderWidth: '1px',
+            borderStyle: 'solid',
+            borderColor: 'rgba(255, 255, 255, 0.08)',
+            borderRadius: '14px',
+            padding: '16px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '14px',
+            backdropFilter: 'blur(16px)',
+            boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.36)',
+            color: '#fff',
+            boxSizing: 'border-box',
+            position: 'relative',
+            overflow: 'hidden'
+          }}>
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '2px',
+              background: 'linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.6), transparent)',
+              pointerEvents: 'none',
+              zIndex: 10
+            }} />
             <div className={styles.panelHeader}>
-              <div>
+              <div className={styles.panelTitleContainer}>
                 <div className={styles.panelTitle}>🌀 VEX Matrix</div>
                 <div className={styles.panelSubtitle}>IV Hedging Exposure</div>
               </div>
@@ -2043,7 +2236,7 @@ ${blockSoportesResistencias}`;
                 <div className={styles.panelStats}>
                   <div className={styles.panelStatItem}>
                     <span className={styles.panelStatLabel}>King Node</span>
-                    <span className={styles.panelStatValue} style={{color: '#c084fc'}}>{vexStats.kingNode?.strike}</span>
+                    <span className={styles.panelStatValue} style={{color: '#c084fc'}}>{vexStats.kingNode?.strike ?? "—"}</span>
                   </div>
                   <div className={styles.panelStatItem}>
                     <span className={styles.panelStatLabel}>Net Exposure</span>
@@ -2102,7 +2295,32 @@ ${blockSoportesResistencias}`;
           </div>
 
           {/* Third Interpretive Panel */}
-          <div className={styles.matrixPanel}>
+          <div className={styles.matrixPanel} style={{
+            backgroundColor: 'rgba(13, 20, 38, 0.75)',
+            borderWidth: '1px',
+            borderStyle: 'solid',
+            borderColor: 'rgba(255, 255, 255, 0.08)',
+            borderRadius: '14px',
+            padding: '16px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '14px',
+            backdropFilter: 'blur(16px)',
+            boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.36)',
+            color: '#fff',
+            boxSizing: 'border-box',
+            position: 'relative',
+            overflow: 'hidden'
+          }}>
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '2px',
+              background: 'linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.6), transparent)',
+              pointerEvents: 'none'
+            }} />
             <div className={styles.panelHeader}>
               <div>
                 <div className={styles.panelTitle}>📝 Análisis del Dealer</div>
@@ -2793,32 +3011,40 @@ ${blockSoportesResistencias}`;
       </>
       )}
 
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", width: "100%", alignItems: "stretch" }}>
-        <div style={{ flex: "2 1 min-content", minWidth: "300px" }}>
+      <div style={{ padding: "0 1rem" }}>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+          gap: "1rem",
+          width: "100%",
+          alignItems: "stretch",
+          marginBottom: "1rem"
+        }}>
           <MacroLiquidityPanel
             history={fedLiquidity}
             loading={fedLiquidityLoading}
           />
-        </div>
-        <div style={{ flex: "1 1 min-content", minWidth: "300px", display: "flex", flexDirection: "column" }}>
-          <InstitutionalFlowScorePanel
-            history={flowScore}
-            loading={flowScoreLoading}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <InstitutionalFlowScorePanel
+              history={flowScore}
+              loading={flowScoreLoading}
+            />
+            <CotPositioningPanel cotPositioning={cotPositioning} />
+          </div>
+          <FundFlowPanel
+            sectorFlow={sectorFlow}
+            marketTide={marketTide}
+            cotPositioning={cotPositioning}
+            fundFlowAlerts={fundFlowAlerts}
+            loading={fundFlowLoading}
           />
-          <InstitutionalAnalystPanel
-            history={institutionalAnalysis}
-            loading={institutionalAnalysisLoading}
-          />
         </div>
-      </div>
 
-      <FundFlowPanel
-        sectorFlow={sectorFlow}
-        marketTide={marketTide}
-        cotPositioning={cotPositioning}
-        fundFlowAlerts={fundFlowAlerts}
-        loading={fundFlowLoading}
-      />
+        <RelativeStrengthPanel
+          data={relativeStrength}
+          loading={relativeStrengthLoading}
+        />
+      </div>
 
     </div>
   );

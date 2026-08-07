@@ -12,6 +12,7 @@ export interface InstitutionalAnalysisEntry {
 interface InstitutionalAnalystPanelProps {
   history: InstitutionalAnalysisEntry[];
   loading: boolean;
+  onClose?: () => void;
 }
 
 const WEEKDAY_LABELS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
@@ -107,35 +108,64 @@ function HistoryCalendarModal({ history, initialDate, onSelect, onClose }: {
   );
 }
 
-function AnalysisDayModal({ entry, onClose }: { entry: InstitutionalAnalysisEntry; onClose: () => void }) {
+function AnalysisDayModal({ entry, onClose, onPrev, onNext }: { entry: InstitutionalAnalysisEntry; onClose: () => void; onPrev?: () => void; onNext?: () => void }) {
   return createPortal(
     <div style={overlayStyle} onClick={onClose}>
-      <div style={{ ...modalStyle, maxWidth: '520px' }} onClick={e => e.stopPropagation()}>
-        <div style={modalHeaderStyle}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Bot size={16} style={{ color: '#a78bfa' }} />
-            <span style={{ fontWeight: 800, fontSize: '0.9rem' }}>{entry.date}</span>
-            <span style={modelBadgeStyle}>{entry.model}</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', maxWidth: '100vw', padding: '0 10px' }} onClick={e => e.stopPropagation()}>
+        
+        {/* Left Arrow */}
+        <button 
+          disabled={!onPrev} 
+          onClick={onPrev} 
+          style={{ ...iconButtonStyle, opacity: onPrev ? 1 : 0, pointerEvents: onPrev ? 'auto' : 'none', cursor: 'pointer', width: '36px', height: '36px', borderRadius: '50%', flexShrink: 0, background: 'rgba(167,139,250,0.1)', border: '1px solid rgba(167,139,250,0.3)' }} 
+          aria-label="Fecha anterior"
+        >
+          <ChevronLeft size={20} color="#a78bfa" />
+        </button>
+
+        {/* Modal Content */}
+        <div style={{ ...modalStyle, maxWidth: '560px', width: '100vw', flex: 1 }}>
+          <div style={modalHeaderStyle}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Bot size={16} style={{ color: '#a78bfa' }} />
+              <span style={{ fontWeight: 800, fontSize: '0.9rem' }}>{entry.date}</span>
+              <span style={modelBadgeStyle}>{entry.model}</span>
+            </div>
+            <button onClick={onClose} style={iconButtonStyle} aria-label="Cerrar"><X size={16} /></button>
           </div>
-          <button onClick={onClose} style={iconButtonStyle} aria-label="Cerrar"><X size={16} /></button>
+          <p style={narrativeStyle}>{entry.narrative}</p>
         </div>
-        <p style={narrativeStyle}>{entry.narrative}</p>
+
+        {/* Right Arrow */}
+        <button 
+          disabled={!onNext} 
+          onClick={onNext} 
+          style={{ ...iconButtonStyle, opacity: onNext ? 1 : 0, pointerEvents: onNext ? 'auto' : 'none', cursor: 'pointer', width: '36px', height: '36px', borderRadius: '50%', flexShrink: 0, background: 'rgba(167,139,250,0.1)', border: '1px solid rgba(167,139,250,0.3)' }} 
+          aria-label="Fecha siguiente"
+        >
+          <ChevronRight size={20} color="#a78bfa" />
+        </button>
+
       </div>
     </div>,
     document.body
   );
 }
 
-export default function InstitutionalAnalystPanel({ history, loading }: InstitutionalAnalystPanelProps) {
+export default function InstitutionalAnalystPanel({ history, loading, onClose }: InstitutionalAnalystPanelProps) {
   const [showCalendar, setShowCalendar] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   if (loading) {
     return (
       <div style={panelContainerStyle}>
+        <div style={topGlowBarStyle} />
         <div style={headerStyle}>
-          <Bot size={18} style={{ color: '#a78bfa' }} />
+          <Bot size={18} style={{ color: '#a78bfa', filter: 'drop-shadow(0 0 6px rgba(167,139,250,0.5))' }} />
           <h3 style={titleStyle}>INSTITUTIONAL ANALYST</h3>
+          {onClose && (
+            <button onClick={onClose} style={iconButtonStyle} aria-label="Cerrar"><X size={16} /></button>
+          )}
         </div>
         <div style={loadingContainerStyle}>
           <div className="animate-pulse" style={loadingTextStyle}>
@@ -149,9 +179,13 @@ export default function InstitutionalAnalystPanel({ history, loading }: Institut
   if (history.length === 0) {
     return (
       <div style={panelContainerStyle}>
+        <div style={topGlowBarStyle} />
         <div style={headerStyle}>
-          <Bot size={18} style={{ color: '#a78bfa' }} />
+          <Bot size={18} style={{ color: '#a78bfa', filter: 'drop-shadow(0 0 6px rgba(167,139,250,0.5))' }} />
           <h3 style={titleStyle}>INSTITUTIONAL ANALYST</h3>
+          {onClose && (
+            <button onClick={onClose} style={iconButtonStyle} aria-label="Cerrar"><X size={16} /></button>
+          )}
         </div>
         <div style={errorContainerStyle}>
           <AlertCircle size={24} style={{ color: 'rgba(255,255,255,0.2)' }} />
@@ -170,21 +204,32 @@ export default function InstitutionalAnalystPanel({ history, loading }: Institut
 
   return (
     <div style={panelContainerStyle}>
+      <div style={topGlowBarStyle} />
       <div style={headerStyle}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Bot size={18} style={{ color: '#a78bfa' }} />
+          <Bot size={18} style={{ color: '#a78bfa', filter: 'drop-shadow(0 0 6px rgba(167,139,250,0.5))' }} />
           <h3 style={titleStyle}>INSTITUTIONAL ANALYST</h3>
+          {latest.model && <span style={modelBadgeStyle}>{latest.model}</span>}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)' }}>al {latest.date}</span>
+          <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace' }}>al {latest.date}</span>
           <button onClick={() => setShowCalendar(true)} style={historyToggleStyle} title="Ver historial">
-            <Calendar size={14} />
+            <Calendar size={13} />
             Historial
           </button>
+          {onClose && (
+            <button onClick={onClose} style={iconButtonStyle} aria-label="Cerrar"><X size={16} /></button>
+          )}
         </div>
       </div>
 
-      <p style={narrativeStyle}>{latest.narrative}</p>
+      <div style={briefingBoxStyle}>
+        <p style={narrativeStyle}>{latest.narrative}</p>
+      </div>
+
+      <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.35)', textAlign: 'right', marginTop: 'auto', paddingTop: '2px' }}>
+        análisis cuantitativo del mercado
+      </div>
 
       {showCalendar && (
         <HistoryCalendarModal
@@ -195,85 +240,123 @@ export default function InstitutionalAnalystPanel({ history, loading }: Institut
         />
       )}
 
-      {selectedEntry && (
-        <AnalysisDayModal entry={selectedEntry} onClose={() => setSelectedDate(null)} />
-      )}
+      {selectedEntry && (() => {
+        const selectedIndex = sorted.findIndex(e => e.date === selectedEntry.date);
+        const onPrev = selectedIndex < sorted.length - 1 ? () => setSelectedDate(sorted[selectedIndex + 1].date) : undefined;
+        const onNext = selectedIndex > 0 ? () => setSelectedDate(sorted[selectedIndex - 1].date) : undefined;
+        return (
+          <AnalysisDayModal 
+            entry={selectedEntry} 
+            onClose={() => setSelectedDate(null)} 
+            onPrev={onPrev}
+            onNext={onNext}
+          />
+        );
+      })()}
     </div>
   );
 }
 
+const topGlowBarStyle: React.CSSProperties = {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  height: '2px',
+  background: 'linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.6), transparent)',
+  pointerEvents: 'none'
+};
+
 const panelContainerStyle: React.CSSProperties = {
-  backgroundColor: 'rgba(10, 16, 35, 0.6)',
+  backgroundColor: '#0d1426',
   borderWidth: '1px',
   borderStyle: 'solid',
   borderColor: 'rgba(255, 255, 255, 0.08)',
-  borderRadius: '12px',
-  padding: '20px',
+  borderRadius: '14px',
+  padding: '16px',
   display: 'flex',
   flexDirection: 'column',
-  gap: '16px',
+  gap: '12px',
   backdropFilter: 'blur(16px)',
+  boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.36)',
   color: '#fff',
-  margin: '0 1rem 1rem 1rem'
+  maxHeight: '100%',
+  boxSizing: 'border-box',
+  position: 'relative',
+  overflow: 'hidden'
 };
 
 const headerStyle: React.CSSProperties = {
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  borderBottom: '1px solid rgba(255,255,255,0.06)',
-  paddingBottom: '12px'
+  borderBottom: '1px solid rgba(255,255,255,0.07)',
+  paddingBottom: '10px'
 };
 
 const titleStyle: React.CSSProperties = {
   margin: 0,
-  fontSize: '1rem',
+  fontSize: '0.92rem',
   fontWeight: 800,
-  letterSpacing: '0.05em',
-  color: '#a78bfa'
+  letterSpacing: '0.06em',
+  color: '#a78bfa',
+  textShadow: '0 0 12px rgba(167,139,250,0.25)'
 };
 
 const modelBadgeStyle: React.CSSProperties = {
-  fontSize: '0.65rem',
+  fontSize: '0.64rem',
   fontWeight: 700,
   padding: '2px 8px',
   borderRadius: '10px',
-  backgroundColor: 'rgba(167,139,250,0.1)',
+  backgroundColor: 'rgba(167,139,250,0.12)',
   color: '#a78bfa',
   border: '1px solid rgba(167,139,250,0.3)',
   fontFamily: 'monospace'
 };
 
+const briefingBoxStyle: React.CSSProperties = {
+  flex: 1,
+  minHeight: 0,
+  backgroundColor: 'rgba(0, 0, 0, 0.16)',
+  border: '1px solid rgba(255, 255, 255, 0.04)',
+  borderLeft: '3px solid #a78bfa',
+  borderRadius: '10px',
+  padding: '14px',
+  overflowY: 'auto'
+};
+
 const narrativeStyle: React.CSSProperties = {
   margin: 0,
-  fontSize: '0.9rem',
+  fontSize: '0.84rem',
   lineHeight: 1.7,
-  color: 'rgba(255,255,255,0.85)',
+  color: '#e2e8f0',
   whiteSpace: 'pre-line'
 };
 
 const historyToggleStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
-  gap: '6px',
+  gap: '5px',
   background: 'rgba(167,139,250,0.1)',
   border: '1px solid rgba(167,139,250,0.3)',
   borderRadius: '20px',
   color: '#a78bfa',
-  fontSize: '0.7rem',
+  fontSize: '0.68rem',
   fontWeight: 700,
   cursor: 'pointer',
-  padding: '4px 10px'
+  padding: '4px 10px',
+  transition: 'all 0.2s ease'
 };
 
 const overlayStyle: React.CSSProperties = {
   position: 'fixed',
   inset: 0,
-  backgroundColor: 'rgba(0,0,0,0.6)',
+  backgroundColor: 'rgba(0,0,0,0.65)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  zIndex: 1000
+  zIndex: 10000,
+  backdropFilter: 'blur(4px)'
 };
 
 const modalStyle: React.CSSProperties = {
@@ -339,7 +422,7 @@ const dayCellStyle: React.CSSProperties = {
 };
 
 const loadingContainerStyle: React.CSSProperties = {
-  height: '100px',
+  height: '200px',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center'

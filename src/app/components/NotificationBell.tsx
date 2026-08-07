@@ -102,29 +102,43 @@ export default function NotificationBell({ onSelectTicker }: NotificationBellPro
             {alerts.length === 0 ? (
               <div style={emptyStyle}>Sin alertas por ahora.</div>
             ) : (
-              alerts.map(a => (
-                <div
-                  key={a.id}
-                  style={{ ...alertItemStyle, cursor: onSelectTicker ? 'pointer' : 'default' }}
-                  onClick={() => {
-                    if (onSelectTicker) {
-                      onSelectTicker(a.ticker);
-                      setOpen(false);
-                    }
-                  }}
-                  onMouseEnter={(e) => { if (onSelectTicker) e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
-                >
-                  <div style={{ fontWeight: 700, fontSize: '0.8rem', color: a.type === 'LONG_GAMMA_ENTRY' ? '#00e676' : a.type === 'SHORT_GAMMA_ENTRY' ? '#ff2a6d' : '#fbbf24' }}>
-                    {a.type === 'DOUBLE_GEX'
-                      ? `+2x GEX ${a.ticker}`
-                      : `${a.ticker} → ${a.type === 'LONG_GAMMA_ENTRY' ? 'LONG GAMMA' : 'SHORT GAMMA'}`}
-                  </div>
-                  <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)', marginTop: '2px' }}>
-                    {formatAlertTimestamp(a)}{typeof a.spot === 'number' && !isNaN(a.spot) ? ` · Spot $${a.spot.toFixed(2)}` : ''}
-                  </div>
-                </div>
-              ))
+              alerts.map((a, i) => {
+                const currentTimestamp = formatAlertTimestamp(a);
+                const prevTimestamp = i > 0 ? formatAlertTimestamp(alerts[i - 1]) : null;
+                const isNewTanda = prevTimestamp && currentTimestamp !== prevTimestamp;
+
+                return (
+                  <React.Fragment key={a.id}>
+                    {isNewTanda && (
+                      <div style={{ 
+                        height: '2px', 
+                        background: 'linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.6), transparent)', 
+                        margin: '12px 0' 
+                      }} />
+                    )}
+                    <div
+                      style={{ ...alertItemStyle, cursor: onSelectTicker ? 'pointer' : 'default' }}
+                      onClick={() => {
+                        if (onSelectTicker) {
+                          onSelectTicker(a.ticker);
+                          setOpen(false);
+                        }
+                      }}
+                      onMouseEnter={(e) => { if (onSelectTicker) e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+                    >
+                      <div style={{ fontWeight: 700, fontSize: '0.8rem', color: a.type === 'LONG_GAMMA_ENTRY' ? '#00e676' : a.type === 'SHORT_GAMMA_ENTRY' ? '#ff2a6d' : '#fbbf24' }}>
+                        {a.type === 'DOUBLE_GEX'
+                          ? `+2x GEX ${a.ticker}`
+                          : `${a.ticker} → ${a.type === 'LONG_GAMMA_ENTRY' ? 'LONG GAMMA' : 'SHORT GAMMA'}`}
+                      </div>
+                      <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)', marginTop: '2px' }}>
+                        {currentTimestamp}{typeof a.spot === 'number' && !isNaN(a.spot) ? ` · Spot $${a.spot.toFixed(2)}` : ''}
+                      </div>
+                    </div>
+                  </React.Fragment>
+                );
+              })
             )}
           </div>
         </div>

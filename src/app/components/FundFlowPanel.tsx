@@ -31,7 +31,7 @@ export interface MarketTideEntry {
 
 export interface CotEntry {
   date: string;
-  instrument: 'ES' | 'NQ' | 'VX';
+  instrument: 'ES' | 'NQ' | 'VX' | 'GC';
   open_interest: number;
   asset_mgr_net: number;
   asset_mgr_net_change: number;
@@ -469,15 +469,15 @@ function CotInfoModal({ onClose }: { onClose: () => void }) {
         </p>
 
         <div style={infoSectionStyle}>
-          <div style={infoTermStyle}>Instrumentos: ES, NQ, VX</div>
+          <div style={infoTermStyle}>Instrumentos: ES, NQ, VX, GC</div>
           <p style={infoTextStyle}>
-            ES = futuros del S&amp;P 500, NQ = futuros del Nasdaq 100, VX = futuros del VIX. Los tres muestran el
-            posicionamiento neto (contratos largos menos cortos) de cada categoría de trader.
+            ES = futuros del S&amp;P 500, NQ = futuros del Nasdaq 100, VX = futuros del VIX, GC = futuros de oro.
+            Los cuatro muestran el posicionamiento neto (contratos largos menos cortos) de cada categoría de trader.
           </p>
         </div>
 
         <div style={infoSectionStyle}>
-          <div style={infoTermStyle}>Asset Managers ("dinero real")</div>
+          <div style={infoTermStyle}>Asset Managers ("dinero real") — ES/NQ/VX</div>
           <p style={infoTextStyle}>
             Fondos de pensión, aseguradoras, asset managers tradicionales — posiciones más estructurales/de largo
             plazo, menos reactivas a movimientos de corto plazo. Se los toma como proxy de convicción institucional.
@@ -485,10 +485,21 @@ function CotInfoModal({ onClose }: { onClose: () => void }) {
         </div>
 
         <div style={infoSectionStyle}>
-          <div style={infoTermStyle}>Leveraged Funds ("dinero especulativo")</div>
+          <div style={infoTermStyle}>Leveraged Funds / Managed Money ("dinero especulativo")</div>
           <p style={infoTextStyle}>
             Hedge funds y CTAs — posiciones tácticas, apalancadas, que rotan rápido con el momentum del precio.
-            Se los toma como proxy de especulación de corto plazo, no de convicción de fondo.
+            Se los toma como proxy de especulación de corto plazo, no de convicción de fondo. En GC (oro) esta
+            categoría se llama "Managed Money" en el reporte de la CFTC, pero es el mismo concepto.
+          </p>
+        </div>
+
+        <div style={infoSectionStyle}>
+          <div style={infoTermStyle}>Comerciales ("cobertura") — solo GC</div>
+          <p style={infoTextStyle}>
+            El oro no tiene categoría "Asset Managers" en el reporte de la CFTC (ese reporte cubre solo futuros
+            financieros). Para GC, esta fila muestra Producer/Merchant + Swap Dealers combinados — mineras y bullion
+            banks cubriendo posiciones comerciales, estructuralmente del lado corto. No es dinero institucional
+            real como en ES/NQ/VX, es cobertura del negocio físico del oro.
           </p>
         </div>
 
@@ -552,11 +563,16 @@ const COT_ALERT_DESCRIPTIONS: Record<CotAlert['kind'], string> = {
 // 2. Extreme positioning: current net position is the highest or lowest in
 //    the trailing 52 weeks - classic "crowded positioning" signal that
 //    often precedes a reversal.
-function computeCotAlerts(entries: CotEntry[]): CotAlert[] {
+function computeCotAlerts(entries: CotEntry[], isGold: boolean): CotAlert[] {
   const sorted = [...entries].sort((a, b) => a.date.localeCompare(b.date));
   if (sorted.length < 8) return [];
   const latest = sorted[sorted.length - 1];
   const alerts: CotAlert[] = [];
+  // GC's asset_mgr_net field actually holds Comerciales (Producer/Merchant +
+  // Swap Dealers), and lev_money_net holds Managed Money - see CotInfoModal.
+  // Alert text needs the matching label, same as the card rows below.
+  const amLabel = isGold ? 'Comerciales' : 'Asset Mgr';
+  const lmLabel = isGold ? 'Managed Money' : 'Leveraged Funds';
 
   const median = (nums: number[]) => {
     const s = [...nums].sort((a, b) => a - b);
@@ -578,17 +594,17 @@ function computeCotAlerts(entries: CotEntry[]): CotAlert[] {
     const lmDir = latest.lev_money_net_change > 0 ? 'suma' : 'reduce';
     alerts.push({
       kind: 'divergence',
-      text: `Asset Mgr ${amDir} mientras Leveraged Funds ${lmDir} — posicionamiento divergente esta semana`,
+      text: `${amLabel} ${amDir} mientras ${lmLabel} ${lmDir} — posicionamiento divergente esta semana`,
       description: COT_ALERT_DESCRIPTIONS.divergence
     });
   }
 
   const amNets = sorted.map(e => e.asset_mgr_net);
   const lmNets = sorted.map(e => e.lev_money_net);
-  if (latest.asset_mgr_net === Math.max(...amNets)) alerts.push({ kind: 'extreme', text: 'Asset Mgr en máximo de 52 semanas', description: COT_ALERT_DESCRIPTIONS.extreme });
-  if (latest.asset_mgr_net === Math.min(...amNets)) alerts.push({ kind: 'extreme', text: 'Asset Mgr en mínimo de 52 semanas', description: COT_ALERT_DESCRIPTIONS.extreme });
-  if (latest.lev_money_net === Math.max(...lmNets)) alerts.push({ kind: 'extreme', text: 'Leveraged Funds en máximo de 52 semanas', description: COT_ALERT_DESCRIPTIONS.extreme });
-  if (latest.lev_money_net === Math.min(...lmNets)) alerts.push({ kind: 'extreme', text: 'Leveraged Funds en mínimo de 52 semanas', description: COT_ALERT_DESCRIPTIONS.extreme });
+  if (latest.asset_mgr_net === Math.max(...amNets)) alerts.push({ kind: 'extreme', text: `${amLabel} en máximo de 52 semanas`, description: COT_ALERT_DESCRIPTIONS.extreme });
+  if (latest.asset_mgr_net === Math.min(...amNets)) alerts.push({ kind: 'extreme', text: `${amLabel} en mínimo de 52 semanas`, description: COT_ALERT_DESCRIPTIONS.extreme });
+  if (latest.lev_money_net === Math.max(...lmNets)) alerts.push({ kind: 'extreme', text: `${lmLabel} en máximo de 52 semanas`, description: COT_ALERT_DESCRIPTIONS.extreme });
+  if (latest.lev_money_net === Math.min(...lmNets)) alerts.push({ kind: 'extreme', text: `${lmLabel} en mínimo de 52 semanas`, description: COT_ALERT_DESCRIPTIONS.extreme });
 
   return alerts;
 }
@@ -615,7 +631,8 @@ const SECTOR_LABELS: Record<string, string> = {
   XLB: 'Materials',
   XLU: 'Utilities',
   XLRE: 'Real Estate',
-  XLC: 'Communication Services'
+  XLC: 'Communication Services',
+  GLD: 'Oro (GLD)'
 };
 
 function formatMoney(val: number | null | undefined): string {
@@ -641,6 +658,12 @@ const FUND_FLOW_ALERTS_READ_KEY = 'fundFlowAlerts_readIds';
 // Same bell/dropdown/unread-badge pattern as NotificationBell.tsx (used for
 // Gamma Regime alerts) - kept local to this file since it's the only place
 // fund-flow alerts render, instead of a shared component for a single user.
+function formatFundFlowAlertTimestamp(a: FundFlowAlert): string {
+  if (!a.detected_at) return a.date;
+  const time = new Date(a.detected_at).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+  return `${a.date} ${time}`;
+}
+
 function FundFlowAlertsBell({ alerts }: { alerts: FundFlowAlert[] }) {
   const [readIds, setReadIds] = useState<Set<string>>(new Set());
   const [open, setOpen] = useState(false);
@@ -665,7 +688,11 @@ function FundFlowAlertsBell({ alerts }: { alerts: FundFlowAlert[] }) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const sortedAlerts = [...alerts].sort((a, b) => b.date.localeCompare(a.date));
+  const sortedAlerts = [...alerts].sort((a, b) => {
+    const keyA = a.detected_at ?? `${a.date}T00:00:00.000Z`;
+    const keyB = b.detected_at ?? `${b.date}T00:00:00.000Z`;
+    return keyB.localeCompare(keyA);
+  });
   const unreadCount = alerts.filter(a => !readIds.has(a.id)).length;
 
   const handleToggle = () => {
@@ -702,22 +729,35 @@ function FundFlowAlertsBell({ alerts }: { alerts: FundFlowAlert[] }) {
             {sortedAlerts.length === 0 ? (
               <div style={bellEmptyStyle}>Sin señales por ahora.</div>
             ) : (
-              sortedAlerts.map(a => {
+              sortedAlerts.map((a, i) => {
+                const currentTimestamp = formatFundFlowAlertTimestamp(a);
+                const prevTimestamp = i > 0 ? formatFundFlowAlertTimestamp(sortedAlerts[i - 1]) : null;
+                const isNewTanda = prevTimestamp && currentTimestamp !== prevTimestamp;
+                
                 const isDistribution = a.type === 'QUIET_DISTRIBUTION';
                 const color = isDistribution ? '#ff2a6d' : '#00e676';
                 return (
-                  <div key={a.id} style={bellAlertItemStyle}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontWeight: 700, fontSize: '0.8rem', color }}>
-                        {a.ticker} — {isDistribution ? 'Distribución silenciosa' : 'Acumulación silenciosa'}
-                      </span>
-                      <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)' }}>{a.date}</span>
+                  <React.Fragment key={a.id}>
+                    {isNewTanda && (
+                      <div style={{ 
+                        height: '2px', 
+                        background: 'linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.6), transparent)', 
+                        margin: '12px 0' 
+                      }} />
+                    )}
+                    <div style={bellAlertItemStyle}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontWeight: 700, fontSize: '0.8rem', color }}>
+                          {a.ticker} — {isDistribution ? 'Distribución silenciosa' : 'Acumulación silenciosa'}
+                        </span>
+                        <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)' }}>{currentTimestamp}</span>
+                      </div>
+                      <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.65)', marginTop: '4px', lineHeight: 1.4 }}>
+                        {a.streak_days} sesiones de {isDistribution ? 'salida' : 'entrada'} neta ({formatMoney(a.net_flow_total)} acumulado)
+                        {' '}mientras el precio {isDistribution ? 'se sostuvo' : 'no acompañó'} ({a.price_change_pct >= 0 ? '+' : ''}{a.price_change_pct.toFixed(2)}%).
+                      </div>
                     </div>
-                    <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.65)', marginTop: '4px', lineHeight: 1.4 }}>
-                      {a.streak_days} sesiones de {isDistribution ? 'salida' : 'entrada'} neta ({formatMoney(a.net_flow_total)} acumulado)
-                      {' '}mientras el precio {isDistribution ? 'se sostuvo' : 'no acompañó'} ({a.price_change_pct >= 0 ? '+' : ''}{a.price_change_pct.toFixed(2)}%).
-                    </div>
-                  </div>
+                  </React.Fragment>
                 );
               })
             )}
@@ -866,14 +906,18 @@ export default function FundFlowPanel({ sectorFlow, marketTide, cotPositioning, 
   );
 }
 
-export function CotPositioningPanel({ cotPositioning }: { cotPositioning: CotEntry[] }) {
+export function CotPositioningPanel({ cotPositioning, instrumentsFilter }: { cotPositioning: CotEntry[], instrumentsFilter?: string[] }) {
   const [showCotInfo, setShowCotInfo] = useState(false);
   
   if (!cotPositioning || cotPositioning.length === 0) {
     return null;
   }
 
-  const COT_INSTRUMENT_ORDER: CotEntry['instrument'][] = ['ES', 'NQ', 'VX'];
+  let COT_INSTRUMENT_ORDER: CotEntry['instrument'][] = ['ES', 'GC', 'NQ', 'VX'];
+  if (instrumentsFilter) {
+    COT_INSTRUMENT_ORDER = COT_INSTRUMENT_ORDER.filter(i => instrumentsFilter.includes(i));
+  }
+  
   const cotByInstrument = new Map<string, CotEntry[]>();
   for (const entry of cotPositioning) {
     const arr = cotByInstrument.get(entry.instrument) ?? [];
@@ -887,7 +931,7 @@ export function CotPositioningPanel({ cotPositioning }: { cotPositioning: CotEnt
       latest: entries[entries.length - 1],
       assetMgrSeries: cotChangeSeries(entries, 'asset_mgr_net_change'),
       levMoneySeries: cotChangeSeries(entries, 'lev_money_net_change'),
-      alerts: computeCotAlerts(entries)
+      alerts: computeCotAlerts(entries, instrument === 'GC')
     };
   });
 
@@ -904,10 +948,10 @@ export function CotPositioningPanel({ cotPositioning }: { cotPositioning: CotEnt
         <span style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.4)' }}>Posicionamiento Especulador vs Institucional</span>
       </div>
       {showCotInfo && <CotInfoModal onClose={() => setShowCotInfo(false)} />}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
         {cotInstruments.map(({ instrument, latest: c, assetMgrSeries, levMoneySeries, alerts }) => {
-          const badgeColor = instrument === 'ES' ? '#a78bfa' : instrument === 'NQ' ? '#38bdf8' : '#f43f5e';
-          const fullName = instrument === 'ES' ? 'E-mini S&P 500' : instrument === 'NQ' ? 'Nasdaq 100 E-mini' : 'VIX Futures';
+          const badgeColor = instrument === 'ES' ? '#a78bfa' : instrument === 'NQ' ? '#38bdf8' : instrument === 'VX' ? '#f43f5e' : '#fbbf24';
+          const fullName = instrument === 'ES' ? 'E-mini S&P 500' : instrument === 'NQ' ? 'Nasdaq 100 E-mini' : instrument === 'VX' ? 'VIX Futures' : 'Gold Futures';
           return (
             <div key={instrument} style={cotCardStyle}>
               <div style={cotCardHeaderStyle}>
@@ -935,9 +979,9 @@ export function CotPositioningPanel({ cotPositioning }: { cotPositioning: CotEnt
               </div>
               
               <div style={cotCardBodyStyle}>
-                {/* Asset Managers Row */}
+                {/* Asset Managers Row (Comerciales para GC - ver CotInfoModal) */}
                 <div style={cotMetricBlockStyle}>
-                  <span style={{ ...labelStyle, fontSize: '0.7rem', whiteSpace: 'nowrap' }}>Asset Mgr</span>
+                  <span style={{ ...labelStyle, fontSize: '0.7rem', whiteSpace: 'nowrap' }}>{instrument === 'GC' ? 'Comerciales' : 'Asset Mgr'}</span>
                   <div style={{ width: '100%', minWidth: 0, display: 'flex', alignItems: 'center' }}>
                     <MetricBars
                       series={assetMgrSeries}
@@ -969,9 +1013,9 @@ export function CotPositioningPanel({ cotPositioning }: { cotPositioning: CotEnt
                   </div>
                 </div>
 
-                {/* Leveraged Funds Row */}
+                {/* Leveraged Funds Row (Managed Money para GC - mismo concepto) */}
                 <div style={cotMetricBlockStyle}>
-                  <span style={{ ...labelStyle, fontSize: '0.7rem', whiteSpace: 'nowrap' }}>Lev Funds</span>
+                  <span style={{ ...labelStyle, fontSize: '0.7rem', whiteSpace: 'nowrap' }}>{instrument === 'GC' ? 'Managed $' : 'Lev Funds'}</span>
                   <div style={{ width: '100%', minWidth: 0, display: 'flex', alignItems: 'center' }}>
                     <MetricBars
                       series={levMoneySeries}

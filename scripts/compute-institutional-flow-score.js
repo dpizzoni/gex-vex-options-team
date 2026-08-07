@@ -200,9 +200,11 @@ async function run() {
     inputs: {
       net_liquidity: latestLiquidity.net_liquidity,
       hy_oas: latestRisk.hy_oas,
+      ig_oas: latestRisk.ig_oas,
       dxy: latestRisk.dxy,
       vix: latestRisk.vix,
       us10y: latestRisk.us10y,
+      real_yield_10y: latestRisk.real_yield_10y,
       qqq_pct_5d: breadth.qqqPctChange,
       qqqe_pct_5d: breadth.qqqePctChange,
       spy_net_flow: spyNetFlow,

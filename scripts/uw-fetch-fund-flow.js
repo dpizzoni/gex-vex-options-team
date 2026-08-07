@@ -16,7 +16,7 @@ const cacheDir = path.join(__dirname, '..', 'cache');
 const SECTOR_TICKERS = ['SPY', 'XLB', 'XLC', 'XLE', 'XLF', 'XLI', 'XLK', 'XLP', 'XLRE', 'XLU', 'XLV', 'XLY'];
 
 // /api/sector/etfs' in_out_flow window is only ~5 trading days deep, and it
-// doesn't cover QQQ/IWM at all (SPDR-sector-only). /api/etfs/{TICKER}/stats
+// doesn't cover QQQ/IWM/GLD at all (SPDR-sector-only). /api/etfs/{TICKER}/stats
 // on each ETF's own /etf/{TICKER} page covers ANY ETF - including every
 // SECTOR_TICKERS name - with the SAME `change` field ($ scale) but going
 // back much further (100s of rows vs ~5). Runs for every ticker so the
@@ -24,7 +24,11 @@ const SECTOR_TICKERS = ['SPY', 'XLB', 'XLC', 'XLE', 'XLF', 'XLI', 'XLK', 'XLP', 
 // deep history; updateEtfStatsFundFlow only touches last/prev_close/volume/
 // net_flow fields, so call_premium/put_premium/etc from the sector fetch
 // above are preserved untouched on days both endpoints cover.
-const ETF_STATS_TICKERS = [...SECTOR_TICKERS, 'QQQ', 'IWM'];
+// GLD (gold) rides this same generic path, not the sector one - it's not an
+// SPDR sector ETF, just another ticker /api/etfs/{TICKER}/stats happens to
+// support - added to give the institutional analysis a real $ flow signal
+// for gold alongside its COT positioning (GC, see fetch-cot-report.js).
+const ETF_STATS_TICKERS = [...SECTOR_TICKERS, 'QQQ', 'IWM', 'GLD'];
 
 function todayStr() {
   return new Date().toISOString().split('T')[0];

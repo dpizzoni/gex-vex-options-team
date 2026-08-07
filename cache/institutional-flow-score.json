@@ -190,29 +190,31 @@
   },
   {
     "date": "2026-08-06",
-    "score": 2,
-    "label": "Buying",
+    "score": 1,
+    "label": "Neutral",
     "components": {
       "liquidity": 1,
       "credit_spread": 1,
-      "dollar": 1,
-      "vix": 1,
+      "dollar": 0,
+      "vix": 0,
       "us10y": 0,
-      "breadth": -2,
+      "breadth": -1,
       "etf_flows": 0
     },
     "inputs": {
       "net_liquidity": 5839.814,
-      "hy_oas": 2.75,
+      "hy_oas": 2.71,
+      "ig_oas": 0.78,
       "dxy": 119.7034,
-      "vix": 15.81,
+      "vix": 15.15,
       "us10y": 4.63,
-      "qqq_pct_5d": 4.549782338744364,
-      "qqqe_pct_5d": 2.827032748617895,
-      "spy_net_flow": 5350000,
-      "qqq_net_flow": 2550000,
-      "iwm_net_flow": -800000,
-      "etf_net_flow_total": 7100000
+      "real_yield_10y": 2.41,
+      "qqq_pct_5d": 4.55384780804306,
+      "qqqe_pct_5d": 3.835310391623789,
+      "spy_net_flow": -10650000,
+      "qqq_net_flow": 4400000,
+      "iwm_net_flow": -50000,
+      "etf_net_flow_total": -6300000
     }
   }
 ]

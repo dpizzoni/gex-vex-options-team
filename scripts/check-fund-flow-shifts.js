@@ -15,7 +15,7 @@ const path = require('path');
 
 const cacheDir = path.join(__dirname, '..', 'cache');
 
-const SECTOR_TICKERS = ['SPY', 'XLB', 'XLC', 'XLE', 'XLF', 'XLI', 'XLK', 'XLP', 'XLRE', 'XLU', 'XLV', 'XLY'];
+const SECTOR_TICKERS = ['SPY', 'XLB', 'XLC', 'XLE', 'XLF', 'XLI', 'XLK', 'XLP', 'XLRE', 'XLU', 'XLV', 'XLY', 'GLD'];
 const alertsPath = path.join(cacheDir, 'fund-flow-alerts.json');
 
 // Needs several real net_flow-dated days before a "streak" means anything -

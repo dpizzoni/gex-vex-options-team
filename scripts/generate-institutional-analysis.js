@@ -43,11 +43,22 @@ chatbot conversacional: sos un analista que escribe una nota de research.
   en subas). Contextualizá con spot_change_1d_pct (¿rally o corrección?),
   put_wall/call_wall (soporte/resistencia estructural) y el p/c ratio del
   vencimiento más cercano (>1 = sesgo defensivo/cobertura, <1 = sesgo alcista).
-- **mercado_riesgo**: usá los niveles absolutos (VIX, DXY, US10Y, HY OAS,
-  IG OAS) y sus deltas de 7d, no solo el score comprimido de
+- **mercado_riesgo**: usá los niveles absolutos (VIX, DXY, US10Y, real_yield_10y,
+  HY OAS, IG OAS) y sus deltas de 7d, no solo el score comprimido de
   institutional_flow_score - un componente en 0 puede ser "genuinamente
   neutral" o "dos movimientos que se cancelaron", y solo el nivel + delta
-  distingue eso. Compará hy_oas contra ig_oas (hy_ig_spread_differential): si
+  distingue eso. real_yield_10y (tasa real a 10 años, TIPS) es el driver de
+  costo de oportunidad detrás de oro - más específico que us10y nominal
+  porque aísla el componente que de verdad mueve la demanda de un activo sin
+  yield: real_yield_10y cayendo (o negativo) es viento de cola para oro
+  incluso con us10y nominal estable o subiendo (si es por mayor inflación
+  esperada, no por tasas reales); real_yield_10y subiendo es viento en contra.
+  Cruzalo con cot_semanal (GC, Managed Money) y GLD en etf_flows/
+  rotacion_precio_hoy: real_yield_10y cayendo + Managed Money sumando largos +
+  flujo neto positivo en GLD es una lectura coherente de tres fuentes
+  independientes; si divergen (ej. real_yield_10y sube pero Managed Money
+  igual suma), señalalo como tensión a vigilar, no lo ignores. Compará
+  hy_oas contra ig_oas (hy_ig_spread_differential): si
   se amplía, el crédito está precificando riesgo idiosincrático en high yield
   específicamente, no un deterioro genérico.
 - **etf_flows.ranking_sectorial_5d**: flujo real en dólares (ordenado de mayor
@@ -71,16 +82,31 @@ chatbot conversacional: sos un analista que escribe una nota de research.
   días previos = continuidad; sector que sube hoy en precio pero venía en
   distribución silenciosa de flujo (o viceversa) = divergencia a vigilar, más
   valiosa que cualquiera de las dos señales por separado.
-- **cot_semanal**: Asset Managers = dinero real/institucional (posiciones más
-  estructurales); Leveraged Funds = dinero especulativo/apalancado
-  (posiciones tácticas de corto plazo). Ambos moviéndose en la misma
-  dirección refuerza la lectura; en direcciones opuestas, señala qué tipo de
-  dinero está realmente detrás del movimiento. El array trae los TRES
-  instrumentos (ES, NQ, VX) - revisalos todos, no solo ES: VX es el más
-  informativo para detectar hedging (ej. Asset Managers sumando VX mientras
-  reducen ES es "dinero real vendiendo equity y comprando cobertura", una
-  lectura que ES solo no te da), y NQ puede confirmar o divergir de ES en
-  cuanto a qué tan generalizado es el posicionamiento.
+- **cot_semanal**: para ES/NQ/VX, Asset Managers = dinero real/institucional
+  (posiciones más estructurales); Leveraged Funds = dinero
+  especulativo/apalancado (posiciones tácticas de corto plazo). Ambos
+  moviéndose en la misma dirección refuerza la lectura; en direcciones
+  opuestas, señala qué tipo de dinero está realmente detrás del movimiento.
+  El array trae CUATRO instrumentos (ES, NQ, VX, GC) - revisalos todos, no
+  solo ES: VX es el más informativo para detectar hedging (ej. Asset
+  Managers sumando VX mientras reducen ES es "dinero real vendiendo equity y
+  comprando cobertura", una lectura que ES solo no te da), y NQ puede
+  confirmar o divergir de ES en cuanto a qué tan generalizado es el
+  posicionamiento.
+  **GC (oro) usa categorías distintas mapeadas a los mismos dos campos**: no
+  existe "Asset Managers" en materias primas, así que asset_mgr_net para GC
+  es en realidad Producer/Merchant + Swap Dealers ("Comerciales" - bullion
+  banks y mineras cubriendo posiciones, estructuralmente net corto; NO es
+  dinero institucional real, es cobertura comercial). lev_money_net para GC
+  sí es un equivalente directo: Managed Money (hedge funds/CTAs, el mismo
+  concepto que Leveraged Funds). Lectura estándar: Managed Money extendiendo
+  largos en oro es apetito especulativo por cobertura/risk-off o expectativa
+  de tasas reales a la baja; que Comerciales extiendan cortos al mismo
+  tiempo es la contraparte normal de esa demanda especulativa, no una señal
+  bajista en sí misma - solo marcá GC como señal fuerte si Managed Money se
+  mueve de forma extrema o diverge de lo que sugieren mercado_riesgo (dxy,
+  us10y) o gamma_regime de otros activos, no lo interpretes con el mismo
+  criterio "dinero real vs especulativo" que ES/NQ/VX.
 
 ## Chequeo de plausibilidad entre tickers correlacionados
 Antes de tomar un dato de rotacion_precio_hoy como válido, comparalo contra
@@ -91,7 +117,11 @@ estadísticamente improbable en un mercado real - señalalo explícitamente
 como posible ruido/error de captura en vez de construir la hipótesis de
 rotación sobre un dato que no pasa el sanity check. No dejes de usar el
 resto de los datos de ese ticker si son plausibles; solo marcá el punto
-específico que no cuadra.
+específico que no cuadra. GLD (oro) NO es parte de este chequeo - no tiene
+overlap estructural con SPY/QQQ ni con ningún sectorial, así que no lo
+compares contra ellos para plausibilidad; tratalo como una clase de activo
+aparte (ver cot_semanal arriba para su contraparte de posicionamiento en
+futuros, GC).
 
 ## Integridad de los datos
 - Basate ÚNICAMENTE en los datos que te paso. Si algo no está (ej. estructura
@@ -182,8 +212,11 @@ function buildGammaSnapshot() {
 
 // All tracked ETFs (indices + sectors), ranked by 5-day cumulative net flow -
 // this is what lets the agent name an actual rotation ("saliendo de X hacia
-// Y") instead of just reporting the SPY+QQQ+IWM aggregate.
-const FLOW_TICKERS = ['SPY', 'QQQ', 'IWM', 'XLB', 'XLC', 'XLE', 'XLF', 'XLI', 'XLK', 'XLP', 'XLRE', 'XLU', 'XLV', 'XLY'];
+// Y") instead of just reporting the SPY+QQQ+IWM aggregate. GLD (oro) rides
+// along in the same ranking/price-action arrays for convenience, but it's
+// not an equity sector - see the "Chequeo de plausibilidad" prompt section
+// below for why it's excluded from the SPY-vs-sectors sanity check.
+const FLOW_TICKERS = ['SPY', 'QQQ', 'IWM', 'GLD', 'XLB', 'XLC', 'XLE', 'XLF', 'XLI', 'XLK', 'XLP', 'XLRE', 'XLU', 'XLV', 'XLY'];
 
 function buildSectorFlowRanking() {
   const rows = [];
@@ -287,7 +320,10 @@ function buildPayload() {
       dxy: latestRisk.dxy,
       dxy_delta_7d: weekAgoRisk ? latestRisk.dxy - weekAgoRisk.dxy : null,
       us10y: latestRisk.us10y,
-      us10y_delta_7d: weekAgoRisk ? latestRisk.us10y - weekAgoRisk.us10y : null
+      us10y_delta_7d: weekAgoRisk ? latestRisk.us10y - weekAgoRisk.us10y : null,
+      real_yield_10y: latestRisk.real_yield_10y,
+      real_yield_10y_delta_7d: weekAgoRisk && latestRisk.real_yield_10y != null && weekAgoRisk.real_yield_10y != null
+        ? latestRisk.real_yield_10y - weekAgoRisk.real_yield_10y : null
     } : null,
     gamma_regime: buildGammaSnapshot(),
     etf_flows: {

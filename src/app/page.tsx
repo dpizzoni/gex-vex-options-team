@@ -38,10 +38,10 @@ import RelativeStrengthPanel, { RelativeStrengthData } from "./components/Relati
 import { computeGammaRegime } from "@/lib/gamma-regime-engine";
 
 // The 11 SPDR sector ETFs + SPY (SECTOR_TICKERS in uw-fetch-fund-flow.js,
-// from /api/sector/etfs) plus QQQ/IWM (ETF_STATS_TICKERS in the same
+// from /api/sector/etfs) plus QQQ/IWM/GLD (ETF_STATS_TICKERS in the same
 // script, from /api/etfs/{TICKER}/stats - a different UW endpoint since
 // /api/sector/etfs is SPDR-sector-only and doesn't cover them).
-const SECTOR_FLOW_TICKERS = ['SPY', 'QQQ', 'IWM', 'XLB', 'XLC', 'XLE', 'XLF', 'XLI', 'XLK', 'XLP', 'XLRE', 'XLU', 'XLV', 'XLY'];
+const SECTOR_FLOW_TICKERS = ['SPY', 'QQQ', 'IWM', 'GLD', 'XLB', 'XLC', 'XLE', 'XLF', 'XLI', 'XLK', 'XLP', 'XLRE', 'XLU', 'XLV', 'XLY'];
 
 interface OptionContract {
   strike: number;
@@ -1111,7 +1111,8 @@ export default function Home() {
 
     return { totalNetGex: tGex, kingNode: king.strike > 0 ? king.strike : null, gammaFlip: gamma_flip, rawTotal, netTotal, positiveCells, negativeCells, neutralCells };
   }, [filteredMatrixData, viewMode, matrixAggregation, data?.spot]);
-  // GEX / VEX Scenario Engine Interpretation V4.3
+
+  // GEX / VEX Scenario Engine Interpretation V4.3
   const analysisSnapshot = useMemo(() => {
     if (!data || !data.spot || filteredMatrixData.length === 0) return null;
     
@@ -3035,31 +3036,38 @@ ${blockSoportesResistencias}`;
 
       <div style={{ padding: "0 1rem" }}>
         <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+          display: "flex",
           gap: "1rem",
           width: "100%",
           alignItems: "stretch",
-          marginBottom: "1rem"
+          marginBottom: "1rem",
+          flexWrap: "wrap"
         }}>
-          <MacroLiquidityPanel
-            history={fedLiquidity}
-            loading={fedLiquidityLoading}
-          />
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <InstitutionalFlowScorePanel
-              history={flowScore}
-              loading={flowScoreLoading}
-            />
+          {/* Left Block (Macro + InstFlow + COT) */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', flex: '2 1 640px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
+              <MacroLiquidityPanel
+                history={fedLiquidity}
+                loading={fedLiquidityLoading}
+              />
+              <InstitutionalFlowScorePanel
+                history={flowScore}
+                loading={flowScoreLoading}
+              />
+            </div>
             <CotPositioningPanel cotPositioning={cotPositioning} />
           </div>
-          <FundFlowPanel
-            sectorFlow={sectorFlow}
-            marketTide={marketTide}
-            cotPositioning={cotPositioning}
-            fundFlowAlerts={fundFlowAlerts}
-            loading={fundFlowLoading}
-          />
+
+          {/* Right Block (Fund Flow) */}
+          <div style={{ flex: '1 1 320px', minWidth: '320px' }}>
+            <FundFlowPanel
+              sectorFlow={sectorFlow}
+              marketTide={marketTide}
+              cotPositioning={cotPositioning}
+              fundFlowAlerts={fundFlowAlerts}
+              loading={fundFlowLoading}
+            />
+          </div>
         </div>
 
         <RelativeStrengthPanel

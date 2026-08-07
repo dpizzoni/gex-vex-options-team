@@ -20,9 +20,11 @@ export interface FlowScoreEntry {
   inputs: {
     net_liquidity: number;
     hy_oas: number;
+    ig_oas?: number | null;
     dxy: number;
     vix: number;
     us10y: number;
+    real_yield_10y?: number | null;
     qqq_pct_5d: number | null;
     qqqe_pct_5d: number | null;
     spy_net_flow: number | null;
@@ -50,6 +52,76 @@ const COMPONENT_LABELS: Record<keyof FlowScoreComponents, string> = {
 };
 
 const COMPONENT_ORDER: (keyof FlowScoreComponents)[] = ['liquidity', 'credit_spread', 'dollar', 'vix', 'us10y', 'breadth', 'etf_flows'];
+
+// Same "closest entry ~7 calendar days back" idea as the backend's
+// weekAgoEntry (generate-institutional-analysis.js) - approximate is fine,
+// this is just for a delta hint next to the raw level, not the score itself.
+function weekAgoEntry(history: FlowScoreEntry[], latestDate: string): FlowScoreEntry | null {
+  const target = new Date(latestDate);
+  target.setUTCDate(target.getUTCDate() - 7);
+  const targetStr = target.toISOString().slice(0, 10);
+  let candidate: FlowScoreEntry | null = null;
+  for (const e of history) {
+    if (e.date <= targetStr) candidate = e;
+    else break;
+  }
+  return candidate;
+}
+
+const RAW_LEVELS: { key: keyof FlowScoreEntry['inputs']; label: string; decimals: number; suffix: string }[] = [
+  { key: 'vix', label: 'VIX', decimals: 1, suffix: '' },
+  { key: 'dxy', label: 'DXY', decimals: 1, suffix: '' },
+  { key: 'us10y', label: 'US10Y', decimals: 2, suffix: '%' },
+  { key: 'real_yield_10y', label: 'Real Yield 10Y', decimals: 2, suffix: '%' },
+  { key: 'hy_oas', label: 'HY OAS', decimals: 2, suffix: 'pp' },
+  { key: 'ig_oas', label: 'IG OAS', decimals: 2, suffix: 'pp' }
+];
+
+function RawLevelsStrip({ history }: { history: FlowScoreEntry[] }) {
+  const latest = history[history.length - 1];
+  const prior = weekAgoEntry(history, latest.date);
+
+  return (
+    <div style={{ paddingTop: '6px' }}>
+      <h4 style={colHeaderStyle}>NIVELES DE MERCADO (crudo, no score)</h4>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+        {RAW_LEVELS.map(({ key, label, decimals, suffix }) => {
+          const value = latest.inputs[key];
+          if (value == null) return null;
+          const priorValue = prior?.inputs[key];
+          const delta = priorValue != null ? (value as number) - priorValue : null;
+          return (
+            <div key={key} style={{
+              flex: '1 1 110px',
+              backgroundColor: 'rgba(255,255,255,0.02)',
+              border: '1px solid rgba(255,255,255,0.05)',
+              borderRadius: '6px',
+              padding: '6px 10px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '2px'
+            }}>
+              <span style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.45)', letterSpacing: '0.03em' }}>{label}</span>
+              <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '0.85rem', color: '#e2e8f0' }}>
+                {(value as number).toFixed(decimals)}{suffix}
+              </span>
+              {delta != null && (
+                <span style={{
+                  fontFamily: 'monospace',
+                  fontSize: '0.62rem',
+                  fontWeight: 600,
+                  color: delta > 0 ? '#00e676' : delta < 0 ? '#ff2a6d' : 'rgba(255,255,255,0.35)'
+                }}>
+                  {delta >= 0 ? '+' : ''}{delta.toFixed(decimals)}{suffix} (7d)
+                </span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 function labelColor(label: string): string {
   if (label === 'Strong Buying' || label === 'Buying') return '#00e676';
@@ -131,6 +203,19 @@ function FlowScoreInfoModal({ onClose }: { onClose: () => void }) {
         <div style={infoSectionStyle}>
           <div style={infoTermStyle}>ETF Flows (SPY+QQQ+IWM)</div>
           <p style={infoTextStyle}>Flujo neto en dólares hacia los 3 ETFs de índice más grandes. Más de $1B de entrada suma, más de $1B de salida resta.</p>
+        </div>
+
+        <div style={{ ...infoSectionStyle, borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '12px' }}>
+          <div style={{ ...infoTermStyle, color: '#a78bfa' }}>Niveles de Mercado (debajo del breakdown)</div>
+          <p style={infoTextStyle}>
+            VIX, DXY y US10Y son los mismos inputs de arriba, pero en su valor crudo — el score arriba comprime cada
+            uno a -2..+2 según cómo cambió en 7d, así que un componente en 0 puede ser "genuinamente neutral" o "dos
+            movimientos que se cancelaron"; el nivel + delta acá distingue eso. HY OAS e IG OAS (spreads de crédito
+            investment grade) no entran al score, solo dan contexto: comparalos entre sí para ver si el crédito está
+            precificando riesgo idiosincrático en high yield o un deterioro genérico. Real Yield 10Y (tasa real a 10
+            años, TIPS) tampoco entra al score — es el driver de costo de oportunidad detrás de activos sin yield
+            como el oro, más específico que US10Y nominal porque aísla el componente que de verdad mueve esa demanda.
+          </p>
         </div>
 
         <div style={{ ...infoSectionStyle, borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '12px' }}>
@@ -273,22 +358,24 @@ export default function InstitutionalFlowScorePanel({ history, loading }: Instit
         </div>
       </div>
 
+      <RawLevelsStrip history={history} />
+
       {recent.length > 1 && (
         <div style={{ paddingTop: '6px' }}>
           <h4 style={colHeaderStyle}>SCORE (ÚLTIMOS {recent.length} DÍAS)</h4>
-          <div style={{ display: 'flex', gap: '4px', alignItems: 'center', height: '36px', padding: '4px 6px', backgroundColor: 'rgba(0,0,0,0.15)', borderRadius: '6px' }}>
+          <div style={{ display: 'flex', gap: '4px', alignItems: 'center', height: '72px', padding: '4px 6px', backgroundColor: 'rgba(0,0,0,0.15)', borderRadius: '6px' }}>
             {recent.map(e => {
-              const h = Math.max(3, (Math.abs(e.score) / maxRecentAbsScore) * 14);
+              const h = Math.max(3, (Math.abs(e.score) / maxRecentAbsScore) * 30);
               const c = labelColor(e.label);
               return (
                 <div key={e.date} title={`${e.date}: ${e.score}`} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: '0 0 24px' }}>
-                  <div style={{ width: '100%', height: '28px', position: 'relative' }}>
+                  <div style={{ width: '100%', height: '60px', position: 'relative' }}>
                     {/* Zero line */}
-                    <div style={{ position: 'absolute', top: '14px', left: 0, right: 0, height: '1px', backgroundColor: 'rgba(255,255,255,0.08)', zIndex: 1 }} />
+                    <div style={{ position: 'absolute', top: '30px', left: 0, right: 0, height: '1px', backgroundColor: 'rgba(255,255,255,0.08)', zIndex: 1 }} />
                     {e.score >= 0 ? (
-                      <div style={{ position: 'absolute', bottom: '14px', left: 0, width: '100%', height: `${h}px`, backgroundColor: c, borderRadius: '2px 2px 0 0', boxShadow: `0 0 4px ${c}60`, zIndex: 2 }} />
+                      <div style={{ position: 'absolute', bottom: '30px', left: 0, width: '100%', height: `${h}px`, backgroundColor: c, borderRadius: '2px 2px 0 0', boxShadow: `0 0 4px ${c}60`, zIndex: 2 }} />
                     ) : (
-                      <div style={{ position: 'absolute', top: '14px', left: 0, width: '100%', height: `${h}px`, backgroundColor: c, borderRadius: '0 0 2px 2px', boxShadow: `0 0 4px ${c}60`, zIndex: 2 }} />
+                      <div style={{ position: 'absolute', top: '30px', left: 0, width: '100%', height: `${h}px`, backgroundColor: c, borderRadius: '0 0 2px 2px', boxShadow: `0 0 4px ${c}60`, zIndex: 2 }} />
                     )}
                   </div>
                 </div>

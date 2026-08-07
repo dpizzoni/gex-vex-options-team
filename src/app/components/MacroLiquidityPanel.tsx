@@ -47,7 +47,7 @@ function weekAgoEntry(history: FedLiquidityEntry[]): FedLiquidityEntry | null {
   return best;
 }
 
-const SINGLE_CHART_HEIGHT = 70;
+const SINGLE_CHART_HEIGHT = 40;
 const CHART_WIDTH_PERCENT = 100;
 
 type LiquiditySeriesKey = 'walcl' | 'tga' | 'rrp' | 'net_liquidity';

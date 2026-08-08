@@ -1,0 +1,58 @@
+{
+  "ticker": "IBIT",
+  "date": "2026-08-08",
+  "spot": 36.8,
+  "expirations": [
+    {
+      "expiration": "2026-08-14",
+      "dte": 7,
+      "call_gex": 2046140,
+      "put_gex": -846039,
+      "net_gex": 1200101,
+      "p_c_ratio": 0.4135
+    },
+    {
+      "expiration": "2026-08-21",
+      "dte": 14,
+      "call_gex": 3780879,
+      "put_gex": -2275570,
+      "net_gex": 1505309,
+      "p_c_ratio": 0.6019
+    },
+    {
+      "expiration": "2026-08-28",
+      "dte": 21,
+      "call_gex": 395018,
+      "put_gex": -157964,
+      "net_gex": 237054,
+      "p_c_ratio": 0.3999
+    },
+    {
+      "expiration": "2026-08-31",
+      "dte": 24,
+      "call_gex": 352580,
+      "put_gex": -344736,
+      "net_gex": 7845,
+      "p_c_ratio": 0.9778
+    },
+    {
+      "expiration": "2026-09-04",
+      "dte": 28,
+      "call_gex": 112385,
+      "put_gex": -69929,
+      "net_gex": 42457,
+      "p_c_ratio": 0.6222
+    },
+    {
+      "expiration": "2026-09-11",
+      "dte": 35,
+      "call_gex": 28389,
+      "put_gex": -25669,
+      "net_gex": 2720,
+      "p_c_ratio": 0.9042
+    }
+  ],
+  "putWall": 35,
+  "callWall": 37,
+  "limitedData": false
+}

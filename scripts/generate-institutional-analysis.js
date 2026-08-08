@@ -439,7 +439,6 @@ async function run() {
   const entry = {
     date: payload.fecha,
     narrative,
-    model: modelUsed,
     generated_at: new Date().toISOString(),
     inputs: payload
   };

@@ -5,7 +5,6 @@ import { Bot, AlertCircle, Calendar, ChevronLeft, ChevronRight, X } from 'lucide
 export interface InstitutionalAnalysisEntry {
   date: string;
   narrative: string;
-  model: string;
   generated_at: string;
 }
 
@@ -129,7 +128,6 @@ function AnalysisDayModal({ entry, onClose, onPrev, onNext }: { entry: Instituti
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <Bot size={16} style={{ color: '#a78bfa' }} />
               <span style={{ fontWeight: 800, fontSize: '0.9rem' }}>{entry.date}</span>
-              <span style={modelBadgeStyle}>{entry.model}</span>
             </div>
             <button onClick={onClose} style={iconButtonStyle} aria-label="Cerrar"><X size={16} /></button>
           </div>
@@ -209,7 +207,6 @@ export default function InstitutionalAnalystPanel({ history, loading, onClose }:
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Bot size={18} style={{ color: '#a78bfa', filter: 'drop-shadow(0 0 6px rgba(167,139,250,0.5))' }} />
           <h3 style={titleStyle}>INSTITUTIONAL ANALYST</h3>
-          {latest.model && <span style={modelBadgeStyle}>{latest.model}</span>}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace' }}>al {latest.date}</span>
@@ -301,17 +298,6 @@ const titleStyle: React.CSSProperties = {
   letterSpacing: '0.06em',
   color: '#a78bfa',
   textShadow: '0 0 12px rgba(167,139,250,0.25)'
-};
-
-const modelBadgeStyle: React.CSSProperties = {
-  fontSize: '0.64rem',
-  fontWeight: 700,
-  padding: '2px 8px',
-  borderRadius: '10px',
-  backgroundColor: 'rgba(167,139,250,0.12)',
-  color: '#a78bfa',
-  border: '1px solid rgba(167,139,250,0.3)',
-  fontFamily: 'monospace'
 };
 
 const briefingBoxStyle: React.CSSProperties = {

@@ -182,6 +182,10 @@ jobs:
           name: 📈 Actualizar Fuerza Relativa (Yahoo Finance)
           command: npm run rs:daily
 
+      - run:
+          name: 🚨 Evaluar alertas de Fuerza Relativa
+          command: npm run rs:alerts:daily
+
       - push_cache:
           commit_message: "chore(data): daily relative strength refresh"
 

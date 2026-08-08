@@ -35,6 +35,7 @@ import MacroLiquidityPanel, { FedLiquidityEntry } from "./components/MacroLiquid
 import InstitutionalFlowScorePanel, { FlowScoreEntry } from "./components/InstitutionalFlowScorePanel";
 import InstitutionalAnalystPanel, { InstitutionalAnalysisEntry } from "./components/InstitutionalAnalystPanel";
 import RelativeStrengthPanel, { RelativeStrengthData } from "./components/RelativeStrengthPanel";
+import RelativeStrengthAlertsPanel, { RelativeStrengthAlertsData } from "./components/RelativeStrengthAlertsPanel";
 import { computeGammaRegime } from "@/lib/gamma-regime-engine";
 
 // The 11 SPDR sector ETFs + SPY (SECTOR_TICKERS in uw-fetch-fund-flow.js,
@@ -170,6 +171,8 @@ export default function Home() {
   // Relative Strength panel state
   const [relativeStrength, setRelativeStrength] = useState<RelativeStrengthData | null>(null);
   const [relativeStrengthLoading, setRelativeStrengthLoading] = useState<boolean>(true);
+  const [relativeStrengthAlerts, setRelativeStrengthAlerts] = useState<RelativeStrengthAlertsData | null>(null);
+  const [relativeStrengthAlertsLoading, setRelativeStrengthAlertsLoading] = useState<boolean>(true);
 
   // Fed Liquidity Monitor panel state
   const [fedLiquidity, setFedLiquidity] = useState<FedLiquidityEntry[]>([]);
@@ -284,6 +287,17 @@ export default function Home() {
       console.error("Relative strength fetch failed", err);
     }).finally(() => {
       setRelativeStrengthLoading(false);
+    });
+  }, []);
+
+  useEffect(() => {
+    setRelativeStrengthAlertsLoading(true);
+    fetch(`/api/relative-strength-alerts?t=${Date.now()}`).then(res => res.json()).then(data => {
+      setRelativeStrengthAlerts(data.date ? data : null);
+    }).catch(err => {
+      console.error("Relative strength alerts fetch failed", err);
+    }).finally(() => {
+      setRelativeStrengthAlertsLoading(false);
     });
   }, []);
 
@@ -1737,7 +1751,7 @@ ${blockSoportesResistencias}`;
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', paddingBottom: '0.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <div className={styles.glowDot} />
-            <h1 className={styles.title} style={{ margin: 0 }}>EXPOSURE Dashboard</h1>
+            <h1 className={styles.title} style={{ margin: 0 }}>NEXUS Terminal</h1>
           </div>
 
           {/* Status / Active Exps aligned Right */}
@@ -2006,6 +2020,19 @@ ${blockSoportesResistencias}`;
           )}
 
         </div>
+
+        {/* ROW 3: Navigation Menu */}
+        <div style={{ display: 'flex', gap: '2rem', alignItems: 'center', width: '100%', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.6rem', paddingBottom: '0.2rem', fontSize: '0.85rem' }}>
+          <button onClick={() => document.getElementById('section-options')?.scrollIntoView({ behavior: 'smooth' })} style={{ color: '#a78bfa', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <Layers size={14} /> Options & Gamma
+          </button>
+          <button onClick={() => document.getElementById('section-liquidity')?.scrollIntoView({ behavior: 'smooth' })} style={{ color: '#38bdf8', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <Activity size={14} /> Liquidity & Flow
+          </button>
+          <button onClick={() => document.getElementById('section-strength')?.scrollIntoView({ behavior: 'smooth' })} style={{ color: '#00e676', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <TrendingUp size={14} /> Relative Strength
+          </button>
+        </div>
       </header>
 
       {refreshStats && (
@@ -2026,6 +2053,7 @@ ${blockSoportesResistencias}`;
 
 
 
+      <div id="section-options" style={{ scrollMarginTop: '220px' }} />
       {viewMode === "matrix" ? (
         <>
         {matrixDisplayFormat === "TABLE" ? (
@@ -3043,6 +3071,7 @@ ${blockSoportesResistencias}`;
           marginBottom: "1rem",
           flexWrap: "wrap"
         }}>
+          <div id="section-liquidity" style={{ scrollMarginTop: '220px' }} />
           {/* Left Block (Macro + InstFlow + COT) */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', flex: '2 1 640px' }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
@@ -3070,9 +3099,15 @@ ${blockSoportesResistencias}`;
           </div>
         </div>
 
+        <div id="section-strength" style={{ scrollMarginTop: '220px' }} />
         <RelativeStrengthPanel
           data={relativeStrength}
           loading={relativeStrengthLoading}
+        />
+
+        <RelativeStrengthAlertsPanel
+          data={relativeStrengthAlerts}
+          loading={relativeStrengthAlertsLoading}
         />
       </div>
 

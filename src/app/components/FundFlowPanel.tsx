@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Activity, AlertCircle, Bell, BellRing, Info, X, Waves, BarChart2, TrendingUp } from 'lucide-react';
+import EtfHoldingsTooltip, { EtfHoldingsMap } from './EtfHoldingsTooltip';
 
 export interface SectorFlowEntry {
   date: string;
@@ -57,6 +58,7 @@ interface FundFlowPanelProps {
   cotPositioning: CotEntry[];
   fundFlowAlerts: FundFlowAlert[];
   loading: boolean;
+  etfHoldings: EtfHoldingsMap;
 }
 
 const BAR_WIDTH = 2;
@@ -768,7 +770,7 @@ function FundFlowAlertsBell({ alerts }: { alerts: FundFlowAlert[] }) {
   );
 }
 
-export default function FundFlowPanel({ sectorFlow, marketTide, cotPositioning, fundFlowAlerts, loading }: FundFlowPanelProps) {
+export default function FundFlowPanel({ sectorFlow, marketTide, cotPositioning, fundFlowAlerts, loading, etfHoldings }: FundFlowPanelProps) {
   const [showCotInfo, setShowCotInfo] = useState(false);
 
   if (loading) {
@@ -862,7 +864,7 @@ export default function FundFlowPanel({ sectorFlow, marketTide, cotPositioning, 
             {sortedSectors.map((s, idx) => (
               <div key={s.ticker} style={{ ...sectorRowStyle, borderBottom: idx < sortedSectors.length - 1 ? '1px dashed rgba(255,255,255,0.05)' : 'none', paddingBottom: '10px', paddingTop: idx === 0 ? '0' : '4px' }}>
                 <span style={{ ...sectorTickerStyle, flex: '1' }}>
-                  {s.ticker}
+                  <EtfHoldingsTooltip ticker={s.ticker} holdingsMap={etfHoldings}>{s.ticker}</EtfHoldingsTooltip>
                   <span style={sectorLabelStyle}>{SECTOR_LABELS[s.ticker] ?? ''}</span>
                 </span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>

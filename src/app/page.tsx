@@ -35,6 +35,7 @@ import MacroLiquidityPanel, { FedLiquidityEntry } from "./components/MacroLiquid
 import InstitutionalFlowScorePanel, { FlowScoreEntry } from "./components/InstitutionalFlowScorePanel";
 import InstitutionalAnalystPanel, { InstitutionalAnalysisEntry } from "./components/InstitutionalAnalystPanel";
 import RelativeStrengthPanel, { RelativeStrengthData } from "./components/RelativeStrengthPanel";
+import { EtfHoldingsMap } from "./components/EtfHoldingsTooltip";
 import RelativeStrengthAlertsPanel, { RelativeStrengthAlertsData } from "./components/RelativeStrengthAlertsPanel";
 import { computeGammaRegime } from "@/lib/gamma-regime-engine";
 
@@ -173,6 +174,7 @@ export default function Home() {
   const [relativeStrengthLoading, setRelativeStrengthLoading] = useState<boolean>(true);
   const [relativeStrengthAlerts, setRelativeStrengthAlerts] = useState<RelativeStrengthAlertsData | null>(null);
   const [relativeStrengthAlertsLoading, setRelativeStrengthAlertsLoading] = useState<boolean>(true);
+  const [etfHoldings, setEtfHoldings] = useState<EtfHoldingsMap>({});
 
   // Fed Liquidity Monitor panel state
   const [fedLiquidity, setFedLiquidity] = useState<FedLiquidityEntry[]>([]);
@@ -298,6 +300,14 @@ export default function Home() {
       console.error("Relative strength alerts fetch failed", err);
     }).finally(() => {
       setRelativeStrengthAlertsLoading(false);
+    });
+  }, []);
+
+  useEffect(() => {
+    fetch(`/api/etf-holdings?t=${Date.now()}`).then(res => res.json()).then(data => {
+      setEtfHoldings(data.tickers ?? {});
+    }).catch(err => {
+      console.error("ETF holdings fetch failed", err);
     });
   }, []);
 
@@ -3095,6 +3105,7 @@ ${blockSoportesResistencias}`;
               cotPositioning={cotPositioning}
               fundFlowAlerts={fundFlowAlerts}
               loading={fundFlowLoading}
+              etfHoldings={etfHoldings}
             />
           </div>
         </div>
@@ -3103,6 +3114,7 @@ ${blockSoportesResistencias}`;
         <RelativeStrengthPanel
           data={relativeStrength}
           loading={relativeStrengthLoading}
+          etfHoldings={etfHoldings}
         />
 
         <RelativeStrengthAlertsPanel

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Activity, Download, Info, Maximize2, Minimize2, X } from 'lucide-react';
 import { exportReport, ExportColumn, ExportFormat } from '@/lib/export-report';
+import EtfHoldingsTooltip, { EtfHoldingsMap } from './EtfHoldingsTooltip';
 
 export interface RelativeStrengthReturns {
   fromOpen: number | null;
@@ -35,6 +36,7 @@ export interface RelativeStrengthData {
 interface RelativeStrengthPanelProps {
   data: RelativeStrengthData | null;
   loading: boolean;
+  etfHoldings: EtfHoldingsMap;
 }
 
 type SortKey = 'ticker' | 'score' | 'delta1W' | 'delta1M';
@@ -378,7 +380,7 @@ function RelativeStrengthInfoModal({ onClose }: { onClose: () => void }) {
   );
 }
 
-export default function RelativeStrengthPanel({ data, loading }: RelativeStrengthPanelProps) {
+export default function RelativeStrengthPanel({ data, loading, etfHoldings }: RelativeStrengthPanelProps) {
   const [sortBy, setSortBy] = useState<SortKey>('score');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
   const [resumenSortBy, setResumenSortBy] = useState<ResumenSortKey | null>('score');
@@ -561,7 +563,7 @@ export default function RelativeStrengthPanel({ data, loading }: RelativeStrengt
           {sorted.map((u, idx) => (
             <div key={u.ticker} style={rankRowStyle}>
               <span style={{ ...sectorTickerStyle, flex: '0 0 100px' }}>
-                {u.ticker}
+                <EtfHoldingsTooltip ticker={u.ticker} holdingsMap={etfHoldings}>{u.ticker}</EtfHoldingsTooltip>
                 <span style={sectorLabelStyle}>{u.name}</span>
               </span>
               <span
@@ -662,7 +664,7 @@ export default function RelativeStrengthPanel({ data, loading }: RelativeStrengt
               {resumenSorted.map(u => (
                 <tr key={u.ticker}>
                   <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 700, position: 'sticky', left: 0, background: 'rgba(10,16,35,0.95)' }}>
-                    {u.ticker}
+                    <EtfHoldingsTooltip ticker={u.ticker} holdingsMap={etfHoldings}>{u.ticker}</EtfHoldingsTooltip>
                     <span style={sectorLabelStyle}> {u.name}</span>
                   </td>
                   <td style={{ ...tdStyle, backgroundColor: scoreBg(u.score) }}>{u.score == null ? 'ND' : `${(u.score * 100).toFixed(0)}%`}</td>

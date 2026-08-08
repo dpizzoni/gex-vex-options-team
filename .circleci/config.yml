@@ -186,6 +186,10 @@ jobs:
           name: 🚨 Evaluar alertas de Fuerza Relativa
           command: npm run rs:alerts:daily
 
+      - run:
+          name: 🧺 Actualizar composición ETF (top 10 holdings, ~trimestral)
+          command: npm run etf:holdings:daily
+
       - push_cache:
           commit_message: "chore(data): daily relative strength refresh"
 

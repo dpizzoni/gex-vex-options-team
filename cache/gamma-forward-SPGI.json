@@ -1,47 +1,55 @@
 {
   "ticker": "SPGI",
-  "date": "2026-08-08",
-  "spot": 408.19,
+  "date": "2026-08-10",
+  "spot": 409,
   "expirations": [
     {
       "expiration": "2026-08-14",
-      "dte": 7,
-      "call_gex": 331,
-      "put_gex": -924,
-      "net_gex": -593,
-      "p_c_ratio": 2.7892
+      "dte": 4,
+      "call_gex": 456,
+      "put_gex": -1186,
+      "net_gex": -729,
+      "p_c_ratio": 2.5976
     },
     {
       "expiration": "2026-08-21",
-      "dte": 14,
-      "call_gex": 790,
-      "put_gex": -2091,
-      "net_gex": -1301,
-      "p_c_ratio": 2.6459
+      "dte": 11,
+      "call_gex": 741,
+      "put_gex": -2190,
+      "net_gex": -1449,
+      "p_c_ratio": 2.9566
     },
     {
       "expiration": "2026-08-28",
-      "dte": 21,
-      "call_gex": 105,
-      "put_gex": -416,
-      "net_gex": -310,
-      "p_c_ratio": 3.9499
+      "dte": 18,
+      "call_gex": 117,
+      "put_gex": -410,
+      "net_gex": -292,
+      "p_c_ratio": 3.492
     },
     {
       "expiration": "2026-09-04",
-      "dte": 28,
-      "call_gex": 49,
-      "put_gex": -356,
-      "net_gex": -307,
-      "p_c_ratio": 7.2501
+      "dte": 25,
+      "call_gex": 62,
+      "put_gex": -341,
+      "net_gex": -279,
+      "p_c_ratio": 5.5053
     },
     {
       "expiration": "2026-09-11",
-      "dte": 35,
-      "call_gex": 12,
-      "put_gex": -210,
-      "net_gex": -198,
-      "p_c_ratio": 17.2892
+      "dte": 32,
+      "call_gex": 34,
+      "put_gex": -253,
+      "net_gex": -219,
+      "p_c_ratio": 7.3617
+    },
+    {
+      "expiration": "2026-09-18",
+      "dte": 39,
+      "call_gex": 591,
+      "put_gex": -1336,
+      "net_gex": -745,
+      "p_c_ratio": 2.2596
     }
   ],
   "putWall": 400,

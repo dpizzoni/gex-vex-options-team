@@ -1,50 +1,58 @@
 {
   "ticker": "XOM",
-  "date": "2026-08-08",
-  "spot": 153.04,
+  "date": "2026-08-10",
+  "spot": 153.19,
   "expirations": [
     {
       "expiration": "2026-08-14",
-      "dte": 7,
-      "call_gex": 46609,
-      "put_gex": -33771,
-      "net_gex": 12838,
-      "p_c_ratio": 0.7246
+      "dte": 4,
+      "call_gex": 95284,
+      "put_gex": -37358,
+      "net_gex": 57926,
+      "p_c_ratio": 0.3921
     },
     {
       "expiration": "2026-08-21",
-      "dte": 14,
-      "call_gex": 139157,
-      "put_gex": -64173,
-      "net_gex": 74984,
-      "p_c_ratio": 0.4612
+      "dte": 11,
+      "call_gex": 142220,
+      "put_gex": -56485,
+      "net_gex": 85735,
+      "p_c_ratio": 0.3972
     },
     {
       "expiration": "2026-08-28",
-      "dte": 21,
-      "call_gex": 25728,
-      "put_gex": -8442,
-      "net_gex": 17286,
-      "p_c_ratio": 0.3281
+      "dte": 18,
+      "call_gex": 30060,
+      "put_gex": -7800,
+      "net_gex": 22260,
+      "p_c_ratio": 0.2595
     },
     {
       "expiration": "2026-09-04",
-      "dte": 28,
-      "call_gex": 3911,
-      "put_gex": -4200,
-      "net_gex": -289,
-      "p_c_ratio": 1.0739
+      "dte": 25,
+      "call_gex": 4642,
+      "put_gex": -3939,
+      "net_gex": 703,
+      "p_c_ratio": 0.8486
     },
     {
       "expiration": "2026-09-11",
-      "dte": 35,
-      "call_gex": 1360,
-      "put_gex": -1173,
-      "net_gex": 187,
-      "p_c_ratio": 0.8625
+      "dte": 32,
+      "call_gex": 2063,
+      "put_gex": -1119,
+      "net_gex": 944,
+      "p_c_ratio": 0.5426
+    },
+    {
+      "expiration": "2026-09-18",
+      "dte": 39,
+      "call_gex": 173478,
+      "put_gex": -90044,
+      "net_gex": 83434,
+      "p_c_ratio": 0.5191
     }
   ],
-  "putWall": 150,
-  "callWall": 155,
+  "putWall": 145,
+  "callWall": 160,
   "limitedData": false
 }

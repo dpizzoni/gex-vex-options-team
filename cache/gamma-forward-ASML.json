@@ -1,50 +1,58 @@
 {
   "ticker": "ASML",
-  "date": "2026-08-08",
-  "spot": 1740.99,
+  "date": "2026-08-10",
+  "spot": 1780.76,
   "expirations": [
     {
       "expiration": "2026-08-14",
-      "dte": 7,
-      "call_gex": 722,
-      "put_gex": -489,
-      "net_gex": 233,
-      "p_c_ratio": 0.6775
+      "dte": 4,
+      "call_gex": 1048,
+      "put_gex": -455,
+      "net_gex": 593,
+      "p_c_ratio": 0.4341
     },
     {
       "expiration": "2026-08-21",
-      "dte": 14,
-      "call_gex": 2109,
-      "put_gex": -1515,
-      "net_gex": 594,
-      "p_c_ratio": 0.7183
+      "dte": 11,
+      "call_gex": 2313,
+      "put_gex": -1430,
+      "net_gex": 883,
+      "p_c_ratio": 0.6182
     },
     {
       "expiration": "2026-08-28",
-      "dte": 21,
-      "call_gex": 121,
-      "put_gex": -162,
-      "net_gex": -41,
-      "p_c_ratio": 1.3388
+      "dte": 18,
+      "call_gex": 132,
+      "put_gex": -160,
+      "net_gex": -28,
+      "p_c_ratio": 1.2099
     },
     {
       "expiration": "2026-09-04",
-      "dte": 28,
-      "call_gex": 64,
-      "put_gex": -156,
-      "net_gex": -92,
-      "p_c_ratio": 2.4265
+      "dte": 25,
+      "call_gex": 71,
+      "put_gex": -139,
+      "net_gex": -68,
+      "p_c_ratio": 1.964
     },
     {
       "expiration": "2026-09-11",
-      "dte": 35,
-      "call_gex": 13,
-      "put_gex": -27,
-      "net_gex": -14,
-      "p_c_ratio": 2.0332
+      "dte": 32,
+      "call_gex": 19,
+      "put_gex": -29,
+      "net_gex": -11,
+      "p_c_ratio": 1.5797
+    },
+    {
+      "expiration": "2026-09-18",
+      "dte": 39,
+      "call_gex": 1026,
+      "put_gex": -631,
+      "net_gex": 395,
+      "p_c_ratio": 0.6151
     }
   ],
-  "putWall": 1700,
-  "callWall": 1800,
+  "putWall": 1600,
+  "callWall": 1900,
   "limitedData": false
 }

@@ -1,18 +1,26 @@
 {
   "ticker": "PCAR",
-  "date": "2026-08-08",
-  "spot": 133.11,
+  "date": "2026-08-10",
+  "spot": null,
   "expirations": [
     {
       "expiration": "2026-08-21",
-      "dte": 14,
-      "call_gex": 9874,
-      "put_gex": -1026,
-      "net_gex": 8848,
-      "p_c_ratio": 0.1039
+      "dte": 11,
+      "call_gex": 8618,
+      "put_gex": -1501,
+      "net_gex": 7118,
+      "p_c_ratio": 0.1741
+    },
+    {
+      "expiration": "2026-09-18",
+      "dte": 39,
+      "call_gex": 3953,
+      "put_gex": -782,
+      "net_gex": 3171,
+      "p_c_ratio": 0.1979
     }
   ],
-  "putWall": 130,
-  "callWall": 133.6,
+  "putWall": null,
+  "callWall": null,
   "limitedData": true
 }

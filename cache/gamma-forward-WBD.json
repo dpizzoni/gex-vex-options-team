@@ -1,47 +1,55 @@
 {
   "ticker": "WBD",
-  "date": "2026-08-08",
-  "spot": 26.78,
+  "date": "2026-08-10",
+  "spot": 26.53,
   "expirations": [
     {
       "expiration": "2026-08-14",
-      "dte": 7,
-      "call_gex": 45589,
-      "put_gex": -48354,
-      "net_gex": -2765,
-      "p_c_ratio": 1.0607
+      "dte": 4,
+      "call_gex": 74227,
+      "put_gex": -120457,
+      "net_gex": -46230,
+      "p_c_ratio": 1.6228
     },
     {
       "expiration": "2026-08-21",
-      "dte": 14,
-      "call_gex": 4363214,
-      "put_gex": -1373394,
-      "net_gex": 2989820,
-      "p_c_ratio": 0.3148
+      "dte": 11,
+      "call_gex": 4955186,
+      "put_gex": -1534576,
+      "net_gex": 3420610,
+      "p_c_ratio": 0.3097
     },
     {
       "expiration": "2026-08-28",
-      "dte": 21,
-      "call_gex": 6067,
-      "put_gex": -9738,
-      "net_gex": -3671,
-      "p_c_ratio": 1.605
+      "dte": 18,
+      "call_gex": 10912,
+      "put_gex": -9858,
+      "net_gex": 1054,
+      "p_c_ratio": 0.9034
     },
     {
       "expiration": "2026-09-04",
-      "dte": 28,
-      "call_gex": 1732,
-      "put_gex": -2777,
-      "net_gex": -1045,
-      "p_c_ratio": 1.6032
+      "dte": 25,
+      "call_gex": 3013,
+      "put_gex": -2517,
+      "net_gex": 495,
+      "p_c_ratio": 0.8355
     },
     {
       "expiration": "2026-09-11",
-      "dte": 35,
-      "call_gex": 417,
-      "put_gex": -143,
-      "net_gex": 274,
-      "p_c_ratio": 0.3429
+      "dte": 32,
+      "call_gex": 506,
+      "put_gex": -142,
+      "net_gex": 364,
+      "p_c_ratio": 0.2802
+    },
+    {
+      "expiration": "2026-09-18",
+      "dte": 39,
+      "call_gex": 2324721,
+      "put_gex": -1831592,
+      "net_gex": 493129,
+      "p_c_ratio": 0.7879
     }
   ],
   "putWall": 25,

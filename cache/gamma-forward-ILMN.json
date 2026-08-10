@@ -1,18 +1,26 @@
 {
   "ticker": "ILMN",
-  "date": "2026-08-08",
-  "spot": 187.96,
+  "date": "2026-08-10",
+  "spot": null,
   "expirations": [
     {
       "expiration": "2026-08-21",
-      "dte": 14,
-      "call_gex": 2364,
-      "put_gex": -1757,
-      "net_gex": 607,
-      "p_c_ratio": 0.7432
+      "dte": 11,
+      "call_gex": 2052,
+      "put_gex": -3855,
+      "net_gex": -1803,
+      "p_c_ratio": 1.8787
+    },
+    {
+      "expiration": "2026-09-18",
+      "dte": 39,
+      "call_gex": 2551,
+      "put_gex": -1071,
+      "net_gex": 1480,
+      "p_c_ratio": 0.4199
     }
   ],
-  "putWall": 185,
-  "callWall": 230,
+  "putWall": null,
+  "callWall": null,
   "limitedData": true
 }

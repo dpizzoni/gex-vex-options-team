@@ -1,26 +1,26 @@
 {
   "ticker": "ORLY",
-  "date": "2026-08-10",
-  "spot": 92.23,
+  "date": "2026-08-11",
+  "spot": null,
   "expirations": [
     {
       "expiration": "2026-08-21",
-      "dte": 11,
-      "call_gex": 52780,
-      "put_gex": -17377,
-      "net_gex": 35403,
-      "p_c_ratio": 0.3292
+      "dte": 10,
+      "call_gex": 56226,
+      "put_gex": -13966,
+      "net_gex": 42261,
+      "p_c_ratio": 0.2484
     },
     {
       "expiration": "2026-09-18",
-      "dte": 39,
-      "call_gex": 42602,
-      "put_gex": -21540,
-      "net_gex": 21062,
-      "p_c_ratio": 0.5056
+      "dte": 38,
+      "call_gex": 44013,
+      "put_gex": -21119,
+      "net_gex": 22895,
+      "p_c_ratio": 0.4798
     }
   ],
-  "putWall": 90,
-  "callWall": 95,
+  "putWall": null,
+  "callWall": null,
   "limitedData": true
 }

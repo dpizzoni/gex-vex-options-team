@@ -1,26 +1,26 @@
 {
   "ticker": "DUK",
-  "date": "2026-08-11",
-  "spot": 123.19,
+  "date": "2026-08-12",
+  "spot": null,
   "expirations": [
     {
       "expiration": "2026-08-21",
-      "dte": 10,
-      "call_gex": 33430,
-      "put_gex": -25921,
-      "net_gex": 7509,
-      "p_c_ratio": 0.7754
+      "dte": 9,
+      "call_gex": 36106,
+      "put_gex": -26593,
+      "net_gex": 9513,
+      "p_c_ratio": 0.7365
     },
     {
       "expiration": "2026-09-18",
-      "dte": 38,
-      "call_gex": 37109,
-      "put_gex": -23567,
-      "net_gex": 13542,
-      "p_c_ratio": 0.6351
+      "dte": 37,
+      "call_gex": 38638,
+      "put_gex": -24113,
+      "net_gex": 14525,
+      "p_c_ratio": 0.6241
     }
   ],
-  "putWall": 120,
-  "callWall": 130,
+  "putWall": null,
+  "callWall": null,
   "limitedData": true
 }

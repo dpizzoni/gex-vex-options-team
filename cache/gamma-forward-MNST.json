@@ -1,26 +1,26 @@
 {
   "ticker": "MNST",
-  "date": "2026-08-11",
+  "date": "2026-08-12",
   "spot": 45.53,
   "expirations": [
     {
       "expiration": "2026-08-21",
-      "dte": 10,
-      "call_gex": 1895,
-      "put_gex": -88,
-      "net_gex": 1807,
-      "p_c_ratio": 0.0463
+      "dte": 9,
+      "call_gex": 134691,
+      "put_gex": -189351,
+      "net_gex": -54660,
+      "p_c_ratio": 1.4058
     },
     {
       "expiration": "2026-09-18",
-      "dte": 38,
-      "call_gex": 4908,
-      "put_gex": -4553,
-      "net_gex": 355,
-      "p_c_ratio": 0.9277
+      "dte": 37,
+      "call_gex": 96792,
+      "put_gex": -113431,
+      "net_gex": -16639,
+      "p_c_ratio": 1.1719
     }
   ],
-  "putWall": 45,
-  "callWall": 80,
+  "putWall": 42.5,
+  "callWall": 47.5,
   "limitedData": true
 }

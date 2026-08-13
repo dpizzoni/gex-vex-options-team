@@ -1,26 +1,26 @@
 {
   "ticker": "ODFL",
-  "date": "2026-08-12",
-  "spot": 212.55,
+  "date": "2026-08-13",
+  "spot": null,
   "expirations": [
     {
       "expiration": "2026-08-21",
-      "dte": 9,
-      "call_gex": 1164,
-      "put_gex": -2625,
-      "net_gex": -1460,
-      "p_c_ratio": 2.2545
+      "dte": 8,
+      "call_gex": 1195,
+      "put_gex": -2474,
+      "net_gex": -1279,
+      "p_c_ratio": 2.0701
     },
     {
       "expiration": "2026-09-18",
-      "dte": 37,
-      "call_gex": 115,
-      "put_gex": -229,
-      "net_gex": -114,
-      "p_c_ratio": 1.9939
+      "dte": 36,
+      "call_gex": 119,
+      "put_gex": -228,
+      "net_gex": -109,
+      "p_c_ratio": 1.9093
     }
   ],
-  "putWall": 200,
-  "callWall": 240,
+  "putWall": null,
+  "callWall": null,
   "limitedData": true
 }

@@ -1,227 +1,5 @@
 [
   {
-    "id": "ADI_2026-08-06",
-    "ticker": "ADI",
-    "date": "2026-08-06",
-    "detected_at": "2026-08-06T10:46:59.787Z",
-    "type": "SHORT_GAMMA_ENTRY",
-    "net_gex": -1886,
-    "ema3_net_gex": -1153,
-    "spot": 377
-  },
-  {
-    "id": "CDW_2026-08-06_DOUBLE_GEX",
-    "ticker": "CDW",
-    "date": "2026-08-06",
-    "detected_at": "2026-08-06T15:11:52.791Z",
-    "type": "DOUBLE_GEX",
-    "net_gex": 9132,
-    "previous_net_gex": 4428,
-    "ema3_net_gex": 7900,
-    "spot": 140.68
-  },
-  {
-    "id": "COST_2026-08-06",
-    "ticker": "COST",
-    "date": "2026-08-06",
-    "detected_at": "2026-08-06T10:46:59.792Z",
-    "type": "LONG_GAMMA_ENTRY",
-    "net_gex": 2728,
-    "ema3_net_gex": -1704,
-    "spot": 950.48
-  },
-  {
-    "id": "CPRT_2026-08-06",
-    "ticker": "CPRT",
-    "date": "2026-08-06",
-    "detected_at": "2026-08-06T15:11:52.792Z",
-    "type": "LONG_GAMMA_ENTRY",
-    "net_gex": 4152,
-    "ema3_net_gex": 1191,
-    "spot": 28.755
-  },
-  {
-    "id": "DDOG_2026-08-06",
-    "ticker": "DDOG",
-    "date": "2026-08-06",
-    "detected_at": "2026-08-06T15:11:52.795Z",
-    "type": "SHORT_GAMMA_ENTRY",
-    "net_gex": -10177,
-    "ema3_net_gex": 3997,
-    "spot": 242.1699
-  },
-  {
-    "id": "DUK_2026-08-06_DOUBLE_GEX",
-    "ticker": "DUK",
-    "date": "2026-08-06",
-    "detected_at": "2026-08-06T10:46:59.796Z",
-    "type": "DOUBLE_GEX",
-    "net_gex": 39106,
-    "previous_net_gex": 17562,
-    "ema3_net_gex": 33142,
-    "spot": null
-  },
-  {
-    "id": "KHC_2026-08-06_DOUBLE_GEX",
-    "ticker": "KHC",
-    "date": "2026-08-06",
-    "detected_at": "2026-08-06T10:46:59.799Z",
-    "type": "DOUBLE_GEX",
-    "net_gex": 2426551,
-    "previous_net_gex": 921336,
-    "ema3_net_gex": 1904539,
-    "spot": 25.85
-  },
-  {
-    "id": "LOW_2026-08-06_DOUBLE_GEX",
-    "ticker": "LOW",
-    "date": "2026-08-06",
-    "detected_at": "2026-08-06T10:46:59.799Z",
-    "type": "DOUBLE_GEX",
-    "net_gex": 15433,
-    "previous_net_gex": 3296,
-    "ema3_net_gex": 3715,
-    "spot": null
-  },
-  {
-    "id": "MCD_2026-08-06_DOUBLE_GEX",
-    "ticker": "MCD",
-    "date": "2026-08-06",
-    "detected_at": "2026-08-06T10:46:59.800Z",
-    "type": "DOUBLE_GEX",
-    "net_gex": 70633,
-    "previous_net_gex": 28564,
-    "ema3_net_gex": 46723,
-    "spot": 274.5
-  },
-  {
-    "id": "MDLZ_2026-08-06_DOUBLE_GEX",
-    "ticker": "MDLZ",
-    "date": "2026-08-06",
-    "detected_at": "2026-08-06T10:46:59.800Z",
-    "type": "DOUBLE_GEX",
-    "net_gex": 114588,
-    "previous_net_gex": 37226,
-    "ema3_net_gex": 80028,
-    "spot": 62.9
-  },
-  {
-    "id": "MELI_2026-08-06",
-    "ticker": "MELI",
-    "date": "2026-08-06",
-    "detected_at": "2026-08-06T15:11:52.799Z",
-    "type": "SHORT_GAMMA_ENTRY",
-    "net_gex": -470,
-    "ema3_net_gex": 16,
-    "spot": 1781.57
-  },
-  {
-    "id": "MO_2026-08-06",
-    "ticker": "MO",
-    "date": "2026-08-06",
-    "detected_at": "2026-08-06T15:11:52.799Z",
-    "type": "LONG_GAMMA_ENTRY",
-    "net_gex": 61664,
-    "ema3_net_gex": 2793,
-    "spot": 68.4398
-  },
-  {
-    "id": "NEE_2026-08-06_DOUBLE_GEX",
-    "ticker": "NEE",
-    "date": "2026-08-06",
-    "detected_at": "2026-08-06T10:46:59.801Z",
-    "type": "DOUBLE_GEX",
-    "net_gex": 45430,
-    "previous_net_gex": 8441,
-    "ema3_net_gex": 29252,
-    "spot": 86.14
-  },
-  {
-    "id": "NEE_2026-08-06",
-    "ticker": "NEE",
-    "date": "2026-08-06",
-    "detected_at": "2026-08-06T15:11:52.800Z",
-    "type": "SHORT_GAMMA_ENTRY",
-    "net_gex": -74614,
-    "ema3_net_gex": -30770,
-    "spot": 85.65
-  },
-  {
-    "id": "ODFL_2026-08-06_DOUBLE_GEX",
-    "ticker": "ODFL",
-    "date": "2026-08-06",
-    "detected_at": "2026-08-06T10:46:59.802Z",
-    "type": "DOUBLE_GEX",
-    "net_gex": -882,
-    "previous_net_gex": -478,
-    "ema3_net_gex": -749,
-    "spot": null
-  },
-  {
-    "id": "ON_2026-08-06",
-    "ticker": "ON",
-    "date": "2026-08-06",
-    "detected_at": "2026-08-06T10:46:59.802Z",
-    "type": "SHORT_GAMMA_ENTRY",
-    "net_gex": -61356,
-    "ema3_net_gex": -29685,
-    "spot": 76.5
-  },
-  {
-    "id": "PM_2026-08-06_DOUBLE_GEX",
-    "ticker": "PM",
-    "date": "2026-08-06",
-    "detected_at": "2026-08-06T10:46:59.803Z",
-    "type": "DOUBLE_GEX",
-    "net_gex": 19341,
-    "previous_net_gex": 9992,
-    "ema3_net_gex": 16499,
-    "spot": null
-  },
-  {
-    "id": "SPGI_2026-08-06_DOUBLE_GEX",
-    "ticker": "SPGI",
-    "date": "2026-08-06",
-    "detected_at": "2026-08-06T15:11:52.803Z",
-    "type": "DOUBLE_GEX",
-    "net_gex": -5037,
-    "previous_net_gex": -2684,
-    "ema3_net_gex": -3791,
-    "spot": 407.015
-  },
-  {
-    "id": "UNH_2026-08-06_DOUBLE_GEX",
-    "ticker": "UNH",
-    "date": "2026-08-06",
-    "detected_at": "2026-08-06T10:46:59.805Z",
-    "type": "DOUBLE_GEX",
-    "net_gex": 86030,
-    "previous_net_gex": 45097,
-    "ema3_net_gex": 67727,
-    "spot": 414.6
-  },
-  {
-    "id": "VRTX_2026-08-06_DOUBLE_GEX",
-    "ticker": "VRTX",
-    "date": "2026-08-06",
-    "detected_at": "2026-08-06T10:46:59.806Z",
-    "type": "DOUBLE_GEX",
-    "net_gex": 2652,
-    "previous_net_gex": 801,
-    "ema3_net_gex": 1436,
-    "spot": null
-  },
-  {
-    "id": "WMT_2026-08-06",
-    "ticker": "WMT",
-    "date": "2026-08-06",
-    "detected_at": "2026-08-06T10:46:59.806Z",
-    "type": "LONG_GAMMA_ENTRY",
-    "net_gex": 44176,
-    "ema3_net_gex": -78129,
-    "spot": 113.19
-  },
-  {
     "id": "ABNB_2026-08-07_DOUBLE_GEX",
     "ticker": "ABNB",
     "date": "2026-08-07",
@@ -1390,5 +1168,109 @@
     "previous_net_gex": 44746,
     "ema3_net_gex": 131751,
     "spot": 115.56
+  },
+  {
+    "id": "COST_2026-08-14_DOUBLE_GEX",
+    "ticker": "COST",
+    "date": "2026-08-14",
+    "detected_at": "2026-08-14T10:46:32.889Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 12786,
+    "previous_net_gex": 2933,
+    "ema3_net_gex": 5455,
+    "spot": 960.9465
+  },
+  {
+    "id": "CSCO_2026-08-14",
+    "ticker": "CSCO",
+    "date": "2026-08-14",
+    "detected_at": "2026-08-14T10:46:32.891Z",
+    "type": "LONG_GAMMA_ENTRY",
+    "net_gex": 79874,
+    "ema3_net_gex": 98670,
+    "spot": 112.86
+  },
+  {
+    "id": "GOOGL_2026-08-14_DOUBLE_GEX",
+    "ticker": "GOOGL",
+    "date": "2026-08-14",
+    "detected_at": "2026-08-14T10:46:32.896Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 341469,
+    "previous_net_gex": 187254,
+    "ema3_net_gex": 260579,
+    "spot": 347
+  },
+  {
+    "id": "HD_2026-08-14",
+    "ticker": "HD",
+    "date": "2026-08-14",
+    "detected_at": "2026-08-14T10:46:32.896Z",
+    "type": "SHORT_GAMMA_ENTRY",
+    "net_gex": -8167,
+    "ema3_net_gex": 7353,
+    "spot": 341
+  },
+  {
+    "id": "HON_2026-08-14_DOUBLE_GEX",
+    "ticker": "HON",
+    "date": "2026-08-14",
+    "detected_at": "2026-08-14T10:46:32.896Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 5442,
+    "previous_net_gex": 706,
+    "ema3_net_gex": 3668,
+    "spot": null
+  },
+  {
+    "id": "IBIT_2026-08-14",
+    "ticker": "IBIT",
+    "date": "2026-08-14",
+    "detected_at": "2026-08-14T10:46:32.896Z",
+    "type": "SHORT_GAMMA_ENTRY",
+    "net_gex": -599841,
+    "ema3_net_gex": 1501766,
+    "spot": 35.56
+  },
+  {
+    "id": "LOW_2026-08-14",
+    "ticker": "LOW",
+    "date": "2026-08-14",
+    "detected_at": "2026-08-14T10:46:32.898Z",
+    "type": "LONG_GAMMA_ENTRY",
+    "net_gex": 6633,
+    "ema3_net_gex": 4062,
+    "spot": null
+  },
+  {
+    "id": "MELI_2026-08-14",
+    "ticker": "MELI",
+    "date": "2026-08-14",
+    "detected_at": "2026-08-14T10:46:32.899Z",
+    "type": "SHORT_GAMMA_ENTRY",
+    "net_gex": -125,
+    "ema3_net_gex": 104,
+    "spot": 1830.55
+  },
+  {
+    "id": "ROST_2026-08-14_DOUBLE_GEX",
+    "ticker": "ROST",
+    "date": "2026-08-14",
+    "detected_at": "2026-08-14T10:46:32.902Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": -3306,
+    "previous_net_gex": -206,
+    "ema3_net_gex": -624,
+    "spot": null
+  },
+  {
+    "id": "VRSK_2026-08-14",
+    "ticker": "VRSK",
+    "date": "2026-08-14",
+    "detected_at": "2026-08-14T10:46:32.904Z",
+    "type": "LONG_GAMMA_ENTRY",
+    "net_gex": 939,
+    "ema3_net_gex": 300,
+    "spot": null
   }
 ]

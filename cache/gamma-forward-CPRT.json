@@ -1,26 +1,26 @@
 {
   "ticker": "CPRT",
   "date": "2026-08-14",
-  "spot": 29.41,
+  "spot": 31.375,
   "expirations": [
     {
       "expiration": "2026-08-21",
       "dte": 7,
-      "call_gex": 112516,
-      "put_gex": -144046,
-      "net_gex": -31531,
-      "p_c_ratio": 1.2802
+      "call_gex": 103847,
+      "put_gex": -98228,
+      "net_gex": 5619,
+      "p_c_ratio": 0.9459
     },
     {
       "expiration": "2026-09-18",
       "dte": 35,
-      "call_gex": 57860,
-      "put_gex": -61355,
-      "net_gex": -3495,
-      "p_c_ratio": 1.0604
+      "call_gex": 62927,
+      "put_gex": -57366,
+      "net_gex": 5560,
+      "p_c_ratio": 0.9116
     }
   ],
   "putWall": 27.5,
-  "callWall": 30,
+  "callWall": 35,
   "limitedData": true
 }

@@ -1,9 +1,50 @@
 {
   "ticker": "CAT",
   "date": "2026-08-14",
-  "spot": 854.6,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 861.935,
+  "expirations": [
+    {
+      "expiration": "2026-08-21",
+      "dte": 7,
+      "call_gex": 4542,
+      "put_gex": -7040,
+      "net_gex": -2498,
+      "p_c_ratio": 1.55
+    },
+    {
+      "expiration": "2026-08-28",
+      "dte": 14,
+      "call_gex": 978,
+      "put_gex": -1116,
+      "net_gex": -138,
+      "p_c_ratio": 1.1411
+    },
+    {
+      "expiration": "2026-09-04",
+      "dte": 21,
+      "call_gex": 822,
+      "put_gex": -504,
+      "net_gex": 318,
+      "p_c_ratio": 0.6135
+    },
+    {
+      "expiration": "2026-09-11",
+      "dte": 28,
+      "call_gex": 383,
+      "put_gex": -290,
+      "net_gex": 93,
+      "p_c_ratio": 0.7562
+    },
+    {
+      "expiration": "2026-09-18",
+      "dte": 35,
+      "call_gex": 5447,
+      "put_gex": -4575,
+      "net_gex": 872,
+      "p_c_ratio": 0.8399
+    }
+  ],
+  "putWall": 800,
+  "callWall": 880,
+  "limitedData": false
 }

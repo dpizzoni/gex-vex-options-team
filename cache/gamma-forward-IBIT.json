@@ -1,58 +1,66 @@
 {
   "ticker": "IBIT",
-  "date": "2026-08-14",
-  "spot": 35.63,
+  "date": "2026-08-17",
+  "spot": 36,
   "expirations": [
     {
       "expiration": "2026-08-21",
-      "dte": 7,
-      "call_gex": 4959091,
-      "put_gex": -4206482,
-      "net_gex": 752609,
-      "p_c_ratio": 0.8482
+      "dte": 4,
+      "call_gex": 5863344,
+      "put_gex": -4619076,
+      "net_gex": 1244268,
+      "p_c_ratio": 0.7878
     },
     {
       "expiration": "2026-08-28",
-      "dte": 14,
-      "call_gex": 374946,
-      "put_gex": -529929,
-      "net_gex": -154984,
-      "p_c_ratio": 1.4134
+      "dte": 11,
+      "call_gex": 586251,
+      "put_gex": -574150,
+      "net_gex": 12101,
+      "p_c_ratio": 0.9794
     },
     {
       "expiration": "2026-08-31",
-      "dte": 17,
-      "call_gex": 383803,
-      "put_gex": -459535,
-      "net_gex": -75732,
-      "p_c_ratio": 1.1973
+      "dte": 14,
+      "call_gex": 456782,
+      "put_gex": -453930,
+      "net_gex": 2853,
+      "p_c_ratio": 0.9938
     },
     {
       "expiration": "2026-09-04",
-      "dte": 21,
-      "call_gex": 152455,
-      "put_gex": -264301,
-      "net_gex": -111846,
-      "p_c_ratio": 1.7336
+      "dte": 18,
+      "call_gex": 266748,
+      "put_gex": -289294,
+      "net_gex": -22547,
+      "p_c_ratio": 1.0845
     },
     {
       "expiration": "2026-09-11",
-      "dte": 28,
-      "call_gex": 64832,
-      "put_gex": -56115,
-      "net_gex": 8717,
-      "p_c_ratio": 0.8656
+      "dte": 25,
+      "call_gex": 93327,
+      "put_gex": -59124,
+      "net_gex": 34203,
+      "p_c_ratio": 0.6335
     },
     {
       "expiration": "2026-09-18",
-      "dte": 35,
-      "call_gex": 2131689,
-      "put_gex": -1700679,
-      "net_gex": 431010,
-      "p_c_ratio": 0.7978
+      "dte": 32,
+      "call_gex": 2306094,
+      "put_gex": -1729357,
+      "net_gex": 576736,
+      "p_c_ratio": 0.7499
+    },
+    {
+      "expiration": "2026-09-25",
+      "dte": 39,
+      "call_gex": 93940,
+      "put_gex": -59667,
+      "net_gex": 34273,
+      "p_c_ratio": 0.6352
     }
   ],
   "putWall": 35,
-  "callWall": 36,
+  "callWall": 37,
   "limitedData": false
 }

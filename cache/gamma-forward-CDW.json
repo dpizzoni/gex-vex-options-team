@@ -1,30 +1,26 @@
 {
   "ticker": "CDW",
   "date": "2026-08-18",
-<<<<<<< Updated upstream
-  "spot": null,
-=======
-  "spot": 135.3,
->>>>>>> Stashed changes
+  "spot": 134.91,
   "expirations": [
     {
       "expiration": "2026-08-21",
       "dte": 3,
-      "call_gex": 10666,
-      "put_gex": -10496,
-      "net_gex": 170,
-      "p_c_ratio": 0.9841
+      "call_gex": 10674,
+      "put_gex": -10189,
+      "net_gex": 484,
+      "p_c_ratio": 0.9546
     },
     {
       "expiration": "2026-09-18",
       "dte": 31,
-      "call_gex": 7958,
-      "put_gex": -4240,
-      "net_gex": 3718,
-      "p_c_ratio": 0.5328
+      "call_gex": 7941,
+      "put_gex": -4224,
+      "net_gex": 3717,
+      "p_c_ratio": 0.5319
     }
   ],
-  "putWall": null,
-  "callWall": null,
+  "putWall": 130,
+  "callWall": 145,
   "limitedData": true
 }

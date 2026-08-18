@@ -1,59 +1,55 @@
 {
   "ticker": "PYPL",
   "date": "2026-08-18",
-<<<<<<< Updated upstream
-  "spot": 60.62,
-=======
-  "spot": 60.33,
->>>>>>> Stashed changes
+  "spot": 61.31,
   "expirations": [
     {
       "expiration": "2026-08-21",
       "dte": 3,
-      "call_gex": 827250,
-      "put_gex": -150538,
-      "net_gex": 676711,
-      "p_c_ratio": 0.182
+      "call_gex": 763809,
+      "put_gex": -123189,
+      "net_gex": 640620,
+      "p_c_ratio": 0.1613
     },
     {
       "expiration": "2026-08-28",
       "dte": 10,
-      "call_gex": 94109,
-      "put_gex": -22407,
-      "net_gex": 71702,
-      "p_c_ratio": 0.2381
+      "call_gex": 94814,
+      "put_gex": -18140,
+      "net_gex": 76674,
+      "p_c_ratio": 0.1913
     },
     {
       "expiration": "2026-09-04",
       "dte": 17,
-      "call_gex": 23216,
-      "put_gex": -11938,
-      "net_gex": 11278,
-      "p_c_ratio": 0.5142
+      "call_gex": 24620,
+      "put_gex": -10036,
+      "net_gex": 14585,
+      "p_c_ratio": 0.4076
     },
     {
       "expiration": "2026-09-11",
       "dte": 24,
-      "call_gex": 27099,
-      "put_gex": -7649,
-      "net_gex": 19450,
-      "p_c_ratio": 0.2823
+      "call_gex": 24775,
+      "put_gex": -5987,
+      "net_gex": 18787,
+      "p_c_ratio": 0.2417
     },
     {
       "expiration": "2026-09-18",
       "dte": 31,
-      "call_gex": 443338,
-      "put_gex": -121466,
-      "net_gex": 321871,
-      "p_c_ratio": 0.274
+      "call_gex": 435498,
+      "put_gex": -114486,
+      "net_gex": 321012,
+      "p_c_ratio": 0.2629
     },
     {
       "expiration": "2026-09-25",
       "dte": 38,
-      "call_gex": 5863,
-      "put_gex": -4687,
-      "net_gex": 1176,
-      "p_c_ratio": 0.7994
+      "call_gex": 6192,
+      "put_gex": -4406,
+      "net_gex": 1786,
+      "p_c_ratio": 0.7115
     }
   ],
   "putWall": 60,

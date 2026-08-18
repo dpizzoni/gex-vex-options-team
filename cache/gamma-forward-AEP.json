@@ -1,30 +1,26 @@
 {
   "ticker": "AEP",
   "date": "2026-08-18",
-<<<<<<< Updated upstream
-  "spot": null,
-=======
-  "spot": 127.3854,
->>>>>>> Stashed changes
+  "spot": 127.7,
   "expirations": [
     {
       "expiration": "2026-08-21",
       "dte": 3,
-      "call_gex": 9639,
-      "put_gex": -30347,
-      "net_gex": -20709,
-      "p_c_ratio": 3.1485
+      "call_gex": 14954,
+      "put_gex": -22193,
+      "net_gex": -7239,
+      "p_c_ratio": 1.4841
     },
     {
       "expiration": "2026-09-18",
       "dte": 31,
-      "call_gex": 18800,
-      "put_gex": -28010,
-      "net_gex": -9210,
-      "p_c_ratio": 1.4899
+      "call_gex": 21894,
+      "put_gex": -24944,
+      "net_gex": -3050,
+      "p_c_ratio": 1.1393
     }
   ],
-  "putWall": null,
-  "callWall": null,
+  "putWall": 125,
+  "callWall": 130,
   "limitedData": true
 }

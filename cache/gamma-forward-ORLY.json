@@ -1,27 +1,23 @@
 {
   "ticker": "ORLY",
   "date": "2026-08-18",
-<<<<<<< Updated upstream
-  "spot": 91.3,
-=======
-  "spot": 90.55,
->>>>>>> Stashed changes
+  "spot": 91.275,
   "expirations": [
     {
       "expiration": "2026-08-21",
       "dte": 3,
-      "call_gex": 53018,
-      "put_gex": -16849,
-      "net_gex": 36169,
-      "p_c_ratio": 0.3178
+      "call_gex": 56468,
+      "put_gex": -19453,
+      "net_gex": 37015,
+      "p_c_ratio": 0.3445
     },
     {
       "expiration": "2026-09-18",
       "dte": 31,
-      "call_gex": 50058,
-      "put_gex": -28840,
-      "net_gex": 21217,
-      "p_c_ratio": 0.5761
+      "call_gex": 46626,
+      "put_gex": -29289,
+      "net_gex": 17337,
+      "p_c_ratio": 0.6282
     }
   ],
   "putWall": 90,

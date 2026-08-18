@@ -1,35 +1,26 @@
 {
   "ticker": "MNST",
   "date": "2026-08-18",
-<<<<<<< Updated upstream
-  "spot": null,
-=======
-  "spot": 45.9041,
->>>>>>> Stashed changes
+  "spot": 46.84,
   "expirations": [
     {
       "expiration": "2026-08-21",
       "dte": 3,
-      "call_gex": 114919,
-      "put_gex": -160076,
-      "net_gex": -45157,
-      "p_c_ratio": 1.393
+      "call_gex": 125295,
+      "put_gex": -136300,
+      "net_gex": -11005,
+      "p_c_ratio": 1.0878
     },
     {
       "expiration": "2026-09-18",
       "dte": 31,
-      "call_gex": 111968,
-      "put_gex": -110219,
-      "net_gex": 1748,
-      "p_c_ratio": 0.9844
+      "call_gex": 116876,
+      "put_gex": -98472,
+      "net_gex": 18404,
+      "p_c_ratio": 0.8425
     }
   ],
-<<<<<<< Updated upstream
-  "putWall": null,
-  "callWall": null,
-=======
-  "putWall": 45,
+  "putWall": 46.25,
   "callWall": 47.5,
->>>>>>> Stashed changes
   "limitedData": true
 }

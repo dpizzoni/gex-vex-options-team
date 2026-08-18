@@ -1,6 +1,374 @@
 [
   {
+<<<<<<< Updated upstream
     "id": "ADP_2026-08-18_DOUBLE_GEX",
+=======
+    "id": "AMD_2026-08-11_DOUBLE_GEX",
+    "ticker": "AMD",
+    "date": "2026-08-11",
+    "detected_at": "2026-08-11T10:46:54.555Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 25736,
+    "previous_net_gex": 10771,
+    "ema3_net_gex": 34215,
+    "spot": 473
+  },
+  {
+    "id": "CAT_2026-08-11",
+    "ticker": "CAT",
+    "date": "2026-08-11",
+    "detected_at": "2026-08-11T15:11:43.280Z",
+    "type": "LONG_GAMMA_ENTRY",
+    "net_gex": 2432,
+    "ema3_net_gex": 2102,
+    "spot": 849.3023
+  },
+  {
+    "id": "COST_2026-08-11",
+    "ticker": "COST",
+    "date": "2026-08-11",
+    "detected_at": "2026-08-11T10:46:54.559Z",
+    "type": "LONG_GAMMA_ENTRY",
+    "net_gex": 1159,
+    "ema3_net_gex": -854,
+    "spot": null
+  },
+  {
+    "id": "DDOG_2026-08-11_DOUBLE_GEX",
+    "ticker": "DDOG",
+    "date": "2026-08-11",
+    "detected_at": "2026-08-11T10:46:54.562Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 21192,
+    "previous_net_gex": 3397,
+    "ema3_net_gex": 12125,
+    "spot": 260
+  },
+  {
+    "id": "LOW_2026-08-11_DOUBLE_GEX",
+    "ticker": "LOW",
+    "date": "2026-08-11",
+    "detected_at": "2026-08-11T15:11:43.291Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 10093,
+    "previous_net_gex": 1402,
+    "ema3_net_gex": 7521,
+    "spot": 222.37
+  },
+  {
+    "id": "MELI_2026-08-11_DOUBLE_GEX",
+    "ticker": "MELI",
+    "date": "2026-08-11",
+    "detected_at": "2026-08-11T15:11:43.291Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 608,
+    "previous_net_gex": 20,
+    "ema3_net_gex": 318,
+    "spot": 1916.98
+  },
+  {
+    "id": "NEE_2026-08-11",
+    "ticker": "NEE",
+    "date": "2026-08-11",
+    "detected_at": "2026-08-11T10:46:54.569Z",
+    "type": "LONG_GAMMA_ENTRY",
+    "net_gex": 24164,
+    "ema3_net_gex": -3117,
+    "spot": 84.54
+  },
+  {
+    "id": "NFLX_2026-08-11_DOUBLE_GEX",
+    "ticker": "NFLX",
+    "date": "2026-08-11",
+    "detected_at": "2026-08-11T10:46:54.570Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 1374151,
+    "previous_net_gex": 335582,
+    "ema3_net_gex": 1015773,
+    "spot": 76.6555
+  },
+  {
+    "id": "ODFL_2026-08-11_DOUBLE_GEX",
+    "ticker": "ODFL",
+    "date": "2026-08-11",
+    "detected_at": "2026-08-11T10:46:54.570Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": -1464,
+    "previous_net_gex": -773,
+    "ema3_net_gex": -1180,
+    "spot": null
+  },
+  {
+    "id": "ON_2026-08-11_DOUBLE_GEX",
+    "ticker": "ON",
+    "date": "2026-08-11",
+    "detected_at": "2026-08-11T10:46:54.570Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 4301,
+    "previous_net_gex": 1634,
+    "ema3_net_gex": 3554,
+    "spot": 80.42
+  },
+  {
+    "id": "PG_2026-08-11_DOUBLE_GEX",
+    "ticker": "PG",
+    "date": "2026-08-11",
+    "detected_at": "2026-08-11T10:46:54.571Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 140703,
+    "previous_net_gex": 70911,
+    "ema3_net_gex": 126229,
+    "spot": 145.94
+  },
+  {
+    "id": "ROST_2026-08-11",
+    "ticker": "ROST",
+    "date": "2026-08-11",
+    "detected_at": "2026-08-11T10:46:54.571Z",
+    "type": "LONG_GAMMA_ENTRY",
+    "net_gex": 4793,
+    "ema3_net_gex": 2087,
+    "spot": null
+  },
+  {
+    "id": "SNPS_2026-08-11_DOUBLE_GEX",
+    "ticker": "SNPS",
+    "date": "2026-08-11",
+    "detected_at": "2026-08-11T10:46:54.572Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": -2241,
+    "previous_net_gex": -302,
+    "ema3_net_gex": -1383,
+    "spot": null
+  },
+  {
+    "id": "SO_2026-08-11_DOUBLE_GEX",
+    "ticker": "SO",
+    "date": "2026-08-11",
+    "detected_at": "2026-08-11T10:46:54.572Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": -34498,
+    "previous_net_gex": -17430,
+    "ema3_net_gex": -13330,
+    "spot": null
+  },
+  {
+    "id": "SO_2026-08-11",
+    "ticker": "SO",
+    "date": "2026-08-11",
+    "detected_at": "2026-08-11T15:11:43.295Z",
+    "type": "LONG_GAMMA_ENTRY",
+    "net_gex": 31855,
+    "ema3_net_gex": 19846,
+    "spot": 91.4
+  },
+  {
+    "id": "TTD_2026-08-11_DOUBLE_GEX",
+    "ticker": "TTD",
+    "date": "2026-08-11",
+    "detected_at": "2026-08-11T10:46:54.573Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 325971,
+    "previous_net_gex": 24209,
+    "ema3_net_gex": 93169,
+    "spot": 13.33
+  },
+  {
+    "id": "VRSK_2026-08-11_DOUBLE_GEX",
+    "ticker": "VRSK",
+    "date": "2026-08-11",
+    "detected_at": "2026-08-11T10:46:54.573Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": -749,
+    "previous_net_gex": -364,
+    "ema3_net_gex": -353,
+    "spot": null
+  },
+  {
+    "id": "WFC_2026-08-11_DOUBLE_GEX",
+    "ticker": "WFC",
+    "date": "2026-08-11",
+    "detected_at": "2026-08-11T15:11:43.297Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 281530,
+    "previous_net_gex": 100746,
+    "ema3_net_gex": 182549,
+    "spot": 87.6
+  },
+  {
+    "id": "AMD_2026-08-12_DOUBLE_GEX",
+    "ticker": "AMD",
+    "date": "2026-08-12",
+    "detected_at": "2026-08-12T10:46:46.495Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 81693,
+    "previous_net_gex": 6554,
+    "ema3_net_gex": 53159,
+    "spot": 480.65
+  },
+  {
+    "id": "CAT_2026-08-12_DOUBLE_GEX",
+    "ticker": "CAT",
+    "date": "2026-08-12",
+    "detected_at": "2026-08-12T15:11:56.797Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 4438,
+    "previous_net_gex": 2432,
+    "ema3_net_gex": 3270,
+    "spot": 861.97
+  },
+  {
+    "id": "COST_2026-08-12",
+    "ticker": "COST",
+    "date": "2026-08-12",
+    "detected_at": "2026-08-12T10:46:46.500Z",
+    "type": "SHORT_GAMMA_ENTRY",
+    "net_gex": -7752,
+    "ema3_net_gex": -3760,
+    "spot": 941.3313
+  },
+  {
+    "id": "FTNT_2026-08-12_DOUBLE_GEX",
+    "ticker": "FTNT",
+    "date": "2026-08-12",
+    "detected_at": "2026-08-12T10:46:46.505Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 6640,
+    "previous_net_gex": 3163,
+    "ema3_net_gex": 7065,
+    "spot": null
+  },
+  {
+    "id": "HON_2026-08-12",
+    "ticker": "HON",
+    "date": "2026-08-12",
+    "detected_at": "2026-08-12T10:46:46.506Z",
+    "type": "SHORT_GAMMA_ENTRY",
+    "net_gex": -5848,
+    "ema3_net_gex": 3273,
+    "spot": null
+  },
+  {
+    "id": "INTC_2026-08-12_DOUBLE_GEX",
+    "ticker": "INTC",
+    "date": "2026-08-12",
+    "detected_at": "2026-08-12T10:46:46.508Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 1025779,
+    "previous_net_gex": 390532,
+    "ema3_net_gex": 749015,
+    "spot": 99.51
+  },
+  {
+    "id": "KHC_2026-08-12_DOUBLE_GEX",
+    "ticker": "KHC",
+    "date": "2026-08-12",
+    "detected_at": "2026-08-12T10:46:46.508Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 1807663,
+    "previous_net_gex": 728677,
+    "ema3_net_gex": 1487023,
+    "spot": 24.65
+  },
+  {
+    "id": "MELI_2026-08-12_DOUBLE_GEX",
+    "ticker": "MELI",
+    "date": "2026-08-12",
+    "detected_at": "2026-08-12T10:46:46.509Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 1105,
+    "previous_net_gex": 608,
+    "ema3_net_gex": 711,
+    "spot": 1928.99
+  },
+  {
+    "id": "MNST_2026-08-12",
+    "ticker": "MNST",
+    "date": "2026-08-12",
+    "detected_at": "2026-08-12T10:46:46.509Z",
+    "type": "SHORT_GAMMA_ENTRY",
+    "net_gex": -26694,
+    "ema3_net_gex": -8267,
+    "spot": 45.53
+  },
+  {
+    "id": "MRVL_2026-08-12_DOUBLE_GEX",
+    "ticker": "MRVL",
+    "date": "2026-08-12",
+    "detected_at": "2026-08-12T10:46:46.510Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 124728,
+    "previous_net_gex": 60886,
+    "ema3_net_gex": 104135,
+    "spot": 219.8
+  },
+  {
+    "id": "MS_2026-08-12_DOUBLE_GEX",
+    "ticker": "MS",
+    "date": "2026-08-12",
+    "detected_at": "2026-08-12T15:11:56.809Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 43845,
+    "previous_net_gex": 22937,
+    "ema3_net_gex": 36356,
+    "spot": 219.38
+  },
+  {
+    "id": "MU_2026-08-12_DOUBLE_GEX",
+    "ticker": "MU",
+    "date": "2026-08-12",
+    "detected_at": "2026-08-12T10:46:46.510Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 54334,
+    "previous_net_gex": 18888,
+    "ema3_net_gex": 39036,
+    "spot": 893.18
+  },
+  {
+    "id": "QQQ_2026-08-12_DOUBLE_GEX",
+    "ticker": "QQQ",
+    "date": "2026-08-12",
+    "detected_at": "2026-08-12T10:46:46.512Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 681283,
+    "previous_net_gex": 294275,
+    "ema3_net_gex": 532605,
+    "spot": 723.4
+  },
+  {
+    "id": "SO_2026-08-12",
+    "ticker": "SO",
+    "date": "2026-08-12",
+    "detected_at": "2026-08-12T15:11:56.813Z",
+    "type": "SHORT_GAMMA_ENTRY",
+    "net_gex": -17877,
+    "ema3_net_gex": 984,
+    "spot": 91.9101
+  },
+  {
+    "id": "WBD_2026-08-12_DOUBLE_GEX",
+    "ticker": "WBD",
+    "date": "2026-08-12",
+    "detected_at": "2026-08-12T15:11:56.815Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 5346693,
+    "previous_net_gex": 1698822,
+    "ema3_net_gex": 2851266,
+    "spot": 27.4274
+  },
+  {
+    "id": "WMT_2026-08-12",
+    "ticker": "WMT",
+    "date": "2026-08-12",
+    "detected_at": "2026-08-12T15:11:56.816Z",
+    "type": "LONG_GAMMA_ENTRY",
+    "net_gex": 44746,
+    "ema3_net_gex": -32175,
+    "spot": 115
+  },
+  {
+    "id": "ADP_2026-08-13_DOUBLE_GEX",
+>>>>>>> Stashed changes
     "ticker": "ADP",
     "date": "2026-08-18",
     "detected_at": "2026-08-18T14:01:27.667Z",
@@ -188,11 +556,216 @@
   {
     "id": "WMT_2026-08-18",
     "ticker": "WMT",
+<<<<<<< Updated upstream
     "date": "2026-08-18",
     "detected_at": "2026-08-18T14:01:27.686Z",
     "type": "LONG_GAMMA_ENTRY",
     "net_gex": 31393,
     "ema3_net_gex": 95462,
     "spot": 115.175
+=======
+    "date": "2026-08-17",
+    "detected_at": "2026-08-17T10:47:11.931Z",
+    "type": "SHORT_GAMMA_ENTRY",
+    "net_gex": -31404,
+    "ema3_net_gex": 149617,
+    "spot": 114.7381
+  },
+  {
+    "id": "ADP_2026-08-18_DOUBLE_GEX",
+    "ticker": "ADP",
+    "date": "2026-08-18",
+    "detected_at": "2026-08-18T14:01:49.263Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 2514,
+    "previous_net_gex": 777,
+    "ema3_net_gex": 4294,
+    "spot": 273.38
+  },
+  {
+    "id": "AEP_2026-08-18",
+    "ticker": "AEP",
+    "date": "2026-08-18",
+    "detected_at": "2026-08-18T14:01:49.264Z",
+    "type": "LONG_GAMMA_ENTRY",
+    "net_gex": 8347,
+    "ema3_net_gex": -6189,
+    "spot": 127.79
+  },
+  {
+    "id": "AVGO_2026-08-18",
+    "ticker": "AVGO",
+    "date": "2026-08-18",
+    "detected_at": "2026-08-18T14:01:49.264Z",
+    "type": "SHORT_GAMMA_ENTRY",
+    "net_gex": -31544,
+    "ema3_net_gex": 14469,
+    "spot": 379.28
+  },
+  {
+    "id": "BA_2026-08-18",
+    "ticker": "BA",
+    "date": "2026-08-18",
+    "detected_at": "2026-08-18T14:01:49.265Z",
+    "type": "SHORT_GAMMA_ENTRY",
+    "net_gex": -21418,
+    "ema3_net_gex": 58527,
+    "spot": 224.92
+  },
+  {
+    "id": "CAT_2026-08-18",
+    "ticker": "CAT",
+    "date": "2026-08-18",
+    "detected_at": "2026-08-18T14:01:49.266Z",
+    "type": "SHORT_GAMMA_ENTRY",
+    "net_gex": -1017,
+    "ema3_net_gex": 950,
+    "spot": 855.23
+  },
+  {
+    "id": "COST_2026-08-18",
+    "ticker": "COST",
+    "date": "2026-08-18",
+    "detected_at": "2026-08-18T14:01:49.268Z",
+    "type": "LONG_GAMMA_ENTRY",
+    "net_gex": 1961,
+    "ema3_net_gex": 2714,
+    "spot": 960.57
+  },
+  {
+    "id": "ETHA_2026-08-18_DOUBLE_GEX",
+    "ticker": "ETHA",
+    "date": "2026-08-18",
+    "detected_at": "2026-08-18T14:01:49.273Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 1726112,
+    "previous_net_gex": 634668,
+    "ema3_net_gex": 1201318,
+    "spot": 14.3101
+  },
+  {
+    "id": "HD_2026-08-18_DOUBLE_GEX",
+    "ticker": "HD",
+    "date": "2026-08-18",
+    "detected_at": "2026-08-18T14:01:49.275Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": -18048,
+    "previous_net_gex": -2750,
+    "ema3_net_gex": -9456,
+    "spot": 339.975
+  },
+  {
+    "id": "HON_2026-08-18",
+    "ticker": "HON",
+    "date": "2026-08-18",
+    "detected_at": "2026-08-18T14:01:49.275Z",
+    "type": "SHORT_GAMMA_ENTRY",
+    "net_gex": -2988,
+    "ema3_net_gex": 400,
+    "spot": 229.37
+  },
+  {
+    "id": "IBIT_2026-08-18_DOUBLE_GEX",
+    "ticker": "IBIT",
+    "date": "2026-08-18",
+    "detected_at": "2026-08-18T14:01:49.276Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 5347215,
+    "previous_net_gex": 2373252,
+    "ema3_net_gex": 3435029,
+    "spot": 36.355
+  },
+  {
+    "id": "MNST_2026-08-18",
+    "ticker": "MNST",
+    "date": "2026-08-18",
+    "detected_at": "2026-08-18T14:01:49.278Z",
+    "type": "LONG_GAMMA_ENTRY",
+    "net_gex": 64655,
+    "ema3_net_gex": 26817,
+    "spot": 46.805
+  },
+  {
+    "id": "ON_2026-08-18",
+    "ticker": "ON",
+    "date": "2026-08-18",
+    "detected_at": "2026-08-18T14:01:49.280Z",
+    "type": "SHORT_GAMMA_ENTRY",
+    "net_gex": -15483,
+    "ema3_net_gex": 18729,
+    "spot": 79.29
+  },
+  {
+    "id": "QQQ_2026-08-18",
+    "ticker": "QQQ",
+    "date": "2026-08-18",
+    "detected_at": "2026-08-18T14:01:49.281Z",
+    "type": "SHORT_GAMMA_ENTRY",
+    "net_gex": -533031,
+    "ema3_net_gex": 259879,
+    "spot": 718.98
+  },
+  {
+    "id": "ROST_2026-08-18_DOUBLE_GEX",
+    "ticker": "ROST",
+    "date": "2026-08-18",
+    "detected_at": "2026-08-18T14:01:49.282Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": -13984,
+    "previous_net_gex": -3483,
+    "ema3_net_gex": -7948,
+    "spot": 237.13
+  },
+  {
+    "id": "SNPS_2026-08-18",
+    "ticker": "SNPS",
+    "date": "2026-08-18",
+    "detected_at": "2026-08-18T14:01:49.282Z",
+    "type": "SHORT_GAMMA_ENTRY",
+    "net_gex": -5498,
+    "ema3_net_gex": -2795,
+    "spot": 406.25
+  },
+  {
+    "id": "SO_2026-08-18",
+    "ticker": "SO",
+    "date": "2026-08-18",
+    "detected_at": "2026-08-18T14:01:49.282Z",
+    "type": "LONG_GAMMA_ENTRY",
+    "net_gex": 26870,
+    "ema3_net_gex": 4313,
+    "spot": 92.86
+  },
+  {
+    "id": "SPY_2026-08-18",
+    "ticker": "SPY",
+    "date": "2026-08-18",
+    "detected_at": "2026-08-18T14:01:49.282Z",
+    "type": "SHORT_GAMMA_ENTRY",
+    "net_gex": -1323704,
+    "ema3_net_gex": 10774,
+    "spot": 768.62
+  },
+  {
+    "id": "VRSK_2026-08-18_DOUBLE_GEX",
+    "ticker": "VRSK",
+    "date": "2026-08-18",
+    "detected_at": "2026-08-18T14:01:49.284Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 911,
+    "previous_net_gex": 35,
+    "ema3_net_gex": 479,
+    "spot": 180.98
+  },
+  {
+    "id": "WMT_2026-08-18",
+    "ticker": "WMT",
+    "date": "2026-08-18",
+    "detected_at": "2026-08-18T14:01:49.285Z",
+    "type": "LONG_GAMMA_ENTRY",
+    "net_gex": 31393,
+    "ema3_net_gex": 95462,
+    "spot": 115.2
+>>>>>>> Stashed changes
   }
 ]

@@ -74,6 +74,20 @@ commands:
               exit 1
             fi
 
+            # --autostash restaura los cambios locales con un `stash pop` al
+            # final, pero si ese pop tiene conflictos (dos jobs concurrentes
+            # tocando el mismo cache/*.json), git lo reporta como warning y
+            # deja los cambios en el stash CON marcadores de conflicto en el
+            # working tree - sin que el comando `rebase` en sí falle (exit 0
+            # igual). Sin este chequeo, esos marcadores se commitean y
+            # pusehan tal cual, corrompiendo el JSON. Verificar explícitamente
+            # que no haya paths unmerged antes de confiar en el árbol.
+            if [ -n "$(git ls-files -u)" ]; then
+              echo "El autostash dejó conflictos sin resolver tras el rebase, aborto el commit." >&2
+              git status --short >&2
+              exit 1
+            fi
+
             git add cache/
             if git diff --cached --quiet; then
               echo "Sin cambios para commitear."

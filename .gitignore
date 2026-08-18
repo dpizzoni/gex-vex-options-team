@@ -43,5 +43,8 @@ next-env.d.ts
 # session files
 auth_state.json
 
+# UW login failure diagnostics (screenshots/HTML dumps), CI-artifact only
+/debug/
+
 # personal notes/docs, not project source - local only
 /docs/

@@ -3,7 +3,42 @@
 // pipeline (uw:daily), this can be removed in favor of that pipeline's own session
 // handling — this module exists only to avoid tripling the same login logic while
 // these scrapers are still standalone scripts.
-const STATE_FILE = require('path').join(__dirname, '..', 'auth_state.json');
+const fs = require('fs');
+const path = require('path');
+const STATE_FILE = path.join(__dirname, '..', 'auth_state.json');
+const DEBUG_DIR = path.join(__dirname, '..', 'debug');
+
+// Dumps a screenshot + the page HTML so a failed CI run leaves evidence of
+// *why* the login didn't take (bot-challenge page, 2FA prompt, changed
+// selectors, etc.) instead of just the generic "Email still not found"
+// error. Never throws - a failure here shouldn't mask the real error.
+async function captureDebugState(p, label) {
+  try {
+    if (!fs.existsSync(DEBUG_DIR)) fs.mkdirSync(DEBUG_DIR, { recursive: true });
+    const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const base = path.join(DEBUG_DIR, `${stamp}_${label}`);
+    await p.screenshot({ path: `${base}.png`, fullPage: true });
+    fs.writeFileSync(`${base}.html`, await p.content());
+    console.log(`Debug capture saved: ${base}.png / .html`);
+  } catch (e) {
+    console.log(`Debug capture failed (non-fatal): ${e.message}`);
+  }
+}
+
+// CI containers check out fresh with no auth_state.json (gitignored, never
+// persisted between runs), so every job used to hit the login form cold via
+// UW_EMAIL/UW_PASSWORD. UW appears to now flag/block those automated form
+// logins from CircleCI's IPs - the submit "succeeds" (redirect happens) but
+// the resulting session isn't actually authenticated. A session captured
+// locally (where the form login isn't blocked) keeps working for days, so
+// seed STATE_FILE from that instead of resubmitting the form: this runs
+// before any script's `newContext({ storageState: STATE_FILE })` because
+// every scraper requires this module first. Falls back to the normal
+// form-login flow below if the seed is missing, invalid, or expired.
+if (!fs.existsSync(STATE_FILE) && process.env.UW_AUTH_STATE_B64) {
+  fs.writeFileSync(STATE_FILE, Buffer.from(process.env.UW_AUTH_STATE_B64, 'base64'));
+  console.log(`Seeded ${STATE_FILE} from UW_AUTH_STATE_B64.`);
+}
 
 async function checkUserLoggedIn(p, userEmail) {
   try {
@@ -43,13 +78,18 @@ async function ensureLoggedIn(p, ctx) {
     await p.waitForLoadState('networkidle');
     await p.waitForTimeout(3000);
 
+    await captureDebugState(p, 'post-submit-redirect');
+
     await ctx.storageState({ path: STATE_FILE });
     console.log(`Session state updated and saved to ${STATE_FILE}`);
 
     loggedIn = await checkUserLoggedIn(p, userEmail);
-    if (!loggedIn) throw new Error("Email still not found after login attempt");
+    if (!loggedIn) {
+      await captureDebugState(p, 'final-check-failed');
+      throw new Error("Email still not found after login attempt");
+    }
   }
   console.log(`Session verified! User ${userEmail} is logged in.`);
 }
 
-module.exports = { ensureLoggedIn, checkUserLoggedIn, STATE_FILE };
+module.exports = { ensureLoggedIn, checkUserLoggedIn, STATE_FILE, DEBUG_DIR };

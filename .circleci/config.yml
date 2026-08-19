@@ -28,13 +28,12 @@ version: 2.1
 #
 # Variables de entorno a configurar en Project Settings > Environment Variables:
 #   UW_EMAIL, UW_PASSWORD  - credenciales de Unusual Whales (gamma + fund-flow)
-#   UW_AUTH_STATE_B64      - sesión (cookies) de UW en base64, capturada localmente y
-#                            seedeada como auth_state.json al arrancar el job (ver
-#                            scripts/uw-session.js). UW empezó a bloquear el login
-#                            automático por formulario desde las IPs de CircleCI, así
-#                            que esto evita pasar por el formulario mientras la sesión
-#                            siga viva. Si expira, hay que regenerarla logueándose
-#                            localmente y volviendo a codificar auth_state.json.
+#   UW_AUTH_STATE_B64      - opcional: sesión (cookies) de UW en base64, seedeada como
+#                            auth_state.json al arrancar el job (ver scripts/uw-session.js)
+#                            para saltear el login por formulario. No hace falta hoy - los
+#                            fallos intermitentes eran una race de hidratación en el chequeo
+#                            post-login, ya resuelta con reintentos. Queda como salvavidas
+#                            por si en algún momento aparece un bloqueo real del lado de UW.
 #   FRED_API_KEY           - key gratuita de FRED (macro-liquidity)
 #   ANTHROPIC_API_KEY      - key de Claude (análisis institucional) - si está seteada,
 #                            generate-institutional-analysis.js la usa en vez de Gemini

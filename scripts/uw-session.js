@@ -27,14 +27,12 @@ async function captureDebugState(p, label) {
 
 // CI containers check out fresh with no auth_state.json (gitignored, never
 // persisted between runs), so every job used to hit the login form cold via
-// UW_EMAIL/UW_PASSWORD. UW appears to now flag/block those automated form
-// logins from CircleCI's IPs - the submit "succeeds" (redirect happens) but
-// the resulting session isn't actually authenticated. A session captured
-// locally (where the form login isn't blocked) keeps working for days, so
-// seed STATE_FILE from that instead of resubmitting the form: this runs
-// before any script's `newContext({ storageState: STATE_FILE })` because
-// every scraper requires this module first. Falls back to the normal
-// form-login flow below if the seed is missing, invalid, or expired.
+// UW_EMAIL/UW_PASSWORD. Optional escape hatch: seed a session captured
+// locally instead of resubmitting the form. Not currently wired up to any
+// CircleCI env var (the actual intermittent-failure cause turned out to be
+// a hydration race in checkUserLoggedIn below, not UW blocking the login -
+// see the retry loop in ensureLoggedIn), but left here in case a real
+// auth block shows up later.
 if (!fs.existsSync(STATE_FILE) && process.env.UW_AUTH_STATE_B64) {
   fs.writeFileSync(STATE_FILE, Buffer.from(process.env.UW_AUTH_STATE_B64, 'base64'));
   console.log(`Seeded ${STATE_FILE} from UW_AUTH_STATE_B64.`);
@@ -84,6 +82,19 @@ async function ensureLoggedIn(p, ctx) {
     console.log(`Session state updated and saved to ${STATE_FILE}`);
 
     loggedIn = await checkUserLoggedIn(p, userEmail);
+    // The check reads the email out of the settings/homepage HTML right
+    // after `networkidle` fires, but `networkidle` only means the network
+    // went quiet - it doesn't guarantee the account info has hydrated into
+    // the DOM yet. That gap is what actually causes the intermittent
+    // failures (this same script succeeds on most other runs with no
+    // credential/environment change), not UW blocking the login. Retry a
+    // few times with a pause before giving up, instead of failing the whole
+    // job on what's likely just a slow render.
+    for (let attempt = 1; !loggedIn && attempt <= 3; attempt++) {
+      console.log(`Login not yet confirmed (attempt ${attempt}/3), waiting for hydration and rechecking...`);
+      await p.waitForTimeout(4000);
+      loggedIn = await checkUserLoggedIn(p, userEmail);
+    }
     if (!loggedIn) {
       await captureDebugState(p, 'final-check-failed');
       throw new Error("Email still not found after login attempt");

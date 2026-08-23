@@ -44,6 +44,8 @@ const TICKERS = [
   'IWD'
 ];
 
+const outputPath = path.join(__dirname, '..', 'cache', 'etf-holdings.json');
+
 const yf = new YF({ suppressNotices: ['yahooSurvey'] });
 
 function loadJson(filePath, fallback) {

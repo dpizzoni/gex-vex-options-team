@@ -1,47 +1,55 @@
 {
   "ticker": "NFLX",
   "date": "2026-08-24",
-  "spot": 79.59,
+  "spot": 79.98,
   "expirations": [
     {
       "expiration": "2026-08-28",
-      "dte": 7,
-      "call_gex": 364377,
-      "put_gex": -148421,
-      "net_gex": 215957,
-      "p_c_ratio": 0.4073
+      "dte": 4,
+      "call_gex": 509390,
+      "put_gex": -193134,
+      "net_gex": 316256,
+      "p_c_ratio": 0.3791
     },
     {
       "expiration": "2026-09-04",
-      "dte": 14,
-      "call_gex": 143396,
-      "put_gex": -29117,
-      "net_gex": 114279,
-      "p_c_ratio": 0.2031
+      "dte": 11,
+      "call_gex": 156534,
+      "put_gex": -40867,
+      "net_gex": 115666,
+      "p_c_ratio": 0.2611
     },
     {
       "expiration": "2026-09-11",
-      "dte": 21,
-      "call_gex": 67574,
-      "put_gex": -22556,
-      "net_gex": 45018,
-      "p_c_ratio": 0.3338
+      "dte": 18,
+      "call_gex": 72964,
+      "put_gex": -22613,
+      "net_gex": 50350,
+      "p_c_ratio": 0.3099
     },
     {
       "expiration": "2026-09-18",
-      "dte": 28,
-      "call_gex": 833080,
-      "put_gex": -513786,
-      "net_gex": 319294,
-      "p_c_ratio": 0.6167
+      "dte": 25,
+      "call_gex": 869111,
+      "put_gex": -518705,
+      "net_gex": 350406,
+      "p_c_ratio": 0.5968
     },
     {
       "expiration": "2026-09-25",
-      "dte": 35,
-      "call_gex": 31693,
-      "put_gex": -19044,
-      "net_gex": 12649,
-      "p_c_ratio": 0.6009
+      "dte": 32,
+      "call_gex": 34192,
+      "put_gex": -37208,
+      "net_gex": -3016,
+      "p_c_ratio": 1.0882
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 39,
+      "call_gex": 15675,
+      "put_gex": -7223,
+      "net_gex": 8452,
+      "p_c_ratio": 0.4608
     }
   ],
   "putWall": 75,

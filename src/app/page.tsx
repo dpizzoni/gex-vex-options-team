@@ -3120,6 +3120,7 @@ ${blockSoportesResistencias}`;
         <RelativeStrengthAlertsPanel
           data={relativeStrengthAlerts}
           loading={relativeStrengthAlertsLoading}
+          etfHoldings={etfHoldings}
         />
       </div>
 

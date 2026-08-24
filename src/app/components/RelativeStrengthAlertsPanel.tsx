@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Radar, AlertCircle, Info, X } from 'lucide-react';
+import EtfHoldingsTooltip, { EtfHoldingsMap, finvizUrl } from './EtfHoldingsTooltip';
 
 export interface RelativeStrengthAlert {
   id: string;
@@ -28,6 +29,7 @@ export interface RelativeStrengthAlertsData {
 interface RelativeStrengthAlertsPanelProps {
   data: RelativeStrengthAlertsData | null;
   loading: boolean;
+  etfHoldings: EtfHoldingsMap;
 }
 
 type BucketKey = keyof RelativeStrengthAlertsData['buckets'];
@@ -124,23 +126,27 @@ function AlertsInfoModal({ onClose }: { onClose: () => void }) {
   );
 }
 
-function AlertRow({ alert }: { alert: RelativeStrengthAlert }) {
+function AlertRow({ alert, etfHoldings }: { alert: RelativeStrengthAlert; etfHoldings: EtfHoldingsMap }) {
   const color = ruleColor(alert.rule);
   return (
     <div style={alertRowStyle}>
-      <span style={{
-        backgroundColor: `${color}1a`,
-        color,
-        border: `1px solid ${color}40`,
-        padding: '2px 7px',
-        borderRadius: '4px',
-        fontWeight: 800,
-        fontSize: '0.7rem',
-        fontFamily: 'monospace',
-        flexShrink: 0
-      }}>
-        {alert.ticker}
-      </span>
+      <EtfHoldingsTooltip ticker={alert.ticker} holdingsMap={etfHoldings}>
+        <a href={finvizUrl(alert.ticker)} target="_blank" rel="noopener noreferrer" style={{
+          backgroundColor: `${color}1a`,
+          color,
+          border: `1px solid ${color}40`,
+          padding: '2px 7px',
+          borderRadius: '4px',
+          fontWeight: 800,
+          fontSize: '0.7rem',
+          fontFamily: 'monospace',
+          flexShrink: 0,
+          textDecoration: 'none',
+          display: 'inline-block'
+        }}>
+          {alert.ticker}
+        </a>
+      </EtfHoldingsTooltip>
       <span style={{ fontSize: '0.76rem', color: 'rgba(255,255,255,0.8)', lineHeight: 1.4 }}>{alert.text}</span>
     </div>
   );
@@ -150,7 +156,7 @@ function AlertRow({ alert }: { alert: RelativeStrengthAlert }) {
 // grid slot is always rendered, even when empty, so the 3-column layout
 // stays stable; emptiness shows as a "sin alertas" placeholder inside its
 // own column instead of collapsing the grid.
-function BucketColumn({ bucketKey, alerts }: { bucketKey: BucketKey; alerts: RelativeStrengthAlert[] }) {
+function BucketColumn({ bucketKey, alerts, etfHoldings }: { bucketKey: BucketKey; alerts: RelativeStrengthAlert[]; etfHoldings: EtfHoldingsMap }) {
   const accent = BUCKET_ACCENT[bucketKey];
   return (
     <div style={{ ...bucketColumnStyle, borderColor: `${accent}25` }}>
@@ -172,7 +178,7 @@ function BucketColumn({ bucketKey, alerts }: { bucketKey: BucketKey; alerts: Rel
         <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.3)', padding: '8px 2px' }}>Sin alertas hoy</div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-          {alerts.map(a => <AlertRow key={a.id} alert={a} />)}
+          {alerts.map(a => <AlertRow key={a.id} alert={a} etfHoldings={etfHoldings} />)}
         </div>
       )}
     </div>
@@ -182,7 +188,7 @@ function BucketColumn({ bucketKey, alerts }: { bucketKey: BucketKey; alerts: Rel
 // Used for the persistencia strip below the 3-column row - stays hidden
 // entirely when empty (unlike BucketColumn), same honest-signal behavior
 // as the original single-list design.
-function BucketStrip({ bucketKey, alerts }: { bucketKey: BucketKey; alerts: RelativeStrengthAlert[] }) {
+function BucketStrip({ bucketKey, alerts, etfHoldings }: { bucketKey: BucketKey; alerts: RelativeStrengthAlert[]; etfHoldings: EtfHoldingsMap }) {
   if (alerts.length === 0) return null;
   const accent = BUCKET_ACCENT[bucketKey];
   return (
@@ -202,13 +208,13 @@ function BucketStrip({ bucketKey, alerts }: { bucketKey: BucketKey; alerts: Rela
         </span>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-        {alerts.map(a => <AlertRow key={a.id} alert={a} />)}
+        {alerts.map(a => <AlertRow key={a.id} alert={a} etfHoldings={etfHoldings} />)}
       </div>
     </div>
   );
 }
 
-export default function RelativeStrengthAlertsPanel({ data, loading }: RelativeStrengthAlertsPanelProps) {
+export default function RelativeStrengthAlertsPanel({ data, loading, etfHoldings }: RelativeStrengthAlertsPanelProps) {
   const [showInfo, setShowInfo] = useState(false);
 
   if (loading) {
@@ -270,10 +276,10 @@ export default function RelativeStrengthAlertsPanel({ data, loading }: RelativeS
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div style={columnsRowStyle}>
             {COLUMN_BUCKETS.map(key => (
-              <BucketColumn key={key} bucketKey={key} alerts={data.buckets[key]} />
+              <BucketColumn key={key} bucketKey={key} alerts={data.buckets[key]} etfHoldings={etfHoldings} />
             ))}
           </div>
-          <BucketStrip bucketKey="persistencia" alerts={data.buckets.persistencia} />
+          <BucketStrip bucketKey="persistencia" alerts={data.buckets.persistencia} etfHoldings={etfHoldings} />
         </div>
       )}
 

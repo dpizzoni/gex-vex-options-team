@@ -14,6 +14,10 @@ export interface EtfHoldingsInfo {
 
 export type EtfHoldingsMap = Record<string, EtfHoldingsInfo>;
 
+export function finvizUrl(ticker: string): string {
+  return `https://finviz.com/stock?t=${ticker}&p=d`;
+}
+
 interface EtfHoldingsTooltipProps {
   ticker: string;
   holdingsMap: EtfHoldingsMap;

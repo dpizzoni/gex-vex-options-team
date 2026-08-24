@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Activity, Download, Info, Maximize2, Minimize2, X } from 'lucide-react';
 import { exportReport, ExportColumn, ExportFormat } from '@/lib/export-report';
-import EtfHoldingsTooltip, { EtfHoldingsMap } from './EtfHoldingsTooltip';
+import EtfHoldingsTooltip, { EtfHoldingsMap, finvizUrl } from './EtfHoldingsTooltip';
 
 export interface RelativeStrengthReturns {
   fromOpen: number | null;
@@ -563,7 +563,9 @@ export default function RelativeStrengthPanel({ data, loading, etfHoldings }: Re
           {sorted.map((u, idx) => (
             <div key={u.ticker} style={rankRowStyle}>
               <span style={{ ...sectorTickerStyle, flex: '0 0 100px' }}>
-                <EtfHoldingsTooltip ticker={u.ticker} holdingsMap={etfHoldings}>{u.ticker}</EtfHoldingsTooltip>
+                <EtfHoldingsTooltip ticker={u.ticker} holdingsMap={etfHoldings}>
+                  <a href={finvizUrl(u.ticker)} target="_blank" rel="noopener noreferrer" style={tickerLinkStyle}>{u.ticker}</a>
+                </EtfHoldingsTooltip>
                 <span style={sectorLabelStyle}>{u.name}</span>
               </span>
               <span
@@ -664,7 +666,9 @@ export default function RelativeStrengthPanel({ data, loading, etfHoldings }: Re
               {resumenSorted.map(u => (
                 <tr key={u.ticker}>
                   <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 700, position: 'sticky', left: 0, background: 'rgba(10,16,35,0.95)' }}>
-                    <EtfHoldingsTooltip ticker={u.ticker} holdingsMap={etfHoldings}>{u.ticker}</EtfHoldingsTooltip>
+                    <EtfHoldingsTooltip ticker={u.ticker} holdingsMap={etfHoldings}>
+                      <a href={finvizUrl(u.ticker)} target="_blank" rel="noopener noreferrer" style={tickerLinkStyle}>{u.ticker}</a>
+                    </EtfHoldingsTooltip>
                     <span style={sectorLabelStyle}> {u.name}</span>
                   </td>
                   <td style={{ ...tdStyle, backgroundColor: scoreBg(u.score) }}>{u.score == null ? 'ND' : `${(u.score * 100).toFixed(0)}%`}</td>
@@ -782,6 +786,11 @@ const sectorTickerStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   fontWeight: 700
+};
+
+const tickerLinkStyle: React.CSSProperties = {
+  color: 'inherit',
+  textDecoration: 'none'
 };
 
 const sectorLabelStyle: React.CSSProperties = {

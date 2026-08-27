@@ -1,58 +1,58 @@
 {
   "ticker": "ABBV",
   "date": "2026-08-27",
-  "spot": null,
+  "spot": 259.23,
   "expirations": [
     {
       "expiration": "2026-08-28",
       "dte": 1,
-      "call_gex": 12270,
-      "put_gex": -10922,
-      "net_gex": 1348,
-      "p_c_ratio": 0.8901
+      "call_gex": 11759,
+      "put_gex": -11286,
+      "net_gex": 473,
+      "p_c_ratio": 0.9598
     },
     {
       "expiration": "2026-09-04",
       "dte": 8,
-      "call_gex": 7082,
-      "put_gex": -3979,
-      "net_gex": 3103,
-      "p_c_ratio": 0.5619
+      "call_gex": 6954,
+      "put_gex": -4174,
+      "net_gex": 2780,
+      "p_c_ratio": 0.6003
     },
     {
       "expiration": "2026-09-11",
       "dte": 15,
-      "call_gex": 2118,
-      "put_gex": -801,
-      "net_gex": 1317,
-      "p_c_ratio": 0.3782
+      "call_gex": 2084,
+      "put_gex": -830,
+      "net_gex": 1254,
+      "p_c_ratio": 0.3982
     },
     {
       "expiration": "2026-09-18",
       "dte": 22,
-      "call_gex": 53505,
-      "put_gex": -7235,
-      "net_gex": 46270,
-      "p_c_ratio": 0.1352
+      "call_gex": 52412,
+      "put_gex": -7398,
+      "net_gex": 45014,
+      "p_c_ratio": 0.1412
     },
     {
       "expiration": "2026-09-25",
       "dte": 29,
-      "call_gex": 931,
-      "put_gex": -269,
-      "net_gex": 662,
-      "p_c_ratio": 0.289
+      "call_gex": 918,
+      "put_gex": -276,
+      "net_gex": 642,
+      "p_c_ratio": 0.3005
     },
     {
       "expiration": "2026-10-02",
       "dte": 36,
-      "call_gex": 624,
-      "put_gex": -362,
-      "net_gex": 262,
-      "p_c_ratio": 0.5801
+      "call_gex": 614,
+      "put_gex": -372,
+      "net_gex": 242,
+      "p_c_ratio": 0.6055
     }
   ],
-  "putWall": null,
-  "callWall": null,
+  "putWall": 250,
+  "callWall": 270,
   "limitedData": false
 }

@@ -1,50 +1,58 @@
 {
   "ticker": "AMGN",
-  "date": "2026-08-28",
-  "spot": 432.42,
+  "date": "2026-08-31",
+  "spot": null,
   "expirations": [
     {
       "expiration": "2026-09-04",
-      "dte": 7,
-      "call_gex": 3119,
-      "put_gex": -2912,
-      "net_gex": 207,
-      "p_c_ratio": 0.9336
+      "dte": 4,
+      "call_gex": 7071,
+      "put_gex": -7312,
+      "net_gex": -241,
+      "p_c_ratio": 1.034
     },
     {
       "expiration": "2026-09-11",
-      "dte": 14,
-      "call_gex": 496,
-      "put_gex": -185,
-      "net_gex": 311,
-      "p_c_ratio": 0.3734
+      "dte": 11,
+      "call_gex": 547,
+      "put_gex": -205,
+      "net_gex": 342,
+      "p_c_ratio": 0.3751
     },
     {
       "expiration": "2026-09-18",
-      "dte": 21,
-      "call_gex": 18126,
-      "put_gex": -10739,
-      "net_gex": 7386,
-      "p_c_ratio": 0.5925
+      "dte": 18,
+      "call_gex": 18376,
+      "put_gex": -11268,
+      "net_gex": 7108,
+      "p_c_ratio": 0.6132
     },
     {
       "expiration": "2026-09-25",
-      "dte": 28,
-      "call_gex": 217,
-      "put_gex": -195,
-      "net_gex": 21,
-      "p_c_ratio": 0.9015
+      "dte": 25,
+      "call_gex": 235,
+      "put_gex": -217,
+      "net_gex": 18,
+      "p_c_ratio": 0.9219
     },
     {
       "expiration": "2026-10-02",
-      "dte": 35,
-      "call_gex": 120,
-      "put_gex": -85,
-      "net_gex": 35,
-      "p_c_ratio": 0.7114
+      "dte": 32,
+      "call_gex": 137,
+      "put_gex": -171,
+      "net_gex": -34,
+      "p_c_ratio": 1.2499
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 39,
+      "call_gex": 3,
+      "put_gex": -40,
+      "net_gex": -37,
+      "p_c_ratio": 13.2699
     }
   ],
-  "putWall": 420,
-  "callWall": 440,
+  "putWall": null,
+  "callWall": null,
   "limitedData": false
 }

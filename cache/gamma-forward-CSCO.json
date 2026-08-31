@@ -1,47 +1,55 @@
 {
   "ticker": "CSCO",
-  "date": "2026-08-28",
-  "spot": 109.93,
+  "date": "2026-08-31",
+  "spot": 109.9,
   "expirations": [
     {
       "expiration": "2026-09-04",
-      "dte": 7,
-      "call_gex": 46530,
-      "put_gex": -30785,
-      "net_gex": 15745,
-      "p_c_ratio": 0.6616
+      "dte": 4,
+      "call_gex": 61412,
+      "put_gex": -58324,
+      "net_gex": 3088,
+      "p_c_ratio": 0.9497
     },
     {
       "expiration": "2026-09-11",
-      "dte": 14,
-      "call_gex": 43168,
-      "put_gex": -12321,
-      "net_gex": 30846,
-      "p_c_ratio": 0.2854
+      "dte": 11,
+      "call_gex": 44785,
+      "put_gex": -13891,
+      "net_gex": 30894,
+      "p_c_ratio": 0.3102
     },
     {
       "expiration": "2026-09-18",
-      "dte": 21,
-      "call_gex": 200037,
-      "put_gex": -127760,
-      "net_gex": 72276,
-      "p_c_ratio": 0.6387
+      "dte": 18,
+      "call_gex": 200352,
+      "put_gex": -130766,
+      "net_gex": 69586,
+      "p_c_ratio": 0.6527
     },
     {
       "expiration": "2026-09-25",
-      "dte": 28,
-      "call_gex": 10450,
-      "put_gex": -7996,
-      "net_gex": 2454,
-      "p_c_ratio": 0.7651
+      "dte": 25,
+      "call_gex": 11018,
+      "put_gex": -8473,
+      "net_gex": 2544,
+      "p_c_ratio": 0.7691
     },
     {
       "expiration": "2026-10-02",
-      "dte": 35,
-      "call_gex": 5683,
-      "put_gex": -2139,
-      "net_gex": 3544,
-      "p_c_ratio": 0.3764
+      "dte": 32,
+      "call_gex": 6145,
+      "put_gex": -2384,
+      "net_gex": 3761,
+      "p_c_ratio": 0.388
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 39,
+      "call_gex": 80,
+      "put_gex": -132,
+      "net_gex": -52,
+      "p_c_ratio": 1.6563
     }
   ],
   "putWall": 105,

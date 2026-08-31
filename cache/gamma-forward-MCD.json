@@ -1,50 +1,58 @@
 {
   "ticker": "MCD",
-  "date": "2026-08-28",
-  "spot": 265,
+  "date": "2026-08-31",
+  "spot": 265.259,
   "expirations": [
     {
       "expiration": "2026-09-04",
-      "dte": 7,
-      "call_gex": 15845,
-      "put_gex": -16829,
-      "net_gex": -983,
-      "p_c_ratio": 1.062
+      "dte": 4,
+      "call_gex": 27431,
+      "put_gex": -18885,
+      "net_gex": 8546,
+      "p_c_ratio": 0.6885
     },
     {
       "expiration": "2026-09-11",
-      "dte": 14,
-      "call_gex": 4449,
-      "put_gex": -4673,
-      "net_gex": -223,
-      "p_c_ratio": 1.0502
+      "dte": 11,
+      "call_gex": 5421,
+      "put_gex": -5265,
+      "net_gex": 156,
+      "p_c_ratio": 0.9713
     },
     {
       "expiration": "2026-09-18",
-      "dte": 21,
-      "call_gex": 31986,
-      "put_gex": -47344,
-      "net_gex": -15358,
-      "p_c_ratio": 1.4801
+      "dte": 18,
+      "call_gex": 39001,
+      "put_gex": -47269,
+      "net_gex": -8268,
+      "p_c_ratio": 1.212
     },
     {
       "expiration": "2026-09-25",
-      "dte": 28,
-      "call_gex": 2634,
-      "put_gex": -4266,
-      "net_gex": -1632,
-      "p_c_ratio": 1.6195
+      "dte": 25,
+      "call_gex": 3106,
+      "put_gex": -4117,
+      "net_gex": -1011,
+      "p_c_ratio": 1.3255
     },
     {
       "expiration": "2026-10-02",
-      "dte": 35,
-      "call_gex": 1630,
-      "put_gex": -2003,
-      "net_gex": -372,
-      "p_c_ratio": 1.2284
+      "dte": 32,
+      "call_gex": 1747,
+      "put_gex": -1910,
+      "net_gex": -163,
+      "p_c_ratio": 1.0935
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 39,
+      "call_gex": 147,
+      "put_gex": -295,
+      "net_gex": -148,
+      "p_c_ratio": 2.0099
     }
   ],
   "putWall": 260,
-  "callWall": 300,
+  "callWall": 270,
   "limitedData": false
 }

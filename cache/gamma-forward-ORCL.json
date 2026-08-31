@@ -1,50 +1,58 @@
 {
   "ticker": "ORCL",
-  "date": "2026-08-28",
-  "spot": 150.85,
+  "date": "2026-08-31",
+  "spot": 149.8,
   "expirations": [
     {
       "expiration": "2026-09-04",
-      "dte": 7,
-      "call_gex": 117356,
-      "put_gex": -43729,
-      "net_gex": 73627,
-      "p_c_ratio": 0.3726
+      "dte": 4,
+      "call_gex": 126347,
+      "put_gex": -71033,
+      "net_gex": 55313,
+      "p_c_ratio": 0.5622
     },
     {
       "expiration": "2026-09-11",
-      "dte": 14,
-      "call_gex": 35178,
-      "put_gex": -14862,
-      "net_gex": 20316,
-      "p_c_ratio": 0.4225
+      "dte": 11,
+      "call_gex": 34890,
+      "put_gex": -18545,
+      "net_gex": 16345,
+      "p_c_ratio": 0.5315
     },
     {
       "expiration": "2026-09-18",
-      "dte": 21,
-      "call_gex": 262971,
-      "put_gex": -184257,
-      "net_gex": 78715,
-      "p_c_ratio": 0.7007
+      "dte": 18,
+      "call_gex": 265793,
+      "put_gex": -190513,
+      "net_gex": 75280,
+      "p_c_ratio": 0.7168
     },
     {
       "expiration": "2026-09-25",
-      "dte": 28,
-      "call_gex": 12241,
-      "put_gex": -10615,
-      "net_gex": 1626,
-      "p_c_ratio": 0.8672
+      "dte": 25,
+      "call_gex": 12570,
+      "put_gex": -12637,
+      "net_gex": -68,
+      "p_c_ratio": 1.0054
     },
     {
       "expiration": "2026-10-02",
-      "dte": 35,
-      "call_gex": 3093,
-      "put_gex": -3297,
-      "net_gex": -204,
-      "p_c_ratio": 1.0661
+      "dte": 32,
+      "call_gex": 3311,
+      "put_gex": -3877,
+      "net_gex": -565,
+      "p_c_ratio": 1.1706
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 39,
+      "call_gex": 370,
+      "put_gex": -678,
+      "net_gex": -307,
+      "p_c_ratio": 1.8298
     }
   ],
   "putWall": 140,
-  "callWall": 155,
+  "callWall": 150,
   "limitedData": false
 }

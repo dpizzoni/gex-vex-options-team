@@ -1,398 +1,409 @@
 {
-  "date": "2026-08-28",
-  "generatedAt": "2026-08-28T20:45:18.982Z",
+  "date": "2026-08-31",
+  "generatedAt": "2026-08-31T20:45:27.932Z",
   "dynamicCutoffs": {
-    "delta1WCutoff": 41.66666666666667,
-    "delta1MCutoff": 38.662790697674424,
-    "divergenceDelta1WCutoff": 20.833333333333336
+    "delta1WCutoff": 49.99999999999999,
+    "delta1MCutoff": 49.03100775193798,
+    "divergenceDelta1WCutoff": 29.166666666666664
   },
   "buckets": {
     "liderazgo": [
       {
-        "id": "2026-08-28_XOP_LEADER_CROSS_UP",
-        "date": "2026-08-28",
+        "id": "2026-08-31_XLE_LEADER_CROSS_UP",
+        "date": "2026-08-31",
         "rule": "LEADER_CROSS_UP",
         "bucket": "liderazgo",
-        "ticker": "XOP",
-        "name": "Exploración de Oil & Gas",
-        "text": "XOP cruzó a nuevo líder (score 83.3%)",
-        "sortMagnitude": 1.8333333333333335
+        "ticker": "XLE",
+        "name": "Sector energético",
+        "text": "XLE cruzó a nuevo líder (score 95.8%)",
+        "sortMagnitude": 1.9583333333333335
       },
       {
-        "id": "2026-08-28_OIH_LEADER_CROSS_UP",
-        "date": "2026-08-28",
+        "id": "2026-08-31_CIBR_LEADER_CROSS_UP",
+        "date": "2026-08-31",
         "rule": "LEADER_CROSS_UP",
-        "bucket": "liderazgo",
-        "ticker": "OIH",
-        "name": "Servicios petroleros",
-        "text": "OIH cruzó a nuevo líder (score 83.3%)",
-        "sortMagnitude": 1.8333333333333335
-      },
-      {
-        "id": "2026-08-28_CIBR_REGIME_CROSS_UP",
-        "date": "2026-08-28",
-        "rule": "REGIME_CROSS_UP",
         "bucket": "liderazgo",
         "ticker": "CIBR",
         "name": "Nasdaq Ciberseguridad",
-        "text": "CIBR pasó a más fuerte que el benchmark, sostenido 2 cierres (score 75%)",
-        "sortMagnitude": 1.75
+        "text": "CIBR cruzó a nuevo líder (score 91.7%)",
+        "sortMagnitude": 1.9166666666666665
       },
       {
-        "id": "2026-08-28_HACK_REGIME_CROSS_UP",
-        "date": "2026-08-28",
+        "id": "2026-08-31_VEGI_LEADER_CROSS_UP",
+        "date": "2026-08-31",
+        "rule": "LEADER_CROSS_UP",
+        "bucket": "liderazgo",
+        "ticker": "VEGI",
+        "name": "Productores agrícolas",
+        "text": "VEGI cruzó a nuevo líder (score 91.7%)",
+        "sortMagnitude": 1.9166666666666665
+      },
+      {
+        "id": "2026-08-31_DRAM_LEADER_CROSS_UP",
+        "date": "2026-08-31",
+        "rule": "LEADER_CROSS_UP",
+        "bucket": "liderazgo",
+        "ticker": "DRAM",
+        "name": "Memorias RAM",
+        "text": "DRAM cruzó a nuevo líder (score 87.5%)",
+        "sortMagnitude": 1.875
+      },
+      {
+        "id": "2026-08-31_MOO_LEADER_CROSS_UP",
+        "date": "2026-08-31",
+        "rule": "LEADER_CROSS_UP",
+        "bucket": "liderazgo",
+        "ticker": "MOO",
+        "name": "Agricultura",
+        "text": "MOO cruzó a nuevo líder (score 87.5%)",
+        "sortMagnitude": 1.875
+      },
+      {
+        "id": "2026-08-31_XLC_REGIME_CROSS_UP",
+        "date": "2026-08-31",
         "rule": "REGIME_CROSS_UP",
         "bucket": "liderazgo",
-        "ticker": "HACK",
-        "name": "Ciberseguridad",
-        "text": "HACK pasó a más fuerte que el benchmark, sostenido 2 cierres (score 70.8%)",
-        "sortMagnitude": 1.7083333333333335
+        "ticker": "XLC",
+        "name": "Servicios de comunicación",
+        "text": "XLC pasó a más fuerte que el benchmark, sostenido 2 cierres (score 62.5%)",
+        "sortMagnitude": 1.625
       },
       {
-        "id": "2026-08-28_XLK_REGIME_CROSS_UP",
-        "date": "2026-08-28",
+        "id": "2026-08-31_XLF_REGIME_CROSS_UP",
+        "date": "2026-08-31",
         "rule": "REGIME_CROSS_UP",
         "bucket": "liderazgo",
-        "ticker": "XLK",
-        "name": "Tecnología",
-        "text": "XLK pasó a más fuerte que el benchmark, sostenido 2 cierres (score 58.3%)",
-        "sortMagnitude": 1.5833333333333335
+        "ticker": "XLF",
+        "name": "Servicios financieros",
+        "text": "XLF pasó a más fuerte que el benchmark, sostenido 2 cierres (score 54.2%)",
+        "sortMagnitude": 1.5416666666666665
       },
       {
-        "id": "2026-08-28_XTL_LEADER_CROSS_DOWN",
-        "date": "2026-08-28",
+        "id": "2026-08-31_IDRV_REGIME_CROSS_UP",
+        "date": "2026-08-31",
+        "rule": "REGIME_CROSS_UP",
+        "bucket": "liderazgo",
+        "ticker": "IDRV",
+        "name": "Vehículos autónomos y tecnología",
+        "text": "IDRV pasó a más fuerte que el benchmark, sostenido 2 cierres (score 50%)",
+        "sortMagnitude": 1.5
+      },
+      {
+        "id": "2026-08-31_IWD_REGIME_CROSS_UP",
+        "date": "2026-08-31",
+        "rule": "REGIME_CROSS_UP",
+        "bucket": "liderazgo",
+        "ticker": "IWD",
+        "name": "Value",
+        "text": "IWD pasó a más fuerte que el benchmark, sostenido 2 cierres (score 50%)",
+        "sortMagnitude": 1.5
+      },
+      {
+        "id": "2026-08-31_SOCL_LEADER_CROSS_DOWN",
+        "date": "2026-08-31",
         "rule": "LEADER_CROSS_DOWN",
         "bucket": "liderazgo",
-        "ticker": "XTL",
-        "name": "Equipos de telecom",
-        "text": "XTL cayó a nuevo rezagado (score 0%)",
-        "sortMagnitude": 1
+        "ticker": "SOCL",
+        "name": "Redes sociales",
+        "text": "SOCL cayó a nuevo rezagado (score 4.2%)",
+        "sortMagnitude": 0.9583333333333334
       },
       {
-        "id": "2026-08-28_IYT_REGIME_CROSS_DOWN",
-        "date": "2026-08-28",
+        "id": "2026-08-31_ROBO_REGIME_CROSS_DOWN",
+        "date": "2026-08-31",
         "rule": "REGIME_CROSS_DOWN",
-        "bucket": "liderazgo",
-        "ticker": "IYT",
-        "name": "Transporte",
-        "text": "IYT pasó a más débil que el benchmark, sostenido 2 cierres (score 8.3%)",
-        "sortMagnitude": 0.9166666666666666
-      },
-      {
-        "id": "2026-08-28_SMH_LEADER_CROSS_DOWN",
-        "date": "2026-08-28",
-        "rule": "LEADER_CROSS_DOWN",
-        "bucket": "liderazgo",
-        "ticker": "SMH",
-        "name": "Semiconductores",
-        "text": "SMH cayó a nuevo rezagado (score 12.5%)",
-        "sortMagnitude": 0.875
-      },
-      {
-        "id": "2026-08-28_ROBO_LEADER_CROSS_DOWN",
-        "date": "2026-08-28",
-        "rule": "LEADER_CROSS_DOWN",
         "bucket": "liderazgo",
         "ticker": "ROBO",
         "name": "Robótica y automatización",
-        "text": "ROBO cayó a nuevo rezagado (score 12.5%)",
-        "sortMagnitude": 0.875
-      },
-      {
-        "id": "2026-08-28_DRNZ_LEADER_CROSS_DOWN",
-        "date": "2026-08-28",
-        "rule": "LEADER_CROSS_DOWN",
-        "bucket": "liderazgo",
-        "ticker": "DRNZ",
-        "name": "Drones",
-        "text": "DRNZ cayó a nuevo rezagado (score 12.5%)",
-        "sortMagnitude": 0.875
-      },
-      {
-        "id": "2026-08-28_PEJ_REGIME_CROSS_DOWN",
-        "date": "2026-08-28",
-        "rule": "REGIME_CROSS_DOWN",
-        "bucket": "liderazgo",
-        "ticker": "PEJ",
-        "name": "Ocio y entretenimiento",
-        "text": "PEJ pasó a más débil que el benchmark, sostenido 2 cierres (score 12.5%)",
-        "sortMagnitude": 0.875
-      },
-      {
-        "id": "2026-08-28_IYR_REGIME_CROSS_DOWN",
-        "date": "2026-08-28",
-        "rule": "REGIME_CROSS_DOWN",
-        "bucket": "liderazgo",
-        "ticker": "IYR",
-        "name": "Bienes raíces",
-        "text": "IYR pasó a más débil que el benchmark, sostenido 2 cierres (score 12.5%)",
-        "sortMagnitude": 0.875
-      },
-      {
-        "id": "2026-08-28_BOTZ_LEADER_CROSS_DOWN",
-        "date": "2026-08-28",
-        "rule": "LEADER_CROSS_DOWN",
-        "bucket": "liderazgo",
-        "ticker": "BOTZ",
-        "name": "Robótica y Inteligencia Artificial",
-        "text": "BOTZ cayó a nuevo rezagado (score 16.7%)",
+        "text": "ROBO pasó a más débil que el benchmark, sostenido 2 cierres (score 16.7%)",
         "sortMagnitude": 0.8333333333333334
       },
       {
-        "id": "2026-08-28_KIE_REGIME_CROSS_DOWN",
-        "date": "2026-08-28",
-        "rule": "REGIME_CROSS_DOWN",
+        "id": "2026-08-31_SHLD_LEADER_CROSS_DOWN",
+        "date": "2026-08-31",
+        "rule": "LEADER_CROSS_DOWN",
+        "bucket": "liderazgo",
+        "ticker": "SHLD",
+        "name": "Tecnología militar",
+        "text": "SHLD cayó a nuevo rezagado (score 16.7%)",
+        "sortMagnitude": 0.8333333333333334
+      },
+      {
+        "id": "2026-08-31_KIE_LEADER_CROSS_DOWN",
+        "date": "2026-08-31",
+        "rule": "LEADER_CROSS_DOWN",
         "bucket": "liderazgo",
         "ticker": "KIE",
         "name": "Seguros",
-        "text": "KIE pasó a más débil que el benchmark, sostenido 2 cierres (score 45.8%)",
-        "sortMagnitude": 0.5416666666666667
+        "text": "KIE cayó a nuevo rezagado (score 16.7%)",
+        "sortMagnitude": 0.8333333333333334
       },
       {
-        "id": "2026-08-28_XLP_REGIME_CROSS_DOWN",
-        "date": "2026-08-28",
+        "id": "2026-08-31_RSP_REGIME_CROSS_DOWN",
+        "date": "2026-08-31",
         "rule": "REGIME_CROSS_DOWN",
         "bucket": "liderazgo",
-        "ticker": "XLP",
-        "name": "Bienes de consumo básicos",
-        "text": "XLP pasó a más débil que el benchmark, sostenido 2 cierres (score 45.8%)",
-        "sortMagnitude": 0.5416666666666667
+        "ticker": "RSP",
+        "name": "S&P 500 Equiponderado",
+        "text": "RSP pasó a más débil que el benchmark, sostenido 2 cierres (score 25%)",
+        "sortMagnitude": 0.75
+      },
+      {
+        "id": "2026-08-31_SMH_REGIME_CROSS_DOWN",
+        "date": "2026-08-31",
+        "rule": "REGIME_CROSS_DOWN",
+        "bucket": "liderazgo",
+        "ticker": "SMH",
+        "name": "Semiconductores",
+        "text": "SMH pasó a más débil que el benchmark, sostenido 2 cierres (score 29.2%)",
+        "sortMagnitude": 0.7083333333333333
+      },
+      {
+        "id": "2026-08-31_QTUM_REGIME_CROSS_DOWN",
+        "date": "2026-08-31",
+        "rule": "REGIME_CROSS_DOWN",
+        "bucket": "liderazgo",
+        "ticker": "QTUM",
+        "name": "Computación cuántica",
+        "text": "QTUM pasó a más débil que el benchmark, sostenido 2 cierres (score 29.2%)",
+        "sortMagnitude": 0.7083333333333333
+      },
+      {
+        "id": "2026-08-31_XHS_REGIME_CROSS_DOWN",
+        "date": "2026-08-31",
+        "rule": "REGIME_CROSS_DOWN",
+        "bucket": "liderazgo",
+        "ticker": "XHS",
+        "name": "Servicios de salud",
+        "text": "XHS pasó a más débil que el benchmark, sostenido 2 cierres (score 29.2%)",
+        "sortMagnitude": 0.7083333333333333
       }
     ],
     "rotacion": [
       {
-        "id": "2026-08-28_CIBR_LEVEL_PLUS_ACCEL",
-        "date": "2026-08-28",
+        "id": "2026-08-31_HACK_LEVEL_PLUS_ACCEL",
+        "date": "2026-08-31",
+        "rule": "LEVEL_PLUS_ACCEL",
+        "bucket": "rotacion",
+        "ticker": "HACK",
+        "name": "Ciberseguridad",
+        "text": "HACK líder ganando tracción: score 79.2% y Δ1W +75.0pp",
+        "sortMagnitude": 2075
+      },
+      {
+        "id": "2026-08-31_CIBR_LEVEL_PLUS_ACCEL",
+        "date": "2026-08-31",
         "rule": "LEVEL_PLUS_ACCEL",
         "bucket": "rotacion",
         "ticker": "CIBR",
         "name": "Nasdaq Ciberseguridad",
-        "text": "CIBR líder ganando tracción: score 75% y Δ1W +41.7pp",
-        "sortMagnitude": 2041.6666666666667
+        "text": "CIBR líder ganando tracción: score 91.7% y Δ1W +70.8pp",
+        "sortMagnitude": 2070.8333333333335
       },
       {
-        "id": "2026-08-28_AIQ_LEVEL_PLUS_ACCEL",
-        "date": "2026-08-28",
+        "id": "2026-08-31_XLK_LEVEL_PLUS_ACCEL",
+        "date": "2026-08-31",
         "rule": "LEVEL_PLUS_ACCEL",
         "bucket": "rotacion",
-        "ticker": "AIQ",
-        "name": "Inteligencia Artificial",
-        "text": "AIQ líder ganando tracción: score 95.8% y Δ1W +41.7pp",
-        "sortMagnitude": 2041.6666666666667
+        "ticker": "XLK",
+        "name": "Tecnología",
+        "text": "XLK líder ganando tracción: score 79.2% y Δ1W +50.0pp",
+        "sortMagnitude": 2050
       },
       {
-        "id": "2026-08-28_AIQ_ROTATION_ACCEL",
-        "date": "2026-08-28",
+        "id": "2026-08-31_HACK_ROTATION_ACCEL",
+        "date": "2026-08-31",
         "rule": "ROTATION_ACCEL",
         "bucket": "rotacion",
-        "ticker": "AIQ",
-        "name": "Inteligencia Artificial",
-        "text": "AIQ rotación acelerada: Δ1W +41.7pp, Δ1M +56.3pp",
-        "sortMagnitude": 1097.9651162790697
+        "ticker": "HACK",
+        "name": "Ciberseguridad",
+        "text": "HACK rotación acelerada: Δ1W +75.0pp, Δ1M +65.2pp",
+        "sortMagnitude": 1140.2131782945737
       },
       {
-        "id": "2026-08-28_PEJ_ROTATION_ACCEL",
-        "date": "2026-08-28",
+        "id": "2026-08-31_CIBR_ROTATION_ACCEL",
+        "date": "2026-08-31",
+        "rule": "ROTATION_ACCEL",
+        "bucket": "rotacion",
+        "ticker": "CIBR",
+        "name": "Nasdaq Ciberseguridad",
+        "text": "CIBR rotación acelerada: Δ1W +70.8pp, Δ1M +68.4pp",
+        "sortMagnitude": 1139.2441860465117
+      },
+      {
+        "id": "2026-08-31_XLK_ROTATION_ACCEL",
+        "date": "2026-08-31",
+        "rule": "ROTATION_ACCEL",
+        "bucket": "rotacion",
+        "ticker": "XLK",
+        "name": "Tecnología",
+        "text": "XLK rotación acelerada: Δ1W +50.0pp, Δ1M +55.9pp",
+        "sortMagnitude": 1105.9108527131782
+      },
+      {
+        "id": "2026-08-31_PEJ_ROTATION_ACCEL",
+        "date": "2026-08-31",
         "rule": "ROTATION_ACCEL",
         "bucket": "rotacion",
         "ticker": "PEJ",
         "name": "Ocio y entretenimiento",
-        "text": "PEJ rotación acelerada: Δ1W -70.8pp, Δ1M -71.2pp",
-        "sortMagnitude": 142.0542635658915
+        "text": "PEJ rotación acelerada: Δ1W -79.2pp, Δ1M -76.7pp",
+        "sortMagnitude": 155.9108527131783
       },
       {
-        "id": "2026-08-28_XPH_ROTATION_ACCEL",
-        "date": "2026-08-28",
+        "id": "2026-08-31_IPAY_ROTATION_ACCEL",
+        "date": "2026-08-31",
         "rule": "ROTATION_ACCEL",
         "bucket": "rotacion",
-        "ticker": "XPH",
-        "name": "Farmacéuticas",
-        "text": "XPH rotación acelerada: Δ1W -45.8pp, Δ1M -47.7pp",
-        "sortMagnitude": 93.5077519379845
+        "ticker": "IPAY",
+        "name": "Servicios de pagos",
+        "text": "IPAY rotación acelerada: Δ1W -62.5pp, Δ1M -64.3pp",
+        "sortMagnitude": 126.84108527131784
       },
       {
-        "id": "2026-08-28_RSP_ROTATION_ACCEL",
-        "date": "2026-08-28",
+        "id": "2026-08-31_RSP_ROTATION_ACCEL",
+        "date": "2026-08-31",
         "rule": "ROTATION_ACCEL",
         "bucket": "rotacion",
         "ticker": "RSP",
         "name": "S&P 500 Equiponderado",
-        "text": "RSP rotación acelerada: Δ1W -41.7pp, Δ1M -47.2pp",
-        "sortMagnitude": 88.85658914728683
-      },
-      {
-        "id": "2026-08-28_IYR_ROTATION_ACCEL",
-        "date": "2026-08-28",
-        "rule": "ROTATION_ACCEL",
-        "bucket": "rotacion",
-        "ticker": "IYR",
-        "name": "Bienes raíces",
-        "text": "IYR rotación acelerada: Δ1W -45.8pp, Δ1M -38.7pp",
-        "sortMagnitude": 84.49612403100775
+        "text": "RSP rotación acelerada: Δ1W -54.2pp, Δ1M -63.4pp",
+        "sortMagnitude": 117.53875968992247
       }
     ],
     "confirmacion": [
       {
-        "id": "2026-08-28_FDN_CONFIRMED_LEADER",
-        "date": "2026-08-28",
+        "id": "2026-08-31_FDN_CONFIRMED_LEADER",
+        "date": "2026-08-31",
         "rule": "CONFIRMED_LEADER",
         "bucket": "confirmacion",
         "ticker": "FDN",
         "name": "Empresas de internet",
-        "text": "FDN líder confirmado: score 100% y a -1.1% de su máximo de 52 semanas",
-        "sortMagnitude": 2
+        "text": "FDN líder confirmado: score 95.8% y a -1.7% de su máximo de 52 semanas",
+        "sortMagnitude": 1.9583333333333335
       },
       {
-        "id": "2026-08-28_KCE_CONFIRMED_LEADER",
-        "date": "2026-08-28",
+        "id": "2026-08-31_XLE_CONFIRMED_LEADER",
+        "date": "2026-08-31",
         "rule": "CONFIRMED_LEADER",
         "bucket": "confirmacion",
-        "ticker": "KCE",
-        "name": "Capital Markets",
-        "text": "KCE líder confirmado: score 87.5% y a -1.0% de su máximo de 52 semanas",
-        "sortMagnitude": 1.875
+        "ticker": "XLE",
+        "name": "Sector energético",
+        "text": "XLE líder confirmado: score 95.8% y a -1.1% de su máximo de 52 semanas",
+        "sortMagnitude": 1.9583333333333335
       },
       {
-        "id": "2026-08-28_XOP_CONFIRMED_LEADER",
-        "date": "2026-08-28",
+        "id": "2026-08-31_XOP_CONFIRMED_LEADER",
+        "date": "2026-08-31",
         "rule": "CONFIRMED_LEADER",
         "bucket": "confirmacion",
         "ticker": "XOP",
         "name": "Exploración de Oil & Gas",
-        "text": "XOP líder confirmado: score 83.3% y a -2.8% de su máximo de 52 semanas",
-        "sortMagnitude": 1.8333333333333335
+        "text": "XOP líder confirmado: score 95.8% y a -1.2% de su máximo de 52 semanas",
+        "sortMagnitude": 1.9583333333333335
       },
       {
-        "id": "2026-08-28_IWF_DIVERGENCE_UP",
-        "date": "2026-08-28",
-        "rule": "DIVERGENCE_UP",
+        "id": "2026-08-31_CIBR_CONFIRMED_LEADER",
+        "date": "2026-08-31",
+        "rule": "CONFIRMED_LEADER",
         "bucket": "confirmacion",
-        "ticker": "IWF",
-        "name": "Growth",
-        "text": "IWF divergencia: score sube (Δ1W +20.8pp) con precio plano/negativo esta semana (0.3%)",
-        "sortMagnitude": 1.4166666666666667
+        "ticker": "CIBR",
+        "name": "Nasdaq Ciberseguridad",
+        "text": "CIBR líder confirmado: score 91.7% y a -2.1% de su máximo de 52 semanas",
+        "sortMagnitude": 1.9166666666666665
       },
       {
-        "id": "2026-08-28_XRT_DIVERGENCE_DOWN",
-        "date": "2026-08-28",
+        "id": "2026-08-31_KCE_CONFIRMED_LEADER",
+        "date": "2026-08-31",
+        "rule": "CONFIRMED_LEADER",
+        "bucket": "confirmacion",
+        "ticker": "KCE",
+        "name": "Capital Markets",
+        "text": "KCE líder confirmado: score 91.7% y a -1.2% de su máximo de 52 semanas",
+        "sortMagnitude": 1.9166666666666665
+      },
+      {
+        "id": "2026-08-31_VEGI_CONFIRMED_LEADER",
+        "date": "2026-08-31",
+        "rule": "CONFIRMED_LEADER",
+        "bucket": "confirmacion",
+        "ticker": "VEGI",
+        "name": "Productores agrícolas",
+        "text": "VEGI líder confirmado: score 91.7% y a -0.0% de su máximo de 52 semanas",
+        "sortMagnitude": 1.9166666666666665
+      },
+      {
+        "id": "2026-08-31_MOO_CONFIRMED_LEADER",
+        "date": "2026-08-31",
+        "rule": "CONFIRMED_LEADER",
+        "bucket": "confirmacion",
+        "ticker": "MOO",
+        "name": "Agricultura",
+        "text": "MOO líder confirmado: score 87.5% y a -0.7% de su máximo de 52 semanas",
+        "sortMagnitude": 1.875
+      },
+      {
+        "id": "2026-08-31_SOCL_DIVERGENCE_DOWN",
+        "date": "2026-08-31",
         "rule": "DIVERGENCE_DOWN",
         "bucket": "confirmacion",
-        "ticker": "XRT",
-        "name": "Comercio minorista",
-        "text": "XRT divergencia: score cae (Δ1W -33.3pp) con precio plano/positivo esta semana (-0.9%)",
+        "ticker": "SOCL",
+        "name": "Redes sociales",
+        "text": "SOCL divergencia: score cae (Δ1W -29.2pp) con precio plano/positivo esta semana (-0.7%)",
         "sortMagnitude": 0.9583333333333334
       },
       {
-        "id": "2026-08-28_IYT_DIVERGENCE_DOWN",
-        "date": "2026-08-28",
+        "id": "2026-08-31_IXP_DIVERGENCE_DOWN",
+        "date": "2026-08-31",
         "rule": "DIVERGENCE_DOWN",
         "bucket": "confirmacion",
-        "ticker": "IYT",
-        "name": "Transporte",
-        "text": "IYT divergencia: score cae (Δ1W -54.2pp) con precio plano/positivo esta semana (-0.7%)",
-        "sortMagnitude": 0.9166666666666666
+        "ticker": "IXP",
+        "name": "Global servicios de comunicaciones",
+        "text": "IXP divergencia: score cae (Δ1W -41.7pp) con precio plano/positivo esta semana (-0.4%)",
+        "sortMagnitude": 0.625
       },
       {
-        "id": "2026-08-28_XLY_DIVERGENCE_DOWN",
-        "date": "2026-08-28",
+        "id": "2026-08-31_SLX_DIVERGENCE_DOWN",
+        "date": "2026-08-31",
         "rule": "DIVERGENCE_DOWN",
         "bucket": "confirmacion",
-        "ticker": "XLY",
-        "name": "Consumo discrecional",
-        "text": "XLY divergencia: score cae (Δ1W -54.2pp) con precio plano/positivo esta semana (-0.7%)",
-        "sortMagnitude": 0.6666666666666667
+        "ticker": "SLX",
+        "name": "Industria del acero",
+        "text": "SLX divergencia: score cae (Δ1W -45.8pp) con precio plano/positivo esta semana (0.3%)",
+        "sortMagnitude": 0.625
       },
       {
-        "id": "2026-08-28_XLP_DIVERGENCE_DOWN",
-        "date": "2026-08-28",
-        "rule": "DIVERGENCE_DOWN",
-        "bucket": "confirmacion",
-        "ticker": "XLP",
-        "name": "Bienes de consumo básicos",
-        "text": "XLP divergencia: score cae (Δ1W -37.5pp) con precio plano/positivo esta semana (-0.6%)",
-        "sortMagnitude": 0.5416666666666667
-      },
-      {
-        "id": "2026-08-28_RSP_DIVERGENCE_DOWN",
-        "date": "2026-08-28",
-        "rule": "DIVERGENCE_DOWN",
-        "bucket": "confirmacion",
-        "ticker": "RSP",
-        "name": "S&P 500 Equiponderado",
-        "text": "RSP divergencia: score cae (Δ1W -41.7pp) con precio plano/positivo esta semana (-0.4%)",
-        "sortMagnitude": 0.5416666666666667
-      },
-      {
-        "id": "2026-08-28_IWD_DIVERGENCE_DOWN",
-        "date": "2026-08-28",
+        "id": "2026-08-31_IWD_DIVERGENCE_DOWN",
+        "date": "2026-08-31",
         "rule": "DIVERGENCE_DOWN",
         "bucket": "confirmacion",
         "ticker": "IWD",
         "name": "Value",
-        "text": "IWD divergencia: score cae (Δ1W -37.5pp) con precio plano/positivo esta semana (0.4%)",
-        "sortMagnitude": 0.45833333333333337
+        "text": "IWD divergencia: score cae (Δ1W -29.2pp) con precio plano/positivo esta semana (-0.5%)",
+        "sortMagnitude": 0.5
       },
       {
-        "id": "2026-08-28_XLF_DIVERGENCE_DOWN",
-        "date": "2026-08-28",
+        "id": "2026-08-31_XLC_DIVERGENCE_DOWN",
+        "date": "2026-08-31",
         "rule": "DIVERGENCE_DOWN",
         "bucket": "confirmacion",
-        "ticker": "XLF",
-        "name": "Servicios financieros",
-        "text": "XLF divergencia: score cae (Δ1W -20.8pp) con precio plano/positivo esta semana (1.1%)",
+        "ticker": "XLC",
+        "name": "Servicios de comunicación",
+        "text": "XLC divergencia: score cae (Δ1W -29.2pp) con precio plano/positivo esta semana (-0.8%)",
         "sortMagnitude": 0.375
-      },
-      {
-        "id": "2026-08-28_IPAY_DIVERGENCE_DOWN",
-        "date": "2026-08-28",
-        "rule": "DIVERGENCE_DOWN",
-        "bucket": "confirmacion",
-        "ticker": "IPAY",
-        "name": "Servicios de pagos",
-        "text": "IPAY divergencia: score cae (Δ1W -33.3pp) con precio plano/positivo esta semana (-0.9%)",
-        "sortMagnitude": 0.375
-      },
-      {
-        "id": "2026-08-28_XLB_DIVERGENCE_DOWN",
-        "date": "2026-08-28",
-        "rule": "DIVERGENCE_DOWN",
-        "bucket": "confirmacion",
-        "ticker": "XLB",
-        "name": "Materiales básicos",
-        "text": "XLB divergencia: score cae (Δ1W -25.0pp) con precio plano/positivo esta semana (-0.7%)",
-        "sortMagnitude": 0.33333333333333337
-      },
-      {
-        "id": "2026-08-28_IAI_DIVERGENCE_DOWN",
-        "date": "2026-08-28",
-        "rule": "DIVERGENCE_DOWN",
-        "bucket": "confirmacion",
-        "ticker": "IAI",
-        "name": "Brokers",
-        "text": "IAI divergencia: score cae (Δ1W -20.8pp) con precio plano/positivo esta semana (0.3%)",
-        "sortMagnitude": 0.25
-      },
-      {
-        "id": "2026-08-28_COPX_DIVERGENCE_DOWN",
-        "date": "2026-08-28",
-        "rule": "DIVERGENCE_DOWN",
-        "bucket": "confirmacion",
-        "ticker": "COPX",
-        "name": "Mineros de cobre",
-        "text": "COPX divergencia: score cae (Δ1W -20.8pp) con precio plano/positivo esta semana (-0.2%)",
-        "sortMagnitude": 0.20833333333333337
-      },
-      {
-        "id": "2026-08-28_SIL_DIVERGENCE_DOWN",
-        "date": "2026-08-28",
-        "rule": "DIVERGENCE_DOWN",
-        "bucket": "confirmacion",
-        "ticker": "SIL",
-        "name": "Mineros de plata",
-        "text": "SIL divergencia: score cae (Δ1W -20.8pp) con precio plano/positivo esta semana (-0.4%)",
-        "sortMagnitude": 0.20833333333333337
       }
     ],
-    "persistencia": []
+    "persistencia": [
+      {
+        "id": "2026-08-31_AIQ_SUSTAINED_LEADERSHIP",
+        "date": "2026-08-31",
+        "rule": "SUSTAINED_LEADERSHIP",
+        "bucket": "persistencia",
+        "ticker": "AIQ",
+        "name": "Inteligencia Artificial",
+        "text": "AIQ liderazgo sostenido 5 sesiones seguidas (score actual 100%)",
+        "sortMagnitude": 5
+      }
+    ]
   }
 }

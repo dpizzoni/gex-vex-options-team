@@ -1,58 +1,9 @@
 {
   "ticker": "DXCM",
-  "date": "2026-08-31",
+  "date": "2026-09-01",
   "spot": 91.06,
-  "expirations": [
-    {
-      "expiration": "2026-09-04",
-      "dte": 4,
-      "call_gex": 3150,
-      "put_gex": -2008,
-      "net_gex": 1142,
-      "p_c_ratio": 0.6375
-    },
-    {
-      "expiration": "2026-09-11",
-      "dte": 11,
-      "call_gex": 2194,
-      "put_gex": -1537,
-      "net_gex": 657,
-      "p_c_ratio": 0.7006
-    },
-    {
-      "expiration": "2026-09-18",
-      "dte": 18,
-      "call_gex": 23822,
-      "put_gex": -16459,
-      "net_gex": 7363,
-      "p_c_ratio": 0.6909
-    },
-    {
-      "expiration": "2026-09-25",
-      "dte": 25,
-      "call_gex": 492,
-      "put_gex": -298,
-      "net_gex": 193,
-      "p_c_ratio": 0.6068
-    },
-    {
-      "expiration": "2026-10-02",
-      "dte": 32,
-      "call_gex": 632,
-      "put_gex": -213,
-      "net_gex": 419,
-      "p_c_ratio": 0.3374
-    },
-    {
-      "expiration": "2026-10-09",
-      "dte": 39,
-      "call_gex": 0,
-      "put_gex": 0,
-      "net_gex": 0,
-      "p_c_ratio": 0
-    }
-  ],
-  "putWall": 90,
-  "callWall": 95,
-  "limitedData": false
+  "expirations": [],
+  "putWall": null,
+  "callWall": null,
+  "limitedData": true
 }

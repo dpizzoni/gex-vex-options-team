@@ -1,47 +1,47 @@
 {
   "ticker": "TMO",
   "date": "2026-09-01",
-  "spot": null,
+  "spot": 603.925,
   "expirations": [
     {
       "expiration": "2026-09-04",
       "dte": 3,
-      "call_gex": 879,
-      "put_gex": -1779,
-      "net_gex": -900,
-      "p_c_ratio": 2.0239
+      "call_gex": 760,
+      "put_gex": -1838,
+      "net_gex": -1078,
+      "p_c_ratio": 2.4198
     },
     {
       "expiration": "2026-09-11",
       "dte": 10,
-      "call_gex": 318,
-      "put_gex": -369,
-      "net_gex": -51,
-      "p_c_ratio": 1.1597
+      "call_gex": 264,
+      "put_gex": -464,
+      "net_gex": -200,
+      "p_c_ratio": 1.7562
     },
     {
       "expiration": "2026-09-18",
       "dte": 17,
-      "call_gex": 4904,
-      "put_gex": -991,
-      "net_gex": 3913,
-      "p_c_ratio": 0.2021
+      "call_gex": 4669,
+      "put_gex": -1099,
+      "net_gex": 3570,
+      "p_c_ratio": 0.2354
     },
     {
       "expiration": "2026-09-25",
       "dte": 24,
-      "call_gex": 83,
-      "put_gex": -327,
-      "net_gex": -245,
-      "p_c_ratio": 3.9656
+      "call_gex": 76,
+      "put_gex": -401,
+      "net_gex": -325,
+      "p_c_ratio": 5.2773
     },
     {
       "expiration": "2026-10-02",
       "dte": 31,
-      "call_gex": 16,
-      "put_gex": -23,
-      "net_gex": -7,
-      "p_c_ratio": 1.4782
+      "call_gex": 14,
+      "put_gex": -24,
+      "net_gex": -9,
+      "p_c_ratio": 1.649
     },
     {
       "expiration": "2026-10-09",
@@ -49,10 +49,10 @@
       "call_gex": 2,
       "put_gex": -6,
       "net_gex": -4,
-      "p_c_ratio": 3.3068
+      "p_c_ratio": 3.5323
     }
   ],
-  "putWall": null,
-  "callWall": null,
+  "putWall": 560,
+  "callWall": 630,
   "limitedData": false
 }

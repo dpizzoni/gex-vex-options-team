@@ -1,58 +1,58 @@
 {
   "ticker": "MDLZ",
   "date": "2026-09-02",
-  "spot": null,
+  "spot": 62.25,
   "expirations": [
     {
       "expiration": "2026-09-04",
       "dte": 2,
-      "call_gex": 3673,
-      "put_gex": -6780,
-      "net_gex": -3107,
-      "p_c_ratio": 1.846
+      "call_gex": 4661,
+      "put_gex": -8197,
+      "net_gex": -3536,
+      "p_c_ratio": 1.7586
     },
     {
       "expiration": "2026-09-11",
       "dte": 9,
-      "call_gex": 1287,
-      "put_gex": -13988,
-      "net_gex": -12701,
-      "p_c_ratio": 10.8704
+      "call_gex": 1100,
+      "put_gex": -8353,
+      "net_gex": -7253,
+      "p_c_ratio": 7.5914
     },
     {
       "expiration": "2026-09-18",
       "dte": 16,
-      "call_gex": 142943,
-      "put_gex": -65015,
-      "net_gex": 77929,
-      "p_c_ratio": 0.4548
+      "call_gex": 141309,
+      "put_gex": -65951,
+      "net_gex": 75359,
+      "p_c_ratio": 0.4667
     },
     {
       "expiration": "2026-09-25",
       "dte": 23,
-      "call_gex": 1242,
-      "put_gex": -959,
-      "net_gex": 283,
-      "p_c_ratio": 0.7719
+      "call_gex": 1161,
+      "put_gex": -1020,
+      "net_gex": 141,
+      "p_c_ratio": 0.8783
     },
     {
       "expiration": "2026-10-02",
       "dte": 30,
-      "call_gex": 522,
-      "put_gex": -358,
-      "net_gex": 164,
-      "p_c_ratio": 0.6856
+      "call_gex": 512,
+      "put_gex": -366,
+      "net_gex": 146,
+      "p_c_ratio": 0.7154
     },
     {
       "expiration": "2026-10-09",
       "dte": 37,
-      "call_gex": 21,
-      "put_gex": -298,
-      "net_gex": -276,
-      "p_c_ratio": 13.9671
+      "call_gex": 19,
+      "put_gex": -296,
+      "net_gex": -277,
+      "p_c_ratio": 15.306
     }
   ],
-  "putWall": null,
-  "callWall": null,
+  "putWall": 60,
+  "callWall": 62.5,
   "limitedData": false
 }

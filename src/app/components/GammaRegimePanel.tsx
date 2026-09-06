@@ -236,7 +236,6 @@ const panelContainerStyle: React.CSSProperties = {
   backdropFilter: 'blur(16px)',
   boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.36)',
   color: '#fff',
-  minHeight: '100%',
   boxSizing: 'border-box',
   position: 'relative',
   overflow: 'hidden'

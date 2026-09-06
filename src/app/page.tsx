@@ -2344,15 +2344,28 @@ ${blockSoportesResistencias}`;
 
           {/* Regime Engine & Chart Stack */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', height: '100%' }}>
-            <GammaRegimeChart
-              history={regimeHistory}
-              forwardExpirations={regimeForward}
-              symbol={symbol}
-              putWall={regimeForwardWalls.putWall}
-              callWall={regimeForwardWalls.callWall}
-              limitedForwardData={regimeForwardWalls.limitedData}
-            />
-            <GammaRegimePanel regimeData={regimeData} loading={regimeLoading} minHistoryCount={regimeHistory.length} />
+            {/* Both children's own root styles are height:100%/minHeight:100% of
+                their containing block - fine when each is the sole occupant of a
+                sized cell, but here they share one column flex container, so
+                without this wrapper both compete for the same 100% and the
+                loser gets crushed (this is what clipped the chart's header after
+                GammaRegimePanel switched to minHeight:100%). Giving the chart
+                the flexible remaining space (flex:1, minHeight:0) and the panel
+                exactly its content size (flex:'0 0 auto') resolves the
+                conflict without touching either component's own styling. */}
+            <div style={{ flex: '1 1 0', minHeight: 0, display: 'flex' }}>
+              <GammaRegimeChart
+                history={regimeHistory}
+                forwardExpirations={regimeForward}
+                symbol={symbol}
+                putWall={regimeForwardWalls.putWall}
+                callWall={regimeForwardWalls.callWall}
+                limitedForwardData={regimeForwardWalls.limitedData}
+              />
+            </div>
+            <div style={{ flex: '0 0 auto' }}>
+              <GammaRegimePanel regimeData={regimeData} loading={regimeLoading} minHistoryCount={regimeHistory.length} />
+            </div>
           </div>
 
           {/* Third Interpretive Panel */}

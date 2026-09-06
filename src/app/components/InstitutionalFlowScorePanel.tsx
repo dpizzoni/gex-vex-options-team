@@ -276,7 +276,7 @@ export default function InstitutionalFlowScorePanel({ history, loading }: Instit
 
   const latest = history[history.length - 1];
   const color = labelColor(latest.label);
-  const recent = history.slice(-10);
+  const recent = history.slice(-30);
   const maxRecentAbsScore = Math.max(4, ...recent.map(e => Math.abs(e.score)));
 
   const percent = (latest.score + MAX_ABS_SCORE) / (2 * MAX_ABS_SCORE);
@@ -363,7 +363,7 @@ export default function InstitutionalFlowScorePanel({ history, loading }: Instit
       {recent.length > 1 && (
         <div style={{ paddingTop: '6px' }}>
           <h4 style={colHeaderStyle}>SCORE (ÚLTIMOS {recent.length} DÍAS)</h4>
-          <div style={{ display: 'flex', gap: '4px', alignItems: 'center', height: '72px', padding: '4px 6px', backgroundColor: 'rgba(0,0,0,0.15)', borderRadius: '6px' }}>
+          <div style={{ display: 'flex', gap: '4px', alignItems: 'center', height: '72px', padding: '4px 6px', backgroundColor: 'rgba(0,0,0,0.15)', borderRadius: '6px', overflowX: 'auto' }}>
             {recent.map(e => {
               const h = Math.max(3, (Math.abs(e.score) / maxRecentAbsScore) * 30);
               const c = labelColor(e.label);

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Bell } from 'lucide-react';
+import { Bell, ArrowUp, ArrowDown } from 'lucide-react';
 
 interface RegimeAlert {
   id: string;
@@ -127,9 +127,21 @@ export default function NotificationBell({ onSelectTicker }: NotificationBellPro
                       onMouseEnter={(e) => { if (onSelectTicker) e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'; }}
                       onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
                     >
-                      <div style={{ fontWeight: 700, fontSize: '0.8rem', color: a.type === 'LONG_GAMMA_ENTRY' ? '#00e676' : a.type === 'SHORT_GAMMA_ENTRY' ? '#ff2a6d' : '#fbbf24' }}>
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        fontWeight: 700,
+                        fontSize: '0.8rem',
+                        color: a.type === 'DOUBLE_GEX'
+                          ? (a.net_gex >= 0 ? '#00e676' : '#ff2a6d')
+                          : (a.type === 'LONG_GAMMA_ENTRY' ? '#00e676' : '#ff2a6d')
+                      }}>
+                        {a.type === 'DOUBLE_GEX' && (
+                          a.net_gex >= 0 ? <ArrowUp size={13} /> : <ArrowDown size={13} />
+                        )}
                         {a.type === 'DOUBLE_GEX'
-                          ? `+2x GEX ${a.ticker}`
+                          ? `2x GEX ${a.ticker}`
                           : `${a.ticker} → ${a.type === 'LONG_GAMMA_ENTRY' ? 'LONG GAMMA' : 'SHORT GAMMA'}`}
                       </div>
                       <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)', marginTop: '2px' }}>

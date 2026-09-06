@@ -59,7 +59,18 @@ jobs:
           # workflow_dispatch run right before it. The last commit with this
           # message is the real "when did the capture actually last succeed"
           # signal (same idea as src/app/api/data-freshness/route.ts).
-          LAST_RUN=$(git log -1 --format=%cs --grep="^chore(data): daily UW capture & dealer update" || true)
+          #
+          # Re-fetch origin/main here instead of trusting the checkout step's
+          # fetch: on 2026-09-04 a queued schedule run's checkout landed on a
+          # stale ref just ~20s after the preceding workflow_dispatch run had
+          # already pushed its own capture commit (GitHub-side replication
+          # lag), so this check missed a same-day success by seconds and
+          # kicked off a redundant ~2.5h capture that later failed to commit
+          # (its dealer/*.json files collided with the ones the first run had
+          # just committed). A fresh fetch immediately before the check - a
+          # few seconds later than checkout's - closes almost all of that gap.
+          git fetch origin main
+          LAST_RUN=$(git log -1 --format=%cs --grep="^chore(data): daily UW capture & dealer update" origin/main || true)
           echo "Última ejecución detectada: ${LAST_RUN:-ninguna}"
 
           if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
@@ -138,10 +149,30 @@ jobs:
       - name: 🔄 Sincronizar con main antes de commitear (OI)
         if: always() && steps.check_today.outputs.skip == 'false'
         run: |
-          git fetch origin main
-          if ! git rebase --autostash origin/main; then
+          # Retries instead of a single attempt: a rebase can fail transiently
+          # if another job (gamma/fund-flow/RS on CircleCI, or a concurrent
+          # workflow_dispatch here) pushes to main in the exact window between
+          # our fetch and our checkout of its tip - this is what happened on
+          # 2026-09-04 (see check_today's comment above). Re-fetching and
+          # retrying a few times, with a short pause, resolves that without
+          # losing this run's ~2.5h capture. If it still fails after 3
+          # attempts it's a real content conflict, not a race - warn and let
+          # the commit/push step fail loudly instead of silently.
+          success=false
+          for attempt in 1 2 3; do
+            git fetch origin main
+            if git rebase --autostash origin/main; then
+              echo "✅ Rebase OK (intento $attempt)."
+              success=true
+              break
+            fi
             git rebase --abort 2>/dev/null || true
-            echo "::warning::No se pudo rebasear sobre main (posible conflicto real de contenido). El commit de OI puede fallar."
+            git checkout main 2>/dev/null || true
+            echo "⚠️ Intento $attempt de rebase falló, reintentando en 15s..."
+            sleep 15
+          done
+          if [ "$success" != "true" ]; then
+            echo "::warning::No se pudo rebasear sobre main tras 3 intentos (posible conflicto real de contenido). El commit de OI puede fallar."
           fi
 
       - name: 💾 Commit & Push - OI y Dealer Build

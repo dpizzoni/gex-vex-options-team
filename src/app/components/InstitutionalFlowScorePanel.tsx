@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Gauge, AlertCircle, Info, X } from 'lucide-react';
 
@@ -237,6 +237,16 @@ function FlowScoreInfoModal({ onClose }: { onClose: () => void }) {
 
 export default function InstitutionalFlowScorePanel({ history, loading }: InstitutionalFlowScorePanelProps) {
   const [showInfo, setShowInfo] = useState(false);
+  const scoreStripRef = useRef<HTMLDivElement>(null);
+
+  // Default the horizontal scroll to the right edge so the most recent bars
+  // (today's score, at the end of the array) are what's visible without the
+  // user having to scroll manually - matters now that the strip holds 30
+  // days instead of 10 and rarely fits without scrolling.
+  useEffect(() => {
+    const el = scoreStripRef.current;
+    if (el) el.scrollLeft = el.scrollWidth;
+  }, [history]);
 
   if (loading) {
     return (
@@ -363,7 +373,7 @@ export default function InstitutionalFlowScorePanel({ history, loading }: Instit
       {recent.length > 1 && (
         <div style={{ paddingTop: '6px' }}>
           <h4 style={colHeaderStyle}>SCORE (ÚLTIMOS {recent.length} DÍAS)</h4>
-          <div style={{ display: 'flex', gap: '4px', alignItems: 'center', height: '72px', padding: '4px 6px', backgroundColor: 'rgba(0,0,0,0.15)', borderRadius: '6px', overflowX: 'auto' }}>
+          <div ref={scoreStripRef} style={{ display: 'flex', gap: '4px', alignItems: 'center', height: '72px', padding: '4px 6px', backgroundColor: 'rgba(0,0,0,0.15)', borderRadius: '6px', overflowX: 'auto' }}>
             {recent.map(e => {
               const h = Math.max(3, (Math.abs(e.score) / maxRecentAbsScore) * 30);
               const c = labelColor(e.label);

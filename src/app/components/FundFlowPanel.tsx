@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Activity, AlertCircle, Bell, BellRing, Info, X, Waves, BarChart2, TrendingUp } from 'lucide-react';
-import EtfHoldingsTooltip, { EtfHoldingsMap } from './EtfHoldingsTooltip';
+import EtfHoldingsTooltip, { EtfHoldingsMap, finvizUrl } from './EtfHoldingsTooltip';
 
 export interface SectorFlowEntry {
   date: string;
@@ -864,7 +864,9 @@ export default function FundFlowPanel({ sectorFlow, marketTide, cotPositioning, 
             {sortedSectors.map((s, idx) => (
               <div key={s.ticker} style={{ ...sectorRowStyle, borderBottom: idx < sortedSectors.length - 1 ? '1px dashed rgba(255,255,255,0.05)' : 'none', paddingBottom: '10px', paddingTop: idx === 0 ? '0' : '4px' }}>
                 <span style={{ ...sectorTickerStyle, flex: '1' }}>
-                  <EtfHoldingsTooltip ticker={s.ticker} holdingsMap={etfHoldings}>{s.ticker}</EtfHoldingsTooltip>
+                  <EtfHoldingsTooltip ticker={s.ticker} holdingsMap={etfHoldings}>
+                    <a href={finvizUrl(s.ticker)} target="_blank" rel="noopener noreferrer" style={tickerLinkStyle}>{s.ticker}</a>
+                  </EtfHoldingsTooltip>
                   <span style={sectorLabelStyle}>{SECTOR_LABELS[s.ticker] ?? ''}</span>
                 </span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
@@ -1207,6 +1209,11 @@ const sectorLabelStyle: React.CSSProperties = {
   fontSize: '0.7rem',
   overflowWrap: 'break-word',
   color: 'rgba(255,255,255,0.4)'
+};
+
+const tickerLinkStyle: React.CSSProperties = {
+  color: 'inherit',
+  textDecoration: 'none'
 };
 
 

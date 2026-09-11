@@ -1,50 +1,50 @@
 {
   "ticker": "LRCX",
   "date": "2026-09-11",
-  "spot": 301.79,
+  "spot": 299.725,
   "expirations": [
     {
       "expiration": "2026-09-18",
       "dte": 7,
-      "call_gex": 24655,
-      "put_gex": -26654,
-      "net_gex": -1999,
-      "p_c_ratio": 1.0811
+      "call_gex": 25696,
+      "put_gex": -28291,
+      "net_gex": -2595,
+      "p_c_ratio": 1.101
     },
     {
       "expiration": "2026-09-25",
       "dte": 14,
-      "call_gex": 1920,
-      "put_gex": -3207,
-      "net_gex": -1287,
-      "p_c_ratio": 1.6704
+      "call_gex": 1986,
+      "put_gex": -3410,
+      "net_gex": -1425,
+      "p_c_ratio": 1.7174
     },
     {
       "expiration": "2026-10-02",
       "dte": 21,
       "call_gex": 1884,
-      "put_gex": -1564,
-      "net_gex": 320,
-      "p_c_ratio": 0.83
+      "put_gex": -1640,
+      "net_gex": 245,
+      "p_c_ratio": 0.8702
     },
     {
       "expiration": "2026-10-09",
       "dte": 28,
-      "call_gex": 989,
-      "put_gex": -530,
-      "net_gex": 459,
-      "p_c_ratio": 0.5358
+      "call_gex": 1002,
+      "put_gex": -556,
+      "net_gex": 446,
+      "p_c_ratio": 0.5547
     },
     {
       "expiration": "2026-10-16",
       "dte": 35,
-      "call_gex": 6541,
-      "put_gex": -13028,
-      "net_gex": -6487,
-      "p_c_ratio": 1.9918
+      "call_gex": 6535,
+      "put_gex": -13399,
+      "net_gex": -6863,
+      "p_c_ratio": 2.0502
     }
   ],
-  "putWall": 300,
+  "putWall": 280,
   "callWall": 310,
   "limitedData": false
 }

@@ -1,26 +1,26 @@
 {
   "ticker": "VRSK",
   "date": "2026-09-11",
-  "spot": null,
+  "spot": 175.05,
   "expirations": [
     {
       "expiration": "2026-09-18",
       "dte": 7,
-      "call_gex": 2496,
-      "put_gex": -3468,
-      "net_gex": -972,
-      "p_c_ratio": 1.3895
+      "call_gex": 2621,
+      "put_gex": -4157,
+      "net_gex": -1536,
+      "p_c_ratio": 1.5862
     },
     {
       "expiration": "2026-10-16",
       "dte": 35,
-      "call_gex": 38,
-      "put_gex": -217,
-      "net_gex": -179,
-      "p_c_ratio": 5.7611
+      "call_gex": 42,
+      "put_gex": -235,
+      "net_gex": -192,
+      "p_c_ratio": 5.5434
     }
   ],
-  "putWall": null,
-  "callWall": null,
+  "putWall": 160,
+  "callWall": 195,
   "limitedData": true
 }

@@ -1,58 +1,50 @@
 {
   "ticker": "MELI",
-  "date": "2026-09-10",
-  "spot": 1906.24,
+  "date": "2026-09-11",
+  "spot": 1910.02,
   "expirations": [
     {
-      "expiration": "2026-09-11",
-      "dte": 1,
-      "call_gex": 367,
-      "put_gex": -700,
-      "net_gex": -334,
-      "p_c_ratio": 1.9099
-    },
-    {
       "expiration": "2026-09-18",
-      "dte": 8,
-      "call_gex": 739,
-      "put_gex": -858,
-      "net_gex": -119,
-      "p_c_ratio": 1.1613
+      "dte": 7,
+      "call_gex": 841,
+      "put_gex": -806,
+      "net_gex": 35,
+      "p_c_ratio": 0.9584
     },
     {
       "expiration": "2026-09-25",
-      "dte": 15,
-      "call_gex": 344,
-      "put_gex": -175,
-      "net_gex": 169,
-      "p_c_ratio": 0.5079
+      "dte": 14,
+      "call_gex": 358,
+      "put_gex": -243,
+      "net_gex": 115,
+      "p_c_ratio": 0.6787
     },
     {
       "expiration": "2026-10-02",
-      "dte": 22,
-      "call_gex": 148,
-      "put_gex": -175,
-      "net_gex": -27,
-      "p_c_ratio": 1.1847
+      "dte": 21,
+      "call_gex": 169,
+      "put_gex": -154,
+      "net_gex": 15,
+      "p_c_ratio": 0.9092
     },
     {
       "expiration": "2026-10-09",
-      "dte": 29,
-      "call_gex": 62,
-      "put_gex": -55,
-      "net_gex": 7,
-      "p_c_ratio": 0.8934
+      "dte": 28,
+      "call_gex": 79,
+      "put_gex": -58,
+      "net_gex": 21,
+      "p_c_ratio": 0.7373
     },
     {
       "expiration": "2026-10-16",
-      "dte": 36,
-      "call_gex": 346,
-      "put_gex": -293,
-      "net_gex": 52,
-      "p_c_ratio": 0.8489
+      "dte": 35,
+      "call_gex": 356,
+      "put_gex": -259,
+      "net_gex": 97,
+      "p_c_ratio": 0.727
     }
   ],
-  "putWall": 1800,
+  "putWall": 1910,
   "callWall": 1920,
   "limitedData": false
 }

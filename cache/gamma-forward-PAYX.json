@@ -1,26 +1,26 @@
 {
   "ticker": "PAYX",
   "date": "2026-09-14",
-  "spot": null,
+  "spot": 117.96,
   "expirations": [
     {
       "expiration": "2026-09-18",
       "dte": 4,
-      "call_gex": 37351,
-      "put_gex": -18727,
-      "net_gex": 18624,
-      "p_c_ratio": 0.5014
+      "call_gex": 25273,
+      "put_gex": -17977,
+      "net_gex": 7296,
+      "p_c_ratio": 0.7113
     },
     {
       "expiration": "2026-10-16",
       "dte": 32,
-      "call_gex": 3956,
-      "put_gex": -1790,
-      "net_gex": 2166,
-      "p_c_ratio": 0.4525
+      "call_gex": 4820,
+      "put_gex": -1717,
+      "net_gex": 3103,
+      "p_c_ratio": 0.3562
     }
   ],
-  "putWall": null,
-  "callWall": null,
+  "putWall": 115,
+  "callWall": 120,
   "limitedData": true
 }

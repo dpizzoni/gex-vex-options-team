@@ -1,20 +1,5 @@
 [
   {
-    "id": "XLC_2026-09-01_FUND_FLOW_SHIFT",
-    "ticker": "XLC",
-    "type": "QUIET_ACCUMULATION",
-    "streak_days": 3,
-    "net_flow_dates": [
-      "2026-08-28",
-      "2026-08-31",
-      "2026-09-01"
-    ],
-    "net_flow_total": 1500000,
-    "price_change_pct": -1.87,
-    "date": "2026-09-01",
-    "detected_at": "2026-09-02T10:50:26.577Z"
-  },
-  {
     "id": "XLE_2026-09-03_FUND_FLOW_SHIFT",
     "ticker": "XLE",
     "type": "QUIET_ACCUMULATION",
@@ -133,5 +118,35 @@
     "price_change_pct": 0.28,
     "date": "2026-09-14",
     "detected_at": "2026-09-15T10:50:00.627Z"
+  },
+  {
+    "id": "XLE_2026-09-15_FUND_FLOW_SHIFT",
+    "ticker": "XLE",
+    "type": "QUIET_DISTRIBUTION",
+    "streak_days": 3,
+    "net_flow_dates": [
+      "2026-09-11",
+      "2026-09-14",
+      "2026-09-15"
+    ],
+    "net_flow_total": -4250000,
+    "price_change_pct": 1.21,
+    "date": "2026-09-15",
+    "detected_at": "2026-09-16T10:50:08.664Z"
+  },
+  {
+    "id": "XLF_2026-09-15_FUND_FLOW_SHIFT",
+    "ticker": "XLF",
+    "type": "QUIET_ACCUMULATION",
+    "streak_days": 3,
+    "net_flow_dates": [
+      "2026-09-11",
+      "2026-09-14",
+      "2026-09-15"
+    ],
+    "net_flow_total": 13550000,
+    "price_change_pct": -0.7,
+    "date": "2026-09-15",
+    "detected_at": "2026-09-16T10:50:08.666Z"
   }
 ]

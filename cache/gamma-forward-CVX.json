@@ -1,9 +1,50 @@
 {
   "ticker": "CVX",
   "date": "2026-09-18",
-  "spot": 210,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 211.07,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 32390,
+      "put_gex": -14739,
+      "net_gex": 17651,
+      "p_c_ratio": 0.4551
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 10617,
+      "put_gex": -5033,
+      "net_gex": 5584,
+      "p_c_ratio": 0.4741
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 8783,
+      "put_gex": -3469,
+      "net_gex": 5314,
+      "p_c_ratio": 0.3949
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 77807,
+      "put_gex": -21920,
+      "net_gex": 55887,
+      "p_c_ratio": 0.2817
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 2588,
+      "put_gex": -1917,
+      "net_gex": 671,
+      "p_c_ratio": 0.7407
+    }
+  ],
+  "putWall": 210,
+  "callWall": 220,
+  "limitedData": false
 }

@@ -1,9 +1,50 @@
 {
   "ticker": "CTAS",
   "date": "2026-09-18",
-  "spot": null,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 197.755,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 714,
+      "put_gex": -1473,
+      "net_gex": -759,
+      "p_c_ratio": 2.0634
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 243,
+      "put_gex": -305,
+      "net_gex": -62,
+      "p_c_ratio": 1.2547
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 53,
+      "put_gex": -127,
+      "net_gex": -74,
+      "p_c_ratio": 2.3897
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 537,
+      "put_gex": -868,
+      "net_gex": -331,
+      "p_c_ratio": 1.6164
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 83,
+      "put_gex": -6,
+      "net_gex": 77,
+      "p_c_ratio": 0.0734
+    }
+  ],
+  "putWall": 195,
+  "callWall": 200,
+  "limitedData": false
 }

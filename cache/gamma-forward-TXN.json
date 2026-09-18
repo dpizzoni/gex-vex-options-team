@@ -1,9 +1,50 @@
 {
   "ticker": "TXN",
   "date": "2026-09-18",
-  "spot": 258.86,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 263.38,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 10178,
+      "put_gex": -3683,
+      "net_gex": 6495,
+      "p_c_ratio": 0.3619
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 1319,
+      "put_gex": -686,
+      "net_gex": 632,
+      "p_c_ratio": 0.5205
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 1416,
+      "put_gex": -3118,
+      "net_gex": -1703,
+      "p_c_ratio": 2.2028
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 11190,
+      "put_gex": -10861,
+      "net_gex": 329,
+      "p_c_ratio": 0.9706
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 675,
+      "put_gex": -215,
+      "net_gex": 460,
+      "p_c_ratio": 0.3181
+    }
+  ],
+  "putWall": 260,
+  "callWall": 270,
+  "limitedData": false
 }

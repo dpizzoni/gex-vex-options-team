@@ -1,9 +1,50 @@
 {
   "ticker": "UNH",
   "date": "2026-09-18",
-  "spot": 376.96,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 373.84,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 8058,
+      "put_gex": -14856,
+      "net_gex": -6798,
+      "p_c_ratio": 1.8437
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 2659,
+      "put_gex": -5386,
+      "net_gex": -2727,
+      "p_c_ratio": 2.0256
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 2169,
+      "put_gex": -30563,
+      "net_gex": -28394,
+      "p_c_ratio": 14.0915
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 14902,
+      "put_gex": -22492,
+      "net_gex": -7590,
+      "p_c_ratio": 1.5093
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 578,
+      "put_gex": -912,
+      "net_gex": -334,
+      "p_c_ratio": 1.5782
+    }
+  ],
+  "putWall": 370,
+  "callWall": 400,
+  "limitedData": false
 }

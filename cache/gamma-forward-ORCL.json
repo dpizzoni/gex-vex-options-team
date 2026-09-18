@@ -1,9 +1,50 @@
 {
   "ticker": "ORCL",
   "date": "2026-09-18",
-  "spot": 151.2887,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 145.42,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 103786,
+      "put_gex": -75471,
+      "net_gex": 28315,
+      "p_c_ratio": 0.7272
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 40711,
+      "put_gex": -32404,
+      "net_gex": 8307,
+      "p_c_ratio": 0.796
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 13135,
+      "put_gex": -13773,
+      "net_gex": -638,
+      "p_c_ratio": 1.0486
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 173307,
+      "put_gex": -136571,
+      "net_gex": 36736,
+      "p_c_ratio": 0.788
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 20456,
+      "put_gex": -9796,
+      "net_gex": 10661,
+      "p_c_ratio": 0.4789
+    }
+  ],
+  "putWall": 145,
+  "callWall": 150,
+  "limitedData": false
 }

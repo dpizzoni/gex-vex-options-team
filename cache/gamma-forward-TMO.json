@@ -1,9 +1,50 @@
 {
   "ticker": "TMO",
   "date": "2026-09-18",
-  "spot": 659.9,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 654.365,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 902,
+      "put_gex": -497,
+      "net_gex": 405,
+      "p_c_ratio": 0.5509
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 143,
+      "put_gex": -31,
+      "net_gex": 112,
+      "p_c_ratio": 0.2137
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 175,
+      "put_gex": -109,
+      "net_gex": 65,
+      "p_c_ratio": 0.6261
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 1083,
+      "put_gex": -684,
+      "net_gex": 399,
+      "p_c_ratio": 0.6314
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 18,
+      "put_gex": -29,
+      "net_gex": -11,
+      "p_c_ratio": 1.6273
+    }
+  ],
+  "putWall": 640,
+  "callWall": 660,
+  "limitedData": false
 }

@@ -1,9 +1,50 @@
 {
   "ticker": "MS",
   "date": "2026-09-18",
-  "spot": null,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 202.3219,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 5827,
+      "put_gex": -12317,
+      "net_gex": -6489,
+      "p_c_ratio": 2.1136
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 2743,
+      "put_gex": -8033,
+      "net_gex": -5289,
+      "p_c_ratio": 2.9281
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 914,
+      "put_gex": -4481,
+      "net_gex": -3567,
+      "p_c_ratio": 4.9028
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 17110,
+      "put_gex": -26454,
+      "net_gex": -9344,
+      "p_c_ratio": 1.5461
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 1321,
+      "put_gex": -362,
+      "net_gex": 959,
+      "p_c_ratio": 0.274
+    }
+  ],
+  "putWall": 200,
+  "callWall": 210,
+  "limitedData": false
 }

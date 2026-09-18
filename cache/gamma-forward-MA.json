@@ -1,9 +1,50 @@
 {
   "ticker": "MA",
   "date": "2026-09-18",
-  "spot": 565.71,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 565.345,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 967,
+      "put_gex": -1550,
+      "net_gex": -583,
+      "p_c_ratio": 1.6023
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 345,
+      "put_gex": -758,
+      "net_gex": -413,
+      "p_c_ratio": 2.1973
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 165,
+      "put_gex": -379,
+      "net_gex": -214,
+      "p_c_ratio": 2.2917
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 5459,
+      "put_gex": -4949,
+      "net_gex": 510,
+      "p_c_ratio": 0.9065
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 66,
+      "put_gex": -201,
+      "net_gex": -135,
+      "p_c_ratio": 3.0566
+    }
+  ],
+  "putWall": 560,
+  "callWall": 570,
+  "limitedData": false
 }

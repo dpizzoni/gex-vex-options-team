@@ -1,9 +1,50 @@
 {
   "ticker": "LLY",
   "date": "2026-09-18",
-  "spot": 1148.82,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 1144.02,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 2194,
+      "put_gex": -2681,
+      "net_gex": -487,
+      "p_c_ratio": 1.2221
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 1319,
+      "put_gex": -1509,
+      "net_gex": -190,
+      "p_c_ratio": 1.1439
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 546,
+      "put_gex": -607,
+      "net_gex": -60,
+      "p_c_ratio": 1.1102
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 2853,
+      "put_gex": -3615,
+      "net_gex": -762,
+      "p_c_ratio": 1.2671
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 241,
+      "put_gex": -215,
+      "net_gex": 26,
+      "p_c_ratio": 0.8928
+    }
+  ],
+  "putWall": 1140,
+  "callWall": 1200,
+  "limitedData": false
 }

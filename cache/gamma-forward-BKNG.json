@@ -1,9 +1,50 @@
 {
   "ticker": "BKNG",
   "date": "2026-09-18",
-  "spot": 170.4,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 169.48,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 5826,
+      "put_gex": -11636,
+      "net_gex": -5811,
+      "p_c_ratio": 1.9974
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 2018,
+      "put_gex": -2877,
+      "net_gex": -859,
+      "p_c_ratio": 1.4258
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 735,
+      "put_gex": -2582,
+      "net_gex": -1847,
+      "p_c_ratio": 3.5145
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 74934,
+      "put_gex": -34484,
+      "net_gex": 40450,
+      "p_c_ratio": 0.4602
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 624,
+      "put_gex": -971,
+      "net_gex": -346,
+      "p_c_ratio": 1.5551
+    }
+  ],
+  "putWall": 160,
+  "callWall": 175,
+  "limitedData": false
 }

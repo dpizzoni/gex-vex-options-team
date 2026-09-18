@@ -1,9 +1,50 @@
 {
   "ticker": "AMGN",
   "date": "2026-09-18",
-  "spot": null,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 382.035,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 1979,
+      "put_gex": -1117,
+      "net_gex": 862,
+      "p_c_ratio": 0.5643
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 1209,
+      "put_gex": -955,
+      "net_gex": 254,
+      "p_c_ratio": 0.7902
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 220,
+      "put_gex": -319,
+      "net_gex": -99,
+      "p_c_ratio": 1.4504
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 7336,
+      "put_gex": -10894,
+      "net_gex": -3558,
+      "p_c_ratio": 1.485
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 342,
+      "put_gex": -446,
+      "net_gex": -104,
+      "p_c_ratio": 1.3024
+    }
+  ],
+  "putWall": 380,
+  "callWall": 400,
+  "limitedData": false
 }

@@ -1,9 +1,50 @@
 {
   "ticker": "DDOG",
   "date": "2026-09-18",
-  "spot": 238.7997,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 229.52,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 5520,
+      "put_gex": -2738,
+      "net_gex": 2781,
+      "p_c_ratio": 0.4961
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 1750,
+      "put_gex": -1171,
+      "net_gex": 578,
+      "p_c_ratio": 0.6694
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 598,
+      "put_gex": -450,
+      "net_gex": 148,
+      "p_c_ratio": 0.7519
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 8420,
+      "put_gex": -6340,
+      "net_gex": 2080,
+      "p_c_ratio": 0.753
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 247,
+      "put_gex": -150,
+      "net_gex": 97,
+      "p_c_ratio": 0.6077
+    }
+  ],
+  "putWall": 220,
+  "callWall": 240,
+  "limitedData": false
 }

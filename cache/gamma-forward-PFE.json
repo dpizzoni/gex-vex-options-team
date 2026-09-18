@@ -1,9 +1,50 @@
 {
   "ticker": "PFE",
   "date": "2026-09-18",
-  "spot": 27.75,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 27.405,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 589004,
+      "put_gex": -414069,
+      "net_gex": 174935,
+      "p_c_ratio": 0.703
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 305386,
+      "put_gex": -63778,
+      "net_gex": 241609,
+      "p_c_ratio": 0.2088
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 102608,
+      "put_gex": -35923,
+      "net_gex": 66685,
+      "p_c_ratio": 0.3501
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 1557501,
+      "put_gex": -582893,
+      "net_gex": 974608,
+      "p_c_ratio": 0.3742
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 55371,
+      "put_gex": -25049,
+      "net_gex": 30322,
+      "p_c_ratio": 0.4524
+    }
+  ],
+  "putWall": 27,
+  "callWall": 28,
+  "limitedData": false
 }

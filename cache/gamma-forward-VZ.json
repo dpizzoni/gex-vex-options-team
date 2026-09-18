@@ -1,9 +1,50 @@
 {
   "ticker": "VZ",
   "date": "2026-09-18",
-  "spot": 48.21,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 48.0266,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 67518,
+      "put_gex": -117583,
+      "net_gex": -50065,
+      "p_c_ratio": 1.7415
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 57956,
+      "put_gex": -95795,
+      "net_gex": -37839,
+      "p_c_ratio": 1.6529
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 57209,
+      "put_gex": -21107,
+      "net_gex": 36103,
+      "p_c_ratio": 0.3689
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 428530,
+      "put_gex": -287608,
+      "net_gex": 140922,
+      "p_c_ratio": 0.6712
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 8214,
+      "put_gex": -11856,
+      "net_gex": -3642,
+      "p_c_ratio": 1.4434
+    }
+  ],
+  "putWall": 47,
+  "callWall": 50,
+  "limitedData": false
 }

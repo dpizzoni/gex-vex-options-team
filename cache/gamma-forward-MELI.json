@@ -1,9 +1,50 @@
 {
   "ticker": "MELI",
   "date": "2026-09-18",
-  "spot": 1827.58,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 1794.4489,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 699,
+      "put_gex": -517,
+      "net_gex": 182,
+      "p_c_ratio": 0.74
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 252,
+      "put_gex": -269,
+      "net_gex": -17,
+      "p_c_ratio": 1.0665
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 152,
+      "put_gex": -136,
+      "net_gex": 16,
+      "p_c_ratio": 0.892
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 416,
+      "put_gex": -395,
+      "net_gex": 21,
+      "p_c_ratio": 0.9489
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 70,
+      "put_gex": -60,
+      "net_gex": 10,
+      "p_c_ratio": 0.8635
+    }
+  ],
+  "putWall": 1700,
+  "callWall": 1810,
+  "limitedData": false
 }

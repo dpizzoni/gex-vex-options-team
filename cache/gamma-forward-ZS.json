@@ -1,9 +1,50 @@
 {
   "ticker": "ZS",
   "date": "2026-09-18",
-  "spot": 197.8,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 196.3,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 10263,
+      "put_gex": -5191,
+      "net_gex": 5072,
+      "p_c_ratio": 0.5058
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 4570,
+      "put_gex": -1849,
+      "net_gex": 2722,
+      "p_c_ratio": 0.4045
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 1620,
+      "put_gex": -1262,
+      "net_gex": 358,
+      "p_c_ratio": 0.7791
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 10905,
+      "put_gex": -4509,
+      "net_gex": 6396,
+      "p_c_ratio": 0.4135
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 916,
+      "put_gex": -266,
+      "net_gex": 650,
+      "p_c_ratio": 0.2902
+    }
+  ],
+  "putWall": 190,
+  "callWall": 200,
+  "limitedData": false
 }

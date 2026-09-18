@@ -1,9 +1,18 @@
 {
   "ticker": "XEL",
   "date": "2026-09-18",
-  "spot": null,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
+  "spot": 72.59,
+  "expirations": [
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 4678,
+      "put_gex": -15797,
+      "net_gex": -11119,
+      "p_c_ratio": 3.3767
+    }
+  ],
+  "putWall": 65,
+  "callWall": 80,
   "limitedData": true
 }

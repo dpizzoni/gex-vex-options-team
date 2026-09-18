@@ -1,9 +1,50 @@
 {
   "ticker": "V",
   "date": "2026-09-18",
-  "spot": 370.31,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 368.67,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 6893,
+      "put_gex": -6036,
+      "net_gex": 857,
+      "p_c_ratio": 0.8757
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 2680,
+      "put_gex": -2215,
+      "net_gex": 465,
+      "p_c_ratio": 0.8266
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 1324,
+      "put_gex": -1313,
+      "net_gex": 11,
+      "p_c_ratio": 0.9919
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 29976,
+      "put_gex": -16064,
+      "net_gex": 13911,
+      "p_c_ratio": 0.5359
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 1198,
+      "put_gex": -754,
+      "net_gex": 444,
+      "p_c_ratio": 0.6294
+    }
+  ],
+  "putWall": 365,
+  "callWall": 370,
+  "limitedData": false
 }

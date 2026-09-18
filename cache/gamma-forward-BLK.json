@@ -1,9 +1,50 @@
 {
   "ticker": "BLK",
   "date": "2026-09-18",
-  "spot": null,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 1049.34,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 90,
+      "put_gex": -296,
+      "net_gex": -206,
+      "p_c_ratio": 3.285
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 37,
+      "put_gex": -130,
+      "net_gex": -93,
+      "p_c_ratio": 3.5095
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 34,
+      "put_gex": -102,
+      "net_gex": -68,
+      "p_c_ratio": 2.981
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 626,
+      "put_gex": -640,
+      "net_gex": -15,
+      "p_c_ratio": 1.0234
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 7,
+      "put_gex": -21,
+      "net_gex": -14,
+      "p_c_ratio": 3.0089
+    }
+  ],
+  "putWall": 1040,
+  "callWall": 1065,
+  "limitedData": false
 }

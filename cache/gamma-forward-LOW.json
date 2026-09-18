@@ -1,9 +1,50 @@
 {
   "ticker": "LOW",
   "date": "2026-09-18",
-  "spot": 194.49,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 193.085,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 1997,
+      "put_gex": -3292,
+      "net_gex": -1295,
+      "p_c_ratio": 1.6484
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 712,
+      "put_gex": -1862,
+      "net_gex": -1150,
+      "p_c_ratio": 2.6155
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 521,
+      "put_gex": -610,
+      "net_gex": -90,
+      "p_c_ratio": 1.1719
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 4571,
+      "put_gex": -39529,
+      "net_gex": -34957,
+      "p_c_ratio": 8.6469
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 194,
+      "put_gex": -373,
+      "net_gex": -179,
+      "p_c_ratio": 1.925
+    }
+  ],
+  "putWall": 190,
+  "callWall": 200,
+  "limitedData": false
 }

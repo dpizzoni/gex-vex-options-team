@@ -1,9 +1,50 @@
 {
   "ticker": "JPM",
   "date": "2026-09-18",
-  "spot": 349.0294,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 346.855,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 12536,
+      "put_gex": -12191,
+      "net_gex": 344,
+      "p_c_ratio": 0.9725
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 4504,
+      "put_gex": -5402,
+      "net_gex": -898,
+      "p_c_ratio": 1.1994
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 4613,
+      "put_gex": -4979,
+      "net_gex": -366,
+      "p_c_ratio": 1.0793
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 39132,
+      "put_gex": -25646,
+      "net_gex": 13487,
+      "p_c_ratio": 0.6554
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 1208,
+      "put_gex": -837,
+      "net_gex": 371,
+      "p_c_ratio": 0.6927
+    }
+  ],
+  "putWall": 345,
+  "callWall": 350,
+  "limitedData": false
 }

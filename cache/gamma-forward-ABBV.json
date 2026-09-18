@@ -1,9 +1,50 @@
 {
   "ticker": "ABBV",
   "date": "2026-09-18",
-  "spot": null,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 263.865,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 4900,
+      "put_gex": -1714,
+      "net_gex": 3186,
+      "p_c_ratio": 0.3499
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 3626,
+      "put_gex": -1572,
+      "net_gex": 2053,
+      "p_c_ratio": 0.4337
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 3435,
+      "put_gex": -347,
+      "net_gex": 3088,
+      "p_c_ratio": 0.1009
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 19610,
+      "put_gex": -6285,
+      "net_gex": 13326,
+      "p_c_ratio": 0.3205
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 907,
+      "put_gex": -443,
+      "net_gex": 464,
+      "p_c_ratio": 0.4888
+    }
+  ],
+  "putWall": 230,
+  "callWall": 270,
+  "limitedData": false
 }

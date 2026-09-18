@@ -1,9 +1,50 @@
 {
   "ticker": "DXCM",
   "date": "2026-09-18",
-  "spot": null,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 88.645,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 11121,
+      "put_gex": -3487,
+      "net_gex": 7635,
+      "p_c_ratio": 0.3135
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 459,
+      "put_gex": -1202,
+      "net_gex": -743,
+      "p_c_ratio": 2.617
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 5869,
+      "put_gex": -191,
+      "net_gex": 5678,
+      "p_c_ratio": 0.0325
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 2693,
+      "put_gex": -6858,
+      "net_gex": -4164,
+      "p_c_ratio": 2.5461
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 137,
+      "put_gex": -114,
+      "net_gex": 24,
+      "p_c_ratio": 0.827
+    }
+  ],
+  "putWall": 85,
+  "callWall": 90,
+  "limitedData": false
 }

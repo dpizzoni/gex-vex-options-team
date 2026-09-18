@@ -1,9 +1,82 @@
 {
   "ticker": "AAPL",
   "date": "2026-09-18",
-  "spot": 337.46,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 334.83,
+  "expirations": [
+    {
+      "expiration": "2026-09-21",
+      "dte": 3,
+      "call_gex": 134002,
+      "put_gex": -48989,
+      "net_gex": 85013,
+      "p_c_ratio": 0.3656
+    },
+    {
+      "expiration": "2026-09-23",
+      "dte": 5,
+      "call_gex": 46251,
+      "put_gex": -13330,
+      "net_gex": 32921,
+      "p_c_ratio": 0.2882
+    },
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 161296,
+      "put_gex": -50952,
+      "net_gex": 110344,
+      "p_c_ratio": 0.3159
+    },
+    {
+      "expiration": "2026-09-28",
+      "dte": 10,
+      "call_gex": 8604,
+      "put_gex": -5702,
+      "net_gex": 2902,
+      "p_c_ratio": 0.6627
+    },
+    {
+      "expiration": "2026-09-30",
+      "dte": 12,
+      "call_gex": 4873,
+      "put_gex": -2460,
+      "net_gex": 2413,
+      "p_c_ratio": 0.5048
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 62760,
+      "put_gex": -19322,
+      "net_gex": 43438,
+      "p_c_ratio": 0.3079
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 35975,
+      "put_gex": -9508,
+      "net_gex": 26466,
+      "p_c_ratio": 0.2643
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 458744,
+      "put_gex": -102738,
+      "net_gex": 356006,
+      "p_c_ratio": 0.224
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 21118,
+      "put_gex": -8741,
+      "net_gex": 12377,
+      "p_c_ratio": 0.4139
+    }
+  ],
+  "putWall": 330,
+  "callWall": 340,
+  "limitedData": false
 }

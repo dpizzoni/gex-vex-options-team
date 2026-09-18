@@ -1,9 +1,50 @@
 {
   "ticker": "MRK",
   "date": "2026-09-18",
-  "spot": 147.5891,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 146.195,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 20238,
+      "put_gex": -9534,
+      "net_gex": 10704,
+      "p_c_ratio": 0.4711
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 3105,
+      "put_gex": -2393,
+      "net_gex": 712,
+      "p_c_ratio": 0.7707
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 7100,
+      "put_gex": -1769,
+      "net_gex": 5331,
+      "p_c_ratio": 0.2491
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 52798,
+      "put_gex": -22950,
+      "net_gex": 29848,
+      "p_c_ratio": 0.4347
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 3080,
+      "put_gex": -899,
+      "net_gex": 2181,
+      "p_c_ratio": 0.2918
+    }
+  ],
+  "putWall": 145,
+  "callWall": 150,
+  "limitedData": false
 }

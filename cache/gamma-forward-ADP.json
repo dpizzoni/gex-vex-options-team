@@ -1,9 +1,50 @@
 {
   "ticker": "ADP",
   "date": "2026-09-18",
-  "spot": null,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 271.01,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 1221,
+      "put_gex": -1503,
+      "net_gex": -283,
+      "p_c_ratio": 1.2318
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 294,
+      "put_gex": -1705,
+      "net_gex": -1412,
+      "p_c_ratio": 5.8059
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 112,
+      "put_gex": -55,
+      "net_gex": 57,
+      "p_c_ratio": 0.495
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 1203,
+      "put_gex": -2669,
+      "net_gex": -1466,
+      "p_c_ratio": 2.2187
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 44,
+      "put_gex": -40,
+      "net_gex": 4,
+      "p_c_ratio": 0.9139
+    }
+  ],
+  "putWall": 270,
+  "callWall": 280,
+  "limitedData": false
 }

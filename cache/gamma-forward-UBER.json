@@ -1,9 +1,50 @@
 {
   "ticker": "UBER",
   "date": "2026-09-18",
-  "spot": 71.1,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 70.4663,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 125152,
+      "put_gex": -96090,
+      "net_gex": 29062,
+      "p_c_ratio": 0.7678
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 43707,
+      "put_gex": -47796,
+      "net_gex": -4088,
+      "p_c_ratio": 1.0935
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 20711,
+      "put_gex": -21389,
+      "net_gex": -677,
+      "p_c_ratio": 1.0327
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 178530,
+      "put_gex": -302115,
+      "net_gex": -123585,
+      "p_c_ratio": 1.6922
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 21274,
+      "put_gex": -9965,
+      "net_gex": 11309,
+      "p_c_ratio": 0.4684
+    }
+  ],
+  "putWall": 70,
+  "callWall": 75,
+  "limitedData": false
 }

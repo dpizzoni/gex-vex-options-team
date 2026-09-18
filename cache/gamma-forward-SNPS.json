@@ -1,9 +1,50 @@
 {
   "ticker": "SNPS",
   "date": "2026-09-18",
-  "spot": 383.5,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 381.89,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 3293,
+      "put_gex": -1036,
+      "net_gex": 2258,
+      "p_c_ratio": 0.3144
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 752,
+      "put_gex": -1152,
+      "net_gex": -400,
+      "p_c_ratio": 1.5318
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 230,
+      "put_gex": -271,
+      "net_gex": -40,
+      "p_c_ratio": 1.1753
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 4564,
+      "put_gex": -2390,
+      "net_gex": 2174,
+      "p_c_ratio": 0.5237
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 131,
+      "put_gex": -2211,
+      "net_gex": -2080,
+      "p_c_ratio": 16.8552
+    }
+  ],
+  "putWall": 380,
+  "callWall": 400,
+  "limitedData": false
 }

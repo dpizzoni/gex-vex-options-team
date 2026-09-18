@@ -1,9 +1,50 @@
 {
   "ticker": "MRVL",
   "date": "2026-09-18",
-  "spot": 244.37,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 239.45,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 35628,
+      "put_gex": -14613,
+      "net_gex": 21015,
+      "p_c_ratio": 0.4102
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 22252,
+      "put_gex": -7918,
+      "net_gex": 14333,
+      "p_c_ratio": 0.3559
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 9356,
+      "put_gex": -8199,
+      "net_gex": 1157,
+      "p_c_ratio": 0.8763
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 60902,
+      "put_gex": -35152,
+      "net_gex": 25751,
+      "p_c_ratio": 0.5772
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 1891,
+      "put_gex": -2815,
+      "net_gex": -924,
+      "p_c_ratio": 1.4884
+    }
+  ],
+  "putWall": 230,
+  "callWall": 240,
+  "limitedData": false
 }

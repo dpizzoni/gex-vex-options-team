@@ -1,9 +1,50 @@
 {
   "ticker": "COST",
   "date": "2026-09-18",
-  "spot": 892.49,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 894.04,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 4619,
+      "put_gex": -8555,
+      "net_gex": -3935,
+      "p_c_ratio": 1.8519
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 2102,
+      "put_gex": -3883,
+      "net_gex": -1780,
+      "p_c_ratio": 1.8468
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 752,
+      "put_gex": -1411,
+      "net_gex": -659,
+      "p_c_ratio": 1.8768
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 4337,
+      "put_gex": -8077,
+      "net_gex": -3740,
+      "p_c_ratio": 1.8625
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 733,
+      "put_gex": -973,
+      "net_gex": -240,
+      "p_c_ratio": 1.3268
+    }
+  ],
+  "putWall": 890,
+  "callWall": 900,
+  "limitedData": false
 }

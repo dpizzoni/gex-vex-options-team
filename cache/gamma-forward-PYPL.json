@@ -1,9 +1,50 @@
 {
   "ticker": "PYPL",
   "date": "2026-09-18",
-  "spot": 52.97,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 52.71,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 117186,
+      "put_gex": -39933,
+      "net_gex": 77252,
+      "p_c_ratio": 0.3408
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 25246,
+      "put_gex": -25631,
+      "net_gex": -385,
+      "p_c_ratio": 1.0152
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 8380,
+      "put_gex": -8585,
+      "net_gex": -205,
+      "p_c_ratio": 1.0244
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 227898,
+      "put_gex": -153370,
+      "net_gex": 74528,
+      "p_c_ratio": 0.673
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 10124,
+      "put_gex": -5457,
+      "net_gex": 4667,
+      "p_c_ratio": 0.539
+    }
+  ],
+  "putWall": 52.5,
+  "callWall": 55,
+  "limitedData": false
 }

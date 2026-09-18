@@ -1,9 +1,50 @@
 {
   "ticker": "XOM",
   "date": "2026-09-18",
-  "spot": 162.23,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 163.08,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 38949,
+      "put_gex": -23765,
+      "net_gex": 15184,
+      "p_c_ratio": 0.6102
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 12485,
+      "put_gex": -8089,
+      "net_gex": 4397,
+      "p_c_ratio": 0.6479
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 6941,
+      "put_gex": -2681,
+      "net_gex": 4260,
+      "p_c_ratio": 0.3863
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 163908,
+      "put_gex": -62693,
+      "net_gex": 101215,
+      "p_c_ratio": 0.3825
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 3919,
+      "put_gex": -5432,
+      "net_gex": -1513,
+      "p_c_ratio": 1.386
+    }
+  ],
+  "putWall": 160,
+  "callWall": 165,
+  "limitedData": false
 }

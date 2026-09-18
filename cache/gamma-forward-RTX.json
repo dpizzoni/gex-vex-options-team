@@ -1,9 +1,50 @@
 {
   "ticker": "RTX",
   "date": "2026-09-18",
-  "spot": 194.12,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 191.62,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 2564,
+      "put_gex": -5377,
+      "net_gex": -2814,
+      "p_c_ratio": 2.0976
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 3017,
+      "put_gex": -1309,
+      "net_gex": 1708,
+      "p_c_ratio": 0.434
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 438,
+      "put_gex": -744,
+      "net_gex": -306,
+      "p_c_ratio": 1.6977
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 4917,
+      "put_gex": -13562,
+      "net_gex": -8645,
+      "p_c_ratio": 2.7581
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 1016,
+      "put_gex": -5851,
+      "net_gex": -4835,
+      "p_c_ratio": 5.7587
+    }
+  ],
+  "putWall": 190,
+  "callWall": 195,
+  "limitedData": false
 }

@@ -1,9 +1,82 @@
 {
   "ticker": "NVDA",
   "date": "2026-09-18",
-  "spot": 221,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 219.495,
+  "expirations": [
+    {
+      "expiration": "2026-09-21",
+      "dte": 3,
+      "call_gex": 198906,
+      "put_gex": -78898,
+      "net_gex": 120008,
+      "p_c_ratio": 0.3967
+    },
+    {
+      "expiration": "2026-09-23",
+      "dte": 5,
+      "call_gex": 109023,
+      "put_gex": -39548,
+      "net_gex": 69475,
+      "p_c_ratio": 0.3627
+    },
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 539761,
+      "put_gex": -272618,
+      "net_gex": 267143,
+      "p_c_ratio": 0.5051
+    },
+    {
+      "expiration": "2026-09-28",
+      "dte": 10,
+      "call_gex": 47849,
+      "put_gex": -17360,
+      "net_gex": 30489,
+      "p_c_ratio": 0.3628
+    },
+    {
+      "expiration": "2026-09-30",
+      "dte": 12,
+      "call_gex": 17924,
+      "put_gex": -9766,
+      "net_gex": 8158,
+      "p_c_ratio": 0.5449
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 171315,
+      "put_gex": -187795,
+      "net_gex": -16481,
+      "p_c_ratio": 1.0962
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 125162,
+      "put_gex": -72128,
+      "net_gex": 53033,
+      "p_c_ratio": 0.5763
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 824422,
+      "put_gex": -431646,
+      "net_gex": 392776,
+      "p_c_ratio": 0.5236
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 36788,
+      "put_gex": -21454,
+      "net_gex": 15333,
+      "p_c_ratio": 0.5832
+    }
+  ],
+  "putWall": 200,
+  "callWall": 220,
+  "limitedData": false
 }

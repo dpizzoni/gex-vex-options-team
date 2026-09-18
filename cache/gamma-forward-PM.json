@@ -1,9 +1,50 @@
 {
   "ticker": "PM",
   "date": "2026-09-18",
-  "spot": null,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 190.57,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 4054,
+      "put_gex": -2462,
+      "net_gex": 1592,
+      "p_c_ratio": 0.6073
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 2201,
+      "put_gex": -569,
+      "net_gex": 1632,
+      "p_c_ratio": 0.2587
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 691,
+      "put_gex": -301,
+      "net_gex": 390,
+      "p_c_ratio": 0.4353
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 9400,
+      "put_gex": -10189,
+      "net_gex": -788,
+      "p_c_ratio": 1.0838
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 1115,
+      "put_gex": -554,
+      "net_gex": 561,
+      "p_c_ratio": 0.4966
+    }
+  ],
+  "putWall": 190,
+  "callWall": 195,
+  "limitedData": false
 }

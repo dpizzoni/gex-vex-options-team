@@ -1,9 +1,50 @@
 {
   "ticker": "KHC",
   "date": "2026-09-18",
-  "spot": null,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 24.5301,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 140911,
+      "put_gex": -93590,
+      "net_gex": 47321,
+      "p_c_ratio": 0.6642
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 74575,
+      "put_gex": -55838,
+      "net_gex": 18736,
+      "p_c_ratio": 0.7488
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 25183,
+      "put_gex": -21726,
+      "net_gex": 3457,
+      "p_c_ratio": 0.8627
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 347396,
+      "put_gex": -162392,
+      "net_gex": 185004,
+      "p_c_ratio": 0.4675
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 17794,
+      "put_gex": -6916,
+      "net_gex": 10877,
+      "p_c_ratio": 0.3887
+    }
+  ],
+  "putWall": 22.5,
+  "callWall": 25,
+  "limitedData": false
 }

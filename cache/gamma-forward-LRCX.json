@@ -1,9 +1,50 @@
 {
   "ticker": "LRCX",
   "date": "2026-09-18",
-  "spot": 272.06,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 282.07,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 16531,
+      "put_gex": -9863,
+      "net_gex": 6668,
+      "p_c_ratio": 0.5967
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 3393,
+      "put_gex": -4372,
+      "net_gex": -980,
+      "p_c_ratio": 1.2888
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 1578,
+      "put_gex": -2202,
+      "net_gex": -624,
+      "p_c_ratio": 1.3954
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 8165,
+      "put_gex": -20724,
+      "net_gex": -12559,
+      "p_c_ratio": 2.5381
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 828,
+      "put_gex": -647,
+      "net_gex": 181,
+      "p_c_ratio": 0.7815
+    }
+  ],
+  "putWall": 280,
+  "callWall": 282.5,
+  "limitedData": false
 }

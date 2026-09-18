@@ -1,9 +1,50 @@
 {
   "ticker": "GEHC",
   "date": "2026-09-18",
-  "spot": null,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 64.14,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 9396,
+      "put_gex": -2898,
+      "net_gex": 6497,
+      "p_c_ratio": 0.3085
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 937,
+      "put_gex": -2964,
+      "net_gex": -2026,
+      "p_c_ratio": 3.1624
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 338,
+      "put_gex": -1154,
+      "net_gex": -816,
+      "p_c_ratio": 3.4151
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 12631,
+      "put_gex": -16141,
+      "net_gex": -3510,
+      "p_c_ratio": 1.2779
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 752,
+      "put_gex": -3499,
+      "net_gex": -2747,
+      "p_c_ratio": 4.6532
+    }
+  ],
+  "putWall": 62.5,
+  "callWall": 65,
+  "limitedData": false
 }

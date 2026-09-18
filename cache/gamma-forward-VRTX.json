@@ -1,9 +1,50 @@
 {
   "ticker": "VRTX",
   "date": "2026-09-18",
-  "spot": null,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 507.8,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 259,
+      "put_gex": -488,
+      "net_gex": -230,
+      "p_c_ratio": 1.887
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 214,
+      "put_gex": -215,
+      "net_gex": -1,
+      "p_c_ratio": 1.0063
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 122,
+      "put_gex": -155,
+      "net_gex": -33,
+      "p_c_ratio": 1.2746
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 1437,
+      "put_gex": -1773,
+      "net_gex": -336,
+      "p_c_ratio": 1.2336
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 36,
+      "put_gex": -40,
+      "net_gex": -4,
+      "p_c_ratio": 1.1142
+    }
+  ],
+  "putWall": 500,
+  "callWall": 510,
+  "limitedData": false
 }

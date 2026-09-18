@@ -1,9 +1,50 @@
 {
   "ticker": "DHR",
   "date": "2026-09-18",
-  "spot": null,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 211.7692,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 3898,
+      "put_gex": -1332,
+      "net_gex": 2565,
+      "p_c_ratio": 0.3419
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 2062,
+      "put_gex": -296,
+      "net_gex": 1766,
+      "p_c_ratio": 0.1434
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 677,
+      "put_gex": -81,
+      "net_gex": 596,
+      "p_c_ratio": 0.119
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 4085,
+      "put_gex": -3202,
+      "net_gex": 883,
+      "p_c_ratio": 0.7839
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 103,
+      "put_gex": -42,
+      "net_gex": 61,
+      "p_c_ratio": 0.4109
+    }
+  ],
+  "putWall": 210,
+  "callWall": 220,
+  "limitedData": false
 }

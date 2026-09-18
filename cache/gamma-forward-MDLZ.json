@@ -1,9 +1,50 @@
 {
   "ticker": "MDLZ",
   "date": "2026-09-18",
-  "spot": null,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 60.82,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 1797,
+      "put_gex": -2026,
+      "net_gex": -230,
+      "p_c_ratio": 1.1278
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 3893,
+      "put_gex": -2434,
+      "net_gex": 1459,
+      "p_c_ratio": 0.6253
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 1831,
+      "put_gex": -592,
+      "net_gex": 1239,
+      "p_c_ratio": 0.3234
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 20919,
+      "put_gex": -12798,
+      "net_gex": 8120,
+      "p_c_ratio": 0.6118
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 359,
+      "put_gex": -1871,
+      "net_gex": -1512,
+      "p_c_ratio": 5.2154
+    }
+  ],
+  "putWall": 60,
+  "callWall": 62.5,
+  "limitedData": false
 }

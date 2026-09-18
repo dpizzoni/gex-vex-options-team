@@ -1,9 +1,50 @@
 {
   "ticker": "CDNS",
   "date": "2026-09-18",
-  "spot": 281.5,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 283.0833,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 323,
+      "put_gex": -1144,
+      "net_gex": -821,
+      "p_c_ratio": 3.5376
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 60,
+      "put_gex": -647,
+      "net_gex": -587,
+      "p_c_ratio": 10.7596
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 43,
+      "put_gex": -570,
+      "net_gex": -527,
+      "p_c_ratio": 13.1673
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 1522,
+      "put_gex": -2799,
+      "net_gex": -1277,
+      "p_c_ratio": 1.839
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 53,
+      "put_gex": -363,
+      "net_gex": -310,
+      "p_c_ratio": 6.8974
+    }
+  ],
+  "putWall": 270,
+  "callWall": 290,
+  "limitedData": false
 }

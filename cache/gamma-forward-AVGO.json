@@ -1,9 +1,82 @@
 {
   "ticker": "AVGO",
   "date": "2026-09-18",
-  "spot": 351.47,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 357.64,
+  "expirations": [
+    {
+      "expiration": "2026-09-21",
+      "dte": 3,
+      "call_gex": 25868,
+      "put_gex": -7448,
+      "net_gex": 18420,
+      "p_c_ratio": 0.2879
+    },
+    {
+      "expiration": "2026-09-23",
+      "dte": 5,
+      "call_gex": 10063,
+      "put_gex": -5222,
+      "net_gex": 4840,
+      "p_c_ratio": 0.519
+    },
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 37193,
+      "put_gex": -38525,
+      "net_gex": -1332,
+      "p_c_ratio": 1.0358
+    },
+    {
+      "expiration": "2026-09-28",
+      "dte": 10,
+      "call_gex": 3599,
+      "put_gex": -3026,
+      "net_gex": 573,
+      "p_c_ratio": 0.8407
+    },
+    {
+      "expiration": "2026-09-30",
+      "dte": 12,
+      "call_gex": 3111,
+      "put_gex": -907,
+      "net_gex": 2204,
+      "p_c_ratio": 0.2916
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 18406,
+      "put_gex": -15197,
+      "net_gex": 3210,
+      "p_c_ratio": 0.8256
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 16171,
+      "put_gex": -6360,
+      "net_gex": 9811,
+      "p_c_ratio": 0.3933
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 63607,
+      "put_gex": -62155,
+      "net_gex": 1452,
+      "p_c_ratio": 0.9772
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 3823,
+      "put_gex": -4078,
+      "net_gex": -255,
+      "p_c_ratio": 1.0667
+    }
+  ],
+  "putWall": 350,
+  "callWall": 360,
+  "limitedData": false
 }

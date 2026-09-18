@@ -1,9 +1,50 @@
 {
   "ticker": "BA",
   "date": "2026-09-18",
-  "spot": 197.85,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 196.35,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 30585,
+      "put_gex": -38678,
+      "net_gex": -8093,
+      "p_c_ratio": 1.2646
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 14854,
+      "put_gex": -8166,
+      "net_gex": 6688,
+      "p_c_ratio": 0.5497
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 3485,
+      "put_gex": -3116,
+      "net_gex": 369,
+      "p_c_ratio": 0.8941
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 36474,
+      "put_gex": -61319,
+      "net_gex": -24845,
+      "p_c_ratio": 1.6812
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 2625,
+      "put_gex": -11975,
+      "net_gex": -9350,
+      "p_c_ratio": 4.5623
+    }
+  ],
+  "putWall": 195,
+  "callWall": 200,
+  "limitedData": false
 }

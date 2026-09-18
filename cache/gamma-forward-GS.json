@@ -1,9 +1,50 @@
 {
   "ticker": "GS",
   "date": "2026-09-18",
-  "spot": 956.98,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 943.625,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 3012,
+      "put_gex": -4943,
+      "net_gex": -1931,
+      "p_c_ratio": 1.6409
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 885,
+      "put_gex": -1895,
+      "net_gex": -1010,
+      "p_c_ratio": 2.1411
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 632,
+      "put_gex": -1562,
+      "net_gex": -930,
+      "p_c_ratio": 2.4714
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 2545,
+      "put_gex": -4883,
+      "net_gex": -2337,
+      "p_c_ratio": 1.9181
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 306,
+      "put_gex": -500,
+      "net_gex": -194,
+      "p_c_ratio": 1.6335
+    }
+  ],
+  "putWall": 940,
+  "callWall": 960,
+  "limitedData": false
 }

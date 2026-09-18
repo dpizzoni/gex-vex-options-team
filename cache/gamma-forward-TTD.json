@@ -1,9 +1,50 @@
 {
   "ticker": "TTD",
   "date": "2026-09-18",
-  "spot": 14.34,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 14.09,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 271545,
+      "put_gex": -174040,
+      "net_gex": 97505,
+      "p_c_ratio": 0.6409
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 80118,
+      "put_gex": -44269,
+      "net_gex": 35849,
+      "p_c_ratio": 0.5526
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 68557,
+      "put_gex": -27783,
+      "net_gex": 40774,
+      "p_c_ratio": 0.4053
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 333793,
+      "put_gex": -133045,
+      "net_gex": 200748,
+      "p_c_ratio": 0.3986
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 12556,
+      "put_gex": -20384,
+      "net_gex": -7828,
+      "p_c_ratio": 1.6235
+    }
+  ],
+  "putWall": 12.5,
+  "callWall": 15,
+  "limitedData": false
 }

@@ -1,9 +1,50 @@
 {
   "ticker": "ASML",
   "date": "2026-09-18",
-  "spot": 1638.84,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 1646.8865,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 744,
+      "put_gex": -906,
+      "net_gex": -162,
+      "p_c_ratio": 1.2177
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 328,
+      "put_gex": -752,
+      "net_gex": -424,
+      "p_c_ratio": 2.291
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 169,
+      "put_gex": -394,
+      "net_gex": -225,
+      "p_c_ratio": 2.3308
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 986,
+      "put_gex": -1273,
+      "net_gex": -287,
+      "p_c_ratio": 1.2913
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 89,
+      "put_gex": -157,
+      "net_gex": -68,
+      "p_c_ratio": 1.7617
+    }
+  ],
+  "putWall": 1600,
+  "callWall": 1670,
+  "limitedData": false
 }

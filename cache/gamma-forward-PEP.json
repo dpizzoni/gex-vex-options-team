@@ -1,9 +1,50 @@
 {
   "ticker": "PEP",
   "date": "2026-09-18",
-  "spot": 132.9,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 130.105,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 11924,
+      "put_gex": -52561,
+      "net_gex": -40637,
+      "p_c_ratio": 4.4081
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 10921,
+      "put_gex": -26372,
+      "net_gex": -15451,
+      "p_c_ratio": 2.4147
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 10790,
+      "put_gex": -24773,
+      "net_gex": -13983,
+      "p_c_ratio": 2.2959
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 47981,
+      "put_gex": -43329,
+      "net_gex": 4652,
+      "p_c_ratio": 0.903
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 1190,
+      "put_gex": -4740,
+      "net_gex": -3550,
+      "p_c_ratio": 3.983
+    }
+  ],
+  "putWall": 130,
+  "callWall": 155,
+  "limitedData": false
 }

@@ -1,9 +1,50 @@
 {
   "ticker": "GILD",
   "date": "2026-09-18",
-  "spot": null,
-  "expirations": [],
-  "putWall": null,
-  "callWall": null,
-  "limitedData": true
+  "spot": 150.195,
+  "expirations": [
+    {
+      "expiration": "2026-09-25",
+      "dte": 7,
+      "call_gex": 9685,
+      "put_gex": -3722,
+      "net_gex": 5963,
+      "p_c_ratio": 0.3843
+    },
+    {
+      "expiration": "2026-10-02",
+      "dte": 14,
+      "call_gex": 4106,
+      "put_gex": -1773,
+      "net_gex": 2333,
+      "p_c_ratio": 0.4318
+    },
+    {
+      "expiration": "2026-10-09",
+      "dte": 21,
+      "call_gex": 2606,
+      "put_gex": -1133,
+      "net_gex": 1473,
+      "p_c_ratio": 0.4348
+    },
+    {
+      "expiration": "2026-10-16",
+      "dte": 28,
+      "call_gex": 14007,
+      "put_gex": -5354,
+      "net_gex": 8653,
+      "p_c_ratio": 0.3823
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 35,
+      "call_gex": 1258,
+      "put_gex": -1100,
+      "net_gex": 158,
+      "p_c_ratio": 0.8743
+    }
+  ],
+  "putWall": 140,
+  "callWall": 165,
+  "limitedData": false
 }

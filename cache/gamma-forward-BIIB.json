@@ -1,46 +1,46 @@
 {
   "ticker": "BIIB",
   "date": "2026-09-21",
-  "spot": null,
+  "spot": 218.41,
   "expirations": [
     {
       "expiration": "2026-09-25",
       "dte": 4,
-      "call_gex": 948,
-      "put_gex": -958,
-      "net_gex": -10,
-      "p_c_ratio": 1.0105
+      "call_gex": 1193,
+      "put_gex": -856,
+      "net_gex": 337,
+      "p_c_ratio": 0.7174
     },
     {
       "expiration": "2026-10-02",
       "dte": 11,
-      "call_gex": 120,
-      "put_gex": -221,
-      "net_gex": -102,
-      "p_c_ratio": 1.8498
+      "call_gex": 134,
+      "put_gex": -205,
+      "net_gex": -71,
+      "p_c_ratio": 1.5293
     },
     {
       "expiration": "2026-10-09",
       "dte": 18,
-      "call_gex": 72,
-      "put_gex": -119,
-      "net_gex": -47,
-      "p_c_ratio": 1.6462
+      "call_gex": 78,
+      "put_gex": -113,
+      "net_gex": -34,
+      "p_c_ratio": 1.4352
     },
     {
       "expiration": "2026-10-16",
       "dte": 25,
-      "call_gex": 3117,
-      "put_gex": -1755,
-      "net_gex": 1362,
-      "p_c_ratio": 0.5632
+      "call_gex": 3173,
+      "put_gex": -1525,
+      "net_gex": 1648,
+      "p_c_ratio": 0.4805
     },
     {
       "expiration": "2026-10-23",
       "dte": 32,
-      "call_gex": 368,
+      "call_gex": 379,
       "put_gex": -6,
-      "net_gex": 363,
+      "net_gex": 373,
       "p_c_ratio": 0.0158
     },
     {
@@ -48,11 +48,11 @@
       "dte": 39,
       "call_gex": 44,
       "put_gex": -9,
-      "net_gex": 35,
-      "p_c_ratio": 0.1962
+      "net_gex": 36,
+      "p_c_ratio": 0.198
     }
   ],
-  "putWall": null,
-  "callWall": null,
+  "putWall": 200,
+  "callWall": 230,
   "limitedData": false
 }

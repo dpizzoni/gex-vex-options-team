@@ -1,50 +1,58 @@
 {
   "ticker": "CDNS",
-  "date": "2026-09-18",
-  "spot": 282.9,
+  "date": "2026-09-21",
+  "spot": 285.3,
   "expirations": [
     {
       "expiration": "2026-09-25",
-      "dte": 7,
-      "call_gex": 323,
-      "put_gex": -1144,
-      "net_gex": -821,
-      "p_c_ratio": 3.5376
+      "dte": 4,
+      "call_gex": 459,
+      "put_gex": -1493,
+      "net_gex": -1034,
+      "p_c_ratio": 3.252
     },
     {
       "expiration": "2026-10-02",
-      "dte": 14,
-      "call_gex": 60,
-      "put_gex": -647,
-      "net_gex": -587,
-      "p_c_ratio": 10.7596
+      "dte": 11,
+      "call_gex": 108,
+      "put_gex": -622,
+      "net_gex": -514,
+      "p_c_ratio": 5.7811
     },
     {
       "expiration": "2026-10-09",
-      "dte": 21,
-      "call_gex": 43,
-      "put_gex": -570,
-      "net_gex": -527,
-      "p_c_ratio": 13.1673
+      "dte": 18,
+      "call_gex": 58,
+      "put_gex": -523,
+      "net_gex": -464,
+      "p_c_ratio": 8.9489
     },
     {
       "expiration": "2026-10-16",
-      "dte": 28,
-      "call_gex": 1522,
-      "put_gex": -2799,
-      "net_gex": -1277,
-      "p_c_ratio": 1.839
+      "dte": 25,
+      "call_gex": 1648,
+      "put_gex": -2743,
+      "net_gex": -1096,
+      "p_c_ratio": 1.6648
     },
     {
       "expiration": "2026-10-23",
-      "dte": 35,
-      "call_gex": 53,
-      "put_gex": -363,
-      "net_gex": -310,
-      "p_c_ratio": 6.8974
+      "dte": 32,
+      "call_gex": 106,
+      "put_gex": -327,
+      "net_gex": -221,
+      "p_c_ratio": 3.0784
+    },
+    {
+      "expiration": "2026-10-30",
+      "dte": 39,
+      "call_gex": 71,
+      "put_gex": -46,
+      "net_gex": 25,
+      "p_c_ratio": 0.6447
     }
   ],
   "putWall": 270,
-  "callWall": 290,
+  "callWall": 350,
   "limitedData": false
 }

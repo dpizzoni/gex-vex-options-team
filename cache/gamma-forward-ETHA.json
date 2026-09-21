@@ -1,50 +1,58 @@
 {
   "ticker": "ETHA",
-  "date": "2026-09-18",
-  "spot": 19.92,
+  "date": "2026-09-21",
+  "spot": 20.47,
   "expirations": [
     {
       "expiration": "2026-09-25",
-      "dte": 7,
-      "call_gex": 1693825,
-      "put_gex": -1341686,
-      "net_gex": 352139,
-      "p_c_ratio": 0.7921
+      "dte": 4,
+      "call_gex": 2176666,
+      "put_gex": -642172,
+      "net_gex": 1534493,
+      "p_c_ratio": 0.295
     },
     {
       "expiration": "2026-10-02",
-      "dte": 14,
-      "call_gex": 292579,
-      "put_gex": -218117,
-      "net_gex": 74462,
-      "p_c_ratio": 0.7455
+      "dte": 11,
+      "call_gex": 378353,
+      "put_gex": -153916,
+      "net_gex": 224437,
+      "p_c_ratio": 0.4068
     },
     {
       "expiration": "2026-10-09",
-      "dte": 21,
-      "call_gex": 123272,
-      "put_gex": -45900,
-      "net_gex": 77371,
-      "p_c_ratio": 0.3724
+      "dte": 18,
+      "call_gex": 97925,
+      "put_gex": -62472,
+      "net_gex": 35454,
+      "p_c_ratio": 0.638
     },
     {
       "expiration": "2026-10-16",
-      "dte": 28,
-      "call_gex": 2105145,
-      "put_gex": -711464,
-      "net_gex": 1393681,
-      "p_c_ratio": 0.338
+      "dte": 25,
+      "call_gex": 1990320,
+      "put_gex": -477377,
+      "net_gex": 1512942,
+      "p_c_ratio": 0.2398
     },
     {
       "expiration": "2026-10-23",
-      "dte": 35,
-      "call_gex": 108567,
-      "put_gex": -115758,
-      "net_gex": -7191,
-      "p_c_ratio": 1.0662
+      "dte": 32,
+      "call_gex": 144055,
+      "put_gex": -68997,
+      "net_gex": 75058,
+      "p_c_ratio": 0.479
+    },
+    {
+      "expiration": "2026-10-30",
+      "dte": 39,
+      "call_gex": 150439,
+      "put_gex": -25547,
+      "net_gex": 124893,
+      "p_c_ratio": 0.1698
     }
   ],
-  "putWall": 19,
-  "callWall": 20,
+  "putWall": 17,
+  "callWall": 22,
   "limitedData": false
 }

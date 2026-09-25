@@ -1,50 +1,50 @@
 {
   "ticker": "GILD",
   "date": "2026-09-25",
-  "spot": null,
+  "spot": 149.13,
   "expirations": [
     {
       "expiration": "2026-10-02",
       "dte": 7,
-      "call_gex": 9243,
-      "put_gex": -3946,
-      "net_gex": 5297,
-      "p_c_ratio": 0.4269
+      "call_gex": 7969,
+      "put_gex": -4729,
+      "net_gex": 3241,
+      "p_c_ratio": 0.5933
     },
     {
       "expiration": "2026-10-09",
       "dte": 14,
-      "call_gex": 4586,
-      "put_gex": -1680,
-      "net_gex": 2907,
-      "p_c_ratio": 0.3663
+      "call_gex": 4152,
+      "put_gex": -1934,
+      "net_gex": 2218,
+      "p_c_ratio": 0.4658
     },
     {
       "expiration": "2026-10-16",
       "dte": 21,
-      "call_gex": 19134,
-      "put_gex": -6332,
-      "net_gex": 12801,
-      "p_c_ratio": 0.331
+      "call_gex": 18050,
+      "put_gex": -6798,
+      "net_gex": 11251,
+      "p_c_ratio": 0.3766
     },
     {
       "expiration": "2026-10-23",
       "dte": 28,
-      "call_gex": 2020,
-      "put_gex": -1813,
-      "net_gex": 207,
-      "p_c_ratio": 0.8975
+      "call_gex": 1892,
+      "put_gex": -2028,
+      "net_gex": -136,
+      "p_c_ratio": 1.0722
     },
     {
       "expiration": "2026-10-30",
       "dte": 35,
-      "call_gex": 675,
-      "put_gex": -253,
-      "net_gex": 422,
-      "p_c_ratio": 0.3743
+      "call_gex": 642,
+      "put_gex": -266,
+      "net_gex": 376,
+      "p_c_ratio": 0.4146
     }
   ],
-  "putWall": null,
-  "callWall": null,
+  "putWall": 148,
+  "callWall": 150,
   "limitedData": false
 }

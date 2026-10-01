@@ -1,58 +1,58 @@
 {
   "ticker": "VRTX",
-  "date": "2026-09-30",
-  "spot": null,
+  "date": "2026-10-01",
+  "spot": 513.13,
   "expirations": [
     {
       "expiration": "2026-10-02",
-      "dte": 2,
-      "call_gex": 1842,
-      "put_gex": -2153,
-      "net_gex": -311,
-      "p_c_ratio": 1.1689
+      "dte": 1,
+      "call_gex": 1630,
+      "put_gex": -3004,
+      "net_gex": -1374,
+      "p_c_ratio": 1.843
     },
     {
       "expiration": "2026-10-09",
-      "dte": 9,
-      "call_gex": 580,
-      "put_gex": -887,
-      "net_gex": -307,
-      "p_c_ratio": 1.5289
+      "dte": 8,
+      "call_gex": 519,
+      "put_gex": -990,
+      "net_gex": -470,
+      "p_c_ratio": 1.9062
     },
     {
       "expiration": "2026-10-16",
-      "dte": 16,
-      "call_gex": 2411,
-      "put_gex": -2524,
-      "net_gex": -113,
-      "p_c_ratio": 1.0469
+      "dte": 15,
+      "call_gex": 2455,
+      "put_gex": -2781,
+      "net_gex": -326,
+      "p_c_ratio": 1.1328
     },
     {
       "expiration": "2026-10-23",
-      "dte": 23,
-      "call_gex": 478,
-      "put_gex": -743,
-      "net_gex": -265,
-      "p_c_ratio": 1.5554
+      "dte": 22,
+      "call_gex": 481,
+      "put_gex": -810,
+      "net_gex": -329,
+      "p_c_ratio": 1.6838
     },
     {
       "expiration": "2026-10-30",
-      "dte": 30,
-      "call_gex": 350,
-      "put_gex": -318,
-      "net_gex": 32,
-      "p_c_ratio": 0.9079
+      "dte": 29,
+      "call_gex": 363,
+      "put_gex": -355,
+      "net_gex": 9,
+      "p_c_ratio": 0.9764
     },
     {
       "expiration": "2026-11-06",
-      "dte": 37,
+      "dte": 36,
       "call_gex": 2,
-      "put_gex": -51,
-      "net_gex": -48,
-      "p_c_ratio": 22.1614
+      "put_gex": -53,
+      "net_gex": -50,
+      "p_c_ratio": 23.03
     }
   ],
-  "putWall": null,
-  "callWall": null,
+  "putWall": 500,
+  "callWall": 540,
   "limitedData": false
 }

@@ -1,58 +1,50 @@
 {
   "ticker": "QCOM",
-  "date": "2026-10-01",
-  "spot": 182.09,
+  "date": "2026-10-02",
+  "spot": 184,
   "expirations": [
     {
-      "expiration": "2026-10-02",
-      "dte": 1,
-      "call_gex": 78933,
-      "put_gex": -78299,
-      "net_gex": 635,
-      "p_c_ratio": 0.992
-    },
-    {
       "expiration": "2026-10-09",
-      "dte": 8,
-      "call_gex": 12785,
-      "put_gex": -10308,
-      "net_gex": 2477,
-      "p_c_ratio": 0.8063
+      "dte": 7,
+      "call_gex": 19813,
+      "put_gex": -13218,
+      "net_gex": 6595,
+      "p_c_ratio": 0.6671
     },
     {
       "expiration": "2026-10-16",
-      "dte": 15,
-      "call_gex": 80031,
-      "put_gex": -45000,
-      "net_gex": 35032,
-      "p_c_ratio": 0.5623
+      "dte": 14,
+      "call_gex": 79412,
+      "put_gex": -46489,
+      "net_gex": 32923,
+      "p_c_ratio": 0.5854
     },
     {
       "expiration": "2026-10-23",
-      "dte": 22,
-      "call_gex": 4894,
-      "put_gex": -3321,
-      "net_gex": 1573,
-      "p_c_ratio": 0.6785
+      "dte": 21,
+      "call_gex": 4970,
+      "put_gex": -3476,
+      "net_gex": 1494,
+      "p_c_ratio": 0.6994
     },
     {
       "expiration": "2026-10-30",
-      "dte": 29,
-      "call_gex": 5232,
-      "put_gex": -4473,
-      "net_gex": 759,
-      "p_c_ratio": 0.8549
+      "dte": 28,
+      "call_gex": 6283,
+      "put_gex": -6055,
+      "net_gex": 228,
+      "p_c_ratio": 0.9637
     },
     {
       "expiration": "2026-11-06",
-      "dte": 36,
-      "call_gex": 1288,
-      "put_gex": -1336,
-      "net_gex": -48,
-      "p_c_ratio": 1.037
+      "dte": 35,
+      "call_gex": 1428,
+      "put_gex": -1496,
+      "net_gex": -68,
+      "p_c_ratio": 1.0474
     }
   ],
-  "putWall": 180,
+  "putWall": 182.5,
   "callWall": 200,
   "limitedData": false
 }

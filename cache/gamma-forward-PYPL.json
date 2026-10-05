@@ -1,47 +1,55 @@
 {
   "ticker": "PYPL",
-  "date": "2026-10-02",
-  "spot": 52.8,
+  "date": "2026-10-05",
+  "spot": 52.3,
   "expirations": [
     {
       "expiration": "2026-10-09",
-      "dte": 7,
-      "call_gex": 66770,
-      "put_gex": -55270,
-      "net_gex": 11500,
-      "p_c_ratio": 0.8278
+      "dte": 4,
+      "call_gex": 157006,
+      "put_gex": -102888,
+      "net_gex": 54118,
+      "p_c_ratio": 0.6553
     },
     {
       "expiration": "2026-10-16",
-      "dte": 14,
-      "call_gex": 344197,
-      "put_gex": -445534,
-      "net_gex": -101337,
-      "p_c_ratio": 1.2944
+      "dte": 11,
+      "call_gex": 345986,
+      "put_gex": -385841,
+      "net_gex": -39855,
+      "p_c_ratio": 1.1152
     },
     {
       "expiration": "2026-10-23",
-      "dte": 21,
-      "call_gex": 31786,
-      "put_gex": -15523,
-      "net_gex": 16263,
-      "p_c_ratio": 0.4883
+      "dte": 18,
+      "call_gex": 32126,
+      "put_gex": -16466,
+      "net_gex": 15660,
+      "p_c_ratio": 0.5126
     },
     {
       "expiration": "2026-10-30",
-      "dte": 28,
-      "call_gex": 13154,
-      "put_gex": -9289,
-      "net_gex": 3865,
-      "p_c_ratio": 0.7062
+      "dte": 25,
+      "call_gex": 14336,
+      "put_gex": -10116,
+      "net_gex": 4220,
+      "p_c_ratio": 0.7056
     },
     {
       "expiration": "2026-11-06",
-      "dte": 35,
-      "call_gex": 1286,
-      "put_gex": -3515,
-      "net_gex": -2228,
-      "p_c_ratio": 2.7324
+      "dte": 32,
+      "call_gex": 1547,
+      "put_gex": -3536,
+      "net_gex": -1990,
+      "p_c_ratio": 2.2863
+    },
+    {
+      "expiration": "2026-11-13",
+      "dte": 39,
+      "call_gex": 3862,
+      "put_gex": -299,
+      "net_gex": 3563,
+      "p_c_ratio": 0.0774
     }
   ],
   "putWall": 50,

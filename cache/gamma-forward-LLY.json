@@ -1,47 +1,55 @@
 {
   "ticker": "LLY",
-  "date": "2026-10-02",
-  "spot": 1142.85,
+  "date": "2026-10-05",
+  "spot": 1142.61,
   "expirations": [
     {
       "expiration": "2026-10-09",
-      "dte": 7,
-      "call_gex": 1443,
-      "put_gex": -1930,
-      "net_gex": -487,
-      "p_c_ratio": 1.3373
+      "dte": 4,
+      "call_gex": 1698,
+      "put_gex": -2868,
+      "net_gex": -1170,
+      "p_c_ratio": 1.689
     },
     {
       "expiration": "2026-10-16",
-      "dte": 14,
-      "call_gex": 4278,
-      "put_gex": -4615,
-      "net_gex": -337,
-      "p_c_ratio": 1.0787
+      "dte": 11,
+      "call_gex": 4006,
+      "put_gex": -4988,
+      "net_gex": -983,
+      "p_c_ratio": 1.2453
     },
     {
       "expiration": "2026-10-23",
-      "dte": 21,
-      "call_gex": 722,
-      "put_gex": -867,
-      "net_gex": -145,
-      "p_c_ratio": 1.2011
+      "dte": 18,
+      "call_gex": 686,
+      "put_gex": -1061,
+      "net_gex": -375,
+      "p_c_ratio": 1.5475
     },
     {
       "expiration": "2026-10-30",
-      "dte": 28,
-      "call_gex": 327,
-      "put_gex": -564,
-      "net_gex": -237,
-      "p_c_ratio": 1.7248
+      "dte": 25,
+      "call_gex": 421,
+      "put_gex": -669,
+      "net_gex": -247,
+      "p_c_ratio": 1.5872
     },
     {
       "expiration": "2026-11-06",
-      "dte": 35,
-      "call_gex": 59,
-      "put_gex": -303,
-      "net_gex": -243,
-      "p_c_ratio": 5.1043
+      "dte": 32,
+      "call_gex": 151,
+      "put_gex": -338,
+      "net_gex": -187,
+      "p_c_ratio": 2.2418
+    },
+    {
+      "expiration": "2026-11-13",
+      "dte": 39,
+      "call_gex": 20,
+      "put_gex": -15,
+      "net_gex": 5,
+      "p_c_ratio": 0.7599
     }
   ],
   "putWall": 1100,

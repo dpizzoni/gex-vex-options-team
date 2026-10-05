@@ -1,50 +1,58 @@
 {
   "ticker": "CRWD",
-  "date": "2026-10-02",
-  "spot": 270.04,
+  "date": "2026-10-05",
+  "spot": 269.94,
   "expirations": [
     {
       "expiration": "2026-10-09",
-      "dte": 7,
-      "call_gex": 15511,
-      "put_gex": -7292,
-      "net_gex": 8219,
-      "p_c_ratio": 0.4701
+      "dte": 4,
+      "call_gex": 23090,
+      "put_gex": -14882,
+      "net_gex": 8208,
+      "p_c_ratio": 0.6445
     },
     {
       "expiration": "2026-10-16",
-      "dte": 14,
-      "call_gex": 41665,
-      "put_gex": -15482,
-      "net_gex": 26182,
-      "p_c_ratio": 0.3716
+      "dte": 11,
+      "call_gex": 43453,
+      "put_gex": -17369,
+      "net_gex": 26083,
+      "p_c_ratio": 0.3997
     },
     {
       "expiration": "2026-10-23",
-      "dte": 21,
-      "call_gex": 3654,
-      "put_gex": -2094,
-      "net_gex": 1560,
-      "p_c_ratio": 0.5731
+      "dte": 18,
+      "call_gex": 4002,
+      "put_gex": -2341,
+      "net_gex": 1661,
+      "p_c_ratio": 0.585
     },
     {
       "expiration": "2026-10-30",
-      "dte": 28,
-      "call_gex": 4476,
-      "put_gex": -2150,
-      "net_gex": 2326,
-      "p_c_ratio": 0.4804
+      "dte": 25,
+      "call_gex": 5204,
+      "put_gex": -2363,
+      "net_gex": 2841,
+      "p_c_ratio": 0.4541
     },
     {
       "expiration": "2026-11-06",
-      "dte": 35,
-      "call_gex": 976,
-      "put_gex": -411,
-      "net_gex": 565,
-      "p_c_ratio": 0.4214
+      "dte": 32,
+      "call_gex": 1108,
+      "put_gex": -473,
+      "net_gex": 635,
+      "p_c_ratio": 0.4266
+    },
+    {
+      "expiration": "2026-11-13",
+      "dte": 39,
+      "call_gex": 116,
+      "put_gex": -184,
+      "net_gex": -69,
+      "p_c_ratio": 1.5956
     }
   ],
   "putWall": 250,
-  "callWall": 275,
+  "callWall": 300,
   "limitedData": false
 }

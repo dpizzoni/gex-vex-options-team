@@ -1,47 +1,55 @@
 {
   "ticker": "BKNG",
-  "date": "2026-10-02",
-  "spot": 159.02,
+  "date": "2026-10-05",
+  "spot": 158.9,
   "expirations": [
     {
       "expiration": "2026-10-09",
-      "dte": 7,
-      "call_gex": 5075,
-      "put_gex": -10621,
-      "net_gex": -5546,
-      "p_c_ratio": 2.0928
+      "dte": 4,
+      "call_gex": 8817,
+      "put_gex": -18220,
+      "net_gex": -9403,
+      "p_c_ratio": 2.0665
     },
     {
       "expiration": "2026-10-16",
-      "dte": 14,
-      "call_gex": 61525,
-      "put_gex": -50903,
-      "net_gex": 10621,
-      "p_c_ratio": 0.8274
+      "dte": 11,
+      "call_gex": 74755,
+      "put_gex": -52436,
+      "net_gex": 22319,
+      "p_c_ratio": 0.7014
     },
     {
       "expiration": "2026-10-23",
-      "dte": 21,
-      "call_gex": 2147,
-      "put_gex": -4457,
-      "net_gex": -2310,
-      "p_c_ratio": 2.0762
+      "dte": 18,
+      "call_gex": 2049,
+      "put_gex": -4656,
+      "net_gex": -2608,
+      "p_c_ratio": 2.2729
     },
     {
       "expiration": "2026-10-30",
-      "dte": 28,
-      "call_gex": 3524,
-      "put_gex": -1718,
-      "net_gex": 1806,
-      "p_c_ratio": 0.4875
+      "dte": 25,
+      "call_gex": 4512,
+      "put_gex": -2319,
+      "net_gex": 2194,
+      "p_c_ratio": 0.5138
     },
     {
       "expiration": "2026-11-06",
-      "dte": 35,
-      "call_gex": 590,
-      "put_gex": -400,
-      "net_gex": 190,
-      "p_c_ratio": 0.6778
+      "dte": 32,
+      "call_gex": 698,
+      "put_gex": -529,
+      "net_gex": 168,
+      "p_c_ratio": 0.7585
+    },
+    {
+      "expiration": "2026-11-13",
+      "dte": 39,
+      "call_gex": 38,
+      "put_gex": -105,
+      "net_gex": -66,
+      "p_c_ratio": 2.7372
     }
   ],
   "putWall": 150,

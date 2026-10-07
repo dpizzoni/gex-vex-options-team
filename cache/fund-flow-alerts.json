@@ -1,20 +1,5 @@
 [
   {
-    "id": "XLI_2026-09-22_FUND_FLOW_SHIFT",
-    "ticker": "XLI",
-    "type": "QUIET_DISTRIBUTION",
-    "streak_days": 3,
-    "net_flow_dates": [
-      "2026-09-18",
-      "2026-09-21",
-      "2026-09-22"
-    ],
-    "net_flow_total": -1800000,
-    "price_change_pct": 0.31,
-    "date": "2026-09-22",
-    "detected_at": "2026-09-23T10:51:17.165Z"
-  },
-  {
     "id": "SPY_2026-09-23_FUND_FLOW_SHIFT",
     "ticker": "SPY",
     "type": "QUIET_ACCUMULATION",
@@ -313,5 +298,20 @@
     "price_change_pct": 0.79,
     "date": "2026-10-05",
     "detected_at": "2026-10-06T10:50:05.242Z"
+  },
+  {
+    "id": "SPY_2026-10-06_FUND_FLOW_SHIFT",
+    "ticker": "SPY",
+    "type": "QUIET_DISTRIBUTION",
+    "streak_days": 3,
+    "net_flow_dates": [
+      "2026-10-02",
+      "2026-10-05",
+      "2026-10-06"
+    ],
+    "net_flow_total": -19150000,
+    "price_change_pct": 1.23,
+    "date": "2026-10-06",
+    "detected_at": "2026-10-07T10:52:03.540Z"
   }
 ]

@@ -1,18 +1,50 @@
 {
   "ticker": "ETHA",
   "date": "2026-10-08",
-  "spot": 57.67,
+  "spot": 56.86,
   "expirations": [
     {
       "expiration": "2026-10-16",
       "dte": 8,
-      "call_gex": 28575,
-      "put_gex": -38680,
-      "net_gex": -10105,
-      "p_c_ratio": 1.3536
+      "call_gex": 26342,
+      "put_gex": -42566,
+      "net_gex": -16224,
+      "p_c_ratio": 1.6159
+    },
+    {
+      "expiration": "2026-10-23",
+      "dte": 15,
+      "call_gex": 0,
+      "put_gex": 0,
+      "net_gex": 0,
+      "p_c_ratio": 0
+    },
+    {
+      "expiration": "2026-10-30",
+      "dte": 22,
+      "call_gex": 0,
+      "put_gex": 0,
+      "net_gex": 0,
+      "p_c_ratio": 0
+    },
+    {
+      "expiration": "2026-11-06",
+      "dte": 29,
+      "call_gex": 0,
+      "put_gex": 0,
+      "net_gex": 0,
+      "p_c_ratio": 0
+    },
+    {
+      "expiration": "2026-11-13",
+      "dte": 36,
+      "call_gex": 0,
+      "put_gex": 0,
+      "net_gex": 0,
+      "p_c_ratio": 0
     }
   ],
-  "putWall": 57,
+  "putWall": 56,
   "callWall": 60,
-  "limitedData": true
+  "limitedData": false
 }

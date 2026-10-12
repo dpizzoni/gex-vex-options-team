@@ -1,47 +1,55 @@
 {
   "ticker": "SCHW",
-  "date": "2026-10-09",
-  "spot": 96.7,
+  "date": "2026-10-12",
+  "spot": 96.87,
   "expirations": [
     {
       "expiration": "2026-10-16",
-      "dte": 7,
-      "call_gex": 86024,
-      "put_gex": -141272,
-      "net_gex": -55248,
-      "p_c_ratio": 1.6422
+      "dte": 4,
+      "call_gex": 88596,
+      "put_gex": -141281,
+      "net_gex": -52685,
+      "p_c_ratio": 1.5947
     },
     {
       "expiration": "2026-10-23",
-      "dte": 14,
-      "call_gex": 7561,
-      "put_gex": -4969,
-      "net_gex": 2592,
-      "p_c_ratio": 0.6571
+      "dte": 11,
+      "call_gex": 6927,
+      "put_gex": -5027,
+      "net_gex": 1900,
+      "p_c_ratio": 0.7257
     },
     {
       "expiration": "2026-10-30",
-      "dte": 21,
-      "call_gex": 5751,
-      "put_gex": -4410,
-      "net_gex": 1341,
-      "p_c_ratio": 0.7668
+      "dte": 18,
+      "call_gex": 5986,
+      "put_gex": -4363,
+      "net_gex": 1623,
+      "p_c_ratio": 0.7288
     },
     {
       "expiration": "2026-11-06",
-      "dte": 28,
-      "call_gex": 2892,
-      "put_gex": -1161,
-      "net_gex": 1730,
-      "p_c_ratio": 0.4016
+      "dte": 25,
+      "call_gex": 2968,
+      "put_gex": -1314,
+      "net_gex": 1655,
+      "p_c_ratio": 0.4426
     },
     {
       "expiration": "2026-11-13",
-      "dte": 35,
-      "call_gex": 5469,
-      "put_gex": -563,
-      "net_gex": 4906,
-      "p_c_ratio": 0.1029
+      "dte": 32,
+      "call_gex": 5607,
+      "put_gex": -676,
+      "net_gex": 4931,
+      "p_c_ratio": 0.1206
+    },
+    {
+      "expiration": "2026-11-20",
+      "dte": 39,
+      "call_gex": 27507,
+      "put_gex": -30847,
+      "net_gex": -3341,
+      "p_c_ratio": 1.1214
     }
   ],
   "putWall": 95,

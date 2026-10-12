@@ -1,50 +1,58 @@
 {
   "ticker": "MRVL",
-  "date": "2026-10-09",
-  "spot": 275.28,
+  "date": "2026-10-12",
+  "spot": 270.71,
   "expirations": [
     {
       "expiration": "2026-10-16",
-      "dte": 7,
-      "call_gex": 100223,
-      "put_gex": -40629,
-      "net_gex": 59593,
-      "p_c_ratio": 0.4054
+      "dte": 4,
+      "call_gex": 117013,
+      "put_gex": -56658,
+      "net_gex": 60355,
+      "p_c_ratio": 0.4842
     },
     {
       "expiration": "2026-10-23",
-      "dte": 14,
-      "call_gex": 12464,
-      "put_gex": -9013,
-      "net_gex": 3451,
-      "p_c_ratio": 0.7231
+      "dte": 11,
+      "call_gex": 13515,
+      "put_gex": -10970,
+      "net_gex": 2546,
+      "p_c_ratio": 0.8116
     },
     {
       "expiration": "2026-10-30",
-      "dte": 21,
-      "call_gex": 15907,
-      "put_gex": -5933,
-      "net_gex": 9974,
-      "p_c_ratio": 0.373
+      "dte": 18,
+      "call_gex": 15646,
+      "put_gex": -7447,
+      "net_gex": 8199,
+      "p_c_ratio": 0.476
     },
     {
       "expiration": "2026-11-06",
-      "dte": 28,
-      "call_gex": 3077,
-      "put_gex": -3822,
-      "net_gex": -745,
-      "p_c_ratio": 1.2421
+      "dte": 25,
+      "call_gex": 5178,
+      "put_gex": -4840,
+      "net_gex": 338,
+      "p_c_ratio": 0.9348
     },
     {
       "expiration": "2026-11-13",
-      "dte": 35,
-      "call_gex": 1029,
-      "put_gex": -2221,
-      "net_gex": -1192,
-      "p_c_ratio": 2.1589
+      "dte": 32,
+      "call_gex": 1292,
+      "put_gex": -2916,
+      "net_gex": -1624,
+      "p_c_ratio": 2.2564
+    },
+    {
+      "expiration": "2026-11-20",
+      "dte": 39,
+      "call_gex": 39605,
+      "put_gex": -21557,
+      "net_gex": 18048,
+      "p_c_ratio": 0.5443
     }
   ],
-  "putWall": 270,
-  "callWall": 280,
+  "putWall": 250,
+  "callWall": 300,
   "limitedData": false
 }

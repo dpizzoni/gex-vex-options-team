@@ -1,47 +1,55 @@
 {
   "ticker": "SBUX",
-  "date": "2026-10-09",
-  "spot": 90.75,
+  "date": "2026-10-12",
+  "spot": 91.0396,
   "expirations": [
     {
       "expiration": "2026-10-16",
-      "dte": 7,
-      "call_gex": 66004,
-      "put_gex": -97784,
-      "net_gex": -31780,
-      "p_c_ratio": 1.4815
+      "dte": 4,
+      "call_gex": 72945,
+      "put_gex": -109510,
+      "net_gex": -36564,
+      "p_c_ratio": 1.5013
     },
     {
       "expiration": "2026-10-23",
-      "dte": 14,
-      "call_gex": 11404,
-      "put_gex": -17204,
-      "net_gex": -5799,
-      "p_c_ratio": 1.5085
+      "dte": 11,
+      "call_gex": 9003,
+      "put_gex": -26600,
+      "net_gex": -17597,
+      "p_c_ratio": 2.9546
     },
     {
       "expiration": "2026-10-30",
-      "dte": 21,
-      "call_gex": 9035,
-      "put_gex": -8983,
-      "net_gex": 52,
-      "p_c_ratio": 0.9942
+      "dte": 18,
+      "call_gex": 9176,
+      "put_gex": -13872,
+      "net_gex": -4696,
+      "p_c_ratio": 1.5117
     },
     {
       "expiration": "2026-11-06",
-      "dte": 28,
-      "call_gex": 2776,
-      "put_gex": -2639,
-      "net_gex": 137,
-      "p_c_ratio": 0.9506
+      "dte": 25,
+      "call_gex": 3029,
+      "put_gex": -3048,
+      "net_gex": -18,
+      "p_c_ratio": 1.006
     },
     {
       "expiration": "2026-11-13",
-      "dte": 35,
-      "call_gex": 785,
-      "put_gex": -3444,
-      "net_gex": -2659,
-      "p_c_ratio": 4.3879
+      "dte": 32,
+      "call_gex": 854,
+      "put_gex": -4251,
+      "net_gex": -3397,
+      "p_c_ratio": 4.9759
+    },
+    {
+      "expiration": "2026-11-20",
+      "dte": 39,
+      "call_gex": 64024,
+      "put_gex": -54885,
+      "net_gex": 9139,
+      "p_c_ratio": 0.8573
     }
   ],
   "putWall": 90,

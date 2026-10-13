@@ -1,26 +1,26 @@
 {
   "ticker": "EXC",
-  "date": "2026-10-12",
-  "spot": 42.12,
+  "date": "2026-10-13",
+  "spot": 42.55,
   "expirations": [
     {
       "expiration": "2026-10-16",
-      "dte": 4,
-      "call_gex": 66383,
-      "put_gex": -23830,
-      "net_gex": 42553,
-      "p_c_ratio": 0.359
+      "dte": 3,
+      "call_gex": 98511,
+      "put_gex": -149251,
+      "net_gex": -50740,
+      "p_c_ratio": 1.5151
     },
     {
       "expiration": "2026-11-20",
-      "dte": 39,
-      "call_gex": 16511,
-      "put_gex": -5729,
-      "net_gex": 10782,
-      "p_c_ratio": 0.347
+      "dte": 38,
+      "call_gex": 21992,
+      "put_gex": -5550,
+      "net_gex": 16442,
+      "p_c_ratio": 0.2524
     }
   ],
-  "putWall": 40,
+  "putWall": 42,
   "callWall": 43,
   "limitedData": true
 }

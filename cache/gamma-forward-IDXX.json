@@ -1,15 +1,15 @@
 {
   "ticker": "IDXX",
   "date": "2026-10-14",
-  "spot": null,
+  "spot": 525.635,
   "expirations": [
     {
       "expiration": "2026-10-16",
       "dte": 2,
-      "call_gex": 492,
-      "put_gex": -347,
-      "net_gex": 144,
-      "p_c_ratio": 0.7065
+      "call_gex": 505,
+      "put_gex": -324,
+      "net_gex": 181,
+      "p_c_ratio": 0.6418
     },
     {
       "expiration": "2026-11-20",
@@ -17,10 +17,10 @@
       "call_gex": 30,
       "put_gex": -35,
       "net_gex": -5,
-      "p_c_ratio": 1.1594
+      "p_c_ratio": 1.1566
     }
   ],
-  "putWall": null,
-  "callWall": null,
+  "putWall": 510,
+  "callWall": 540,
   "limitedData": true
 }

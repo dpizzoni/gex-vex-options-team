@@ -1,26 +1,26 @@
 {
   "ticker": "FAST",
   "date": "2026-10-14",
-  "spot": 51.9385,
+  "spot": 52.17,
   "expirations": [
     {
       "expiration": "2026-10-16",
       "dte": 2,
-      "call_gex": 93193,
-      "put_gex": -140946,
-      "net_gex": -47753,
-      "p_c_ratio": 1.5124
+      "call_gex": 70105,
+      "put_gex": -34367,
+      "net_gex": 35738,
+      "p_c_ratio": 0.4902
     },
     {
       "expiration": "2026-11-20",
       "dte": 37,
-      "call_gex": 103022,
-      "put_gex": -27012,
-      "net_gex": 76010,
-      "p_c_ratio": 0.2622
+      "call_gex": 83983,
+      "put_gex": -40385,
+      "net_gex": 43598,
+      "p_c_ratio": 0.4809
     }
   ],
-  "putWall": 50,
-  "callWall": 55,
+  "putWall": 47.5,
+  "callWall": 52.5,
   "limitedData": true
 }

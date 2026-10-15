@@ -1,26 +1,26 @@
 {
   "ticker": "CTSH",
   "date": "2026-10-15",
-  "spot": 63.35,
+  "spot": 65.9,
   "expirations": [
     {
       "expiration": "2026-10-16",
       "dte": 1,
-      "call_gex": 52095,
-      "put_gex": -16316,
-      "net_gex": 35779,
-      "p_c_ratio": 0.3132
+      "call_gex": 48001,
+      "put_gex": -13837,
+      "net_gex": 34163,
+      "p_c_ratio": 0.2883
     },
     {
       "expiration": "2026-11-20",
       "dte": 36,
-      "call_gex": 11717,
-      "put_gex": -2029,
-      "net_gex": 9688,
-      "p_c_ratio": 0.1731
+      "call_gex": 11894,
+      "put_gex": -1819,
+      "net_gex": 10076,
+      "p_c_ratio": 0.1529
     }
   ],
   "putWall": 60,
-  "callWall": 65,
+  "callWall": 67.5,
   "limitedData": true
 }

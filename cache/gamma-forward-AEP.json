@@ -1,26 +1,18 @@
 {
   "ticker": "AEP",
-  "date": "2026-10-15",
-  "spot": 124.29,
+  "date": "2026-10-16",
+  "spot": null,
   "expirations": [
     {
-      "expiration": "2026-10-16",
-      "dte": 1,
-      "call_gex": 18454,
-      "put_gex": -17336,
-      "net_gex": 1118,
-      "p_c_ratio": 0.9394
-    },
-    {
       "expiration": "2026-11-20",
-      "dte": 36,
-      "call_gex": 30309,
-      "put_gex": -14817,
-      "net_gex": 15491,
-      "p_c_ratio": 0.4889
+      "dte": 35,
+      "call_gex": 28544,
+      "put_gex": -16076,
+      "net_gex": 12469,
+      "p_c_ratio": 0.5632
     }
   ],
-  "putWall": 115,
-  "callWall": 130,
+  "putWall": null,
+  "callWall": null,
   "limitedData": true
 }

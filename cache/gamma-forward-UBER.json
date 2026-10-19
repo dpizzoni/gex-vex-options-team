@@ -1,47 +1,55 @@
 {
   "ticker": "UBER",
-  "date": "2026-10-16",
-  "spot": 70.35,
+  "date": "2026-10-19",
+  "spot": 70.25,
   "expirations": [
     {
       "expiration": "2026-10-23",
-      "dte": 7,
-      "call_gex": 166302,
-      "put_gex": -145139,
-      "net_gex": 21164,
-      "p_c_ratio": 0.8727
+      "dte": 4,
+      "call_gex": 215924,
+      "put_gex": -197232,
+      "net_gex": 18693,
+      "p_c_ratio": 0.9134
     },
     {
       "expiration": "2026-10-30",
-      "dte": 14,
-      "call_gex": 106418,
-      "put_gex": -65289,
-      "net_gex": 41129,
-      "p_c_ratio": 0.6135
+      "dte": 11,
+      "call_gex": 118861,
+      "put_gex": -89906,
+      "net_gex": 28955,
+      "p_c_ratio": 0.7564
     },
     {
       "expiration": "2026-11-06",
-      "dte": 21,
-      "call_gex": 32530,
-      "put_gex": -37073,
-      "net_gex": -4543,
-      "p_c_ratio": 1.1397
+      "dte": 18,
+      "call_gex": 33231,
+      "put_gex": -76979,
+      "net_gex": -43748,
+      "p_c_ratio": 2.3165
     },
     {
       "expiration": "2026-11-13",
-      "dte": 28,
-      "call_gex": 12150,
-      "put_gex": -16314,
-      "net_gex": -4164,
-      "p_c_ratio": 1.3427
+      "dte": 25,
+      "call_gex": 11703,
+      "put_gex": -19165,
+      "net_gex": -7463,
+      "p_c_ratio": 1.6377
     },
     {
       "expiration": "2026-11-20",
-      "dte": 35,
-      "call_gex": 210070,
-      "put_gex": -189823,
-      "net_gex": 20247,
-      "p_c_ratio": 0.9036
+      "dte": 32,
+      "call_gex": 213001,
+      "put_gex": -206772,
+      "net_gex": 6229,
+      "p_c_ratio": 0.9708
+    },
+    {
+      "expiration": "2026-11-27",
+      "dte": 39,
+      "call_gex": 1673,
+      "put_gex": -2357,
+      "net_gex": -685,
+      "p_c_ratio": 1.4094
     }
   ],
   "putWall": 70,

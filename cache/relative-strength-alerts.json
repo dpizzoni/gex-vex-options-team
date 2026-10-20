@@ -1,367 +1,507 @@
 {
-  "date": "2026-10-19",
-  "generatedAt": "2026-10-19T20:46:01.831Z",
+  "date": "2026-10-20",
+  "generatedAt": "2026-10-20T20:46:08.754Z",
   "dynamicCutoffs": {
-    "delta1WCutoff": 45.833333333333336,
-    "delta1MCutoff": 61.434108527131784,
+    "delta1WCutoff": 41.666666666666664,
+    "delta1MCutoff": 58.23643410852712,
     "divergenceDelta1WCutoff": 25
   },
   "buckets": {
     "liderazgo": [
       {
-        "id": "2026-10-19_MLPX_REGIME_CROSS_UP",
-        "date": "2026-10-19",
-        "rule": "REGIME_CROSS_UP",
+        "id": "2026-10-20_XHS_LEADER_CROSS_UP",
+        "date": "2026-10-20",
+        "rule": "LEADER_CROSS_UP",
         "bucket": "liderazgo",
-        "ticker": "MLPX",
-        "name": "Infraestructura de energía",
-        "text": "MLPX pasó a más fuerte que el benchmark, sostenido 2 cierres (score 75%)",
-        "sortMagnitude": 1.75
+        "ticker": "XHS",
+        "name": "Servicios de salud",
+        "text": "XHS cruzó a nuevo líder (score 100%)",
+        "sortMagnitude": 2
       },
       {
-        "id": "2026-10-19_SHLD_REGIME_CROSS_UP",
-        "date": "2026-10-19",
-        "rule": "REGIME_CROSS_UP",
+        "id": "2026-10-20_KIE_LEADER_CROSS_UP",
+        "date": "2026-10-20",
+        "rule": "LEADER_CROSS_UP",
         "bucket": "liderazgo",
-        "ticker": "SHLD",
-        "name": "Tecnología militar",
-        "text": "SHLD pasó a más fuerte que el benchmark, sostenido 2 cierres (score 62.5%)",
-        "sortMagnitude": 1.625
+        "ticker": "KIE",
+        "name": "Seguros",
+        "text": "KIE cruzó a nuevo líder (score 95.8%)",
+        "sortMagnitude": 1.9583333333333335
       },
       {
-        "id": "2026-10-19_IAI_LEADER_CROSS_DOWN",
-        "date": "2026-10-19",
-        "rule": "LEADER_CROSS_DOWN",
+        "id": "2026-10-20_RSP_LEADER_CROSS_UP",
+        "date": "2026-10-20",
+        "rule": "LEADER_CROSS_UP",
         "bucket": "liderazgo",
-        "ticker": "IAI",
-        "name": "Brokers",
-        "text": "IAI cayó a nuevo rezagado (score 4.2%)",
-        "sortMagnitude": 0.9583333333333334
+        "ticker": "RSP",
+        "name": "S&P 500 Equiponderado",
+        "text": "RSP cruzó a nuevo líder (score 95.8%)",
+        "sortMagnitude": 1.9583333333333335
       },
       {
-        "id": "2026-10-19_FDN_REGIME_CROSS_DOWN",
-        "date": "2026-10-19",
-        "rule": "REGIME_CROSS_DOWN",
-        "bucket": "liderazgo",
-        "ticker": "FDN",
-        "name": "Empresas de internet",
-        "text": "FDN pasó a más débil que el benchmark, sostenido 2 cierres (score 8.3%)",
-        "sortMagnitude": 0.9166666666666666
-      },
-      {
-        "id": "2026-10-19_IXP_LEADER_CROSS_DOWN",
-        "date": "2026-10-19",
-        "rule": "LEADER_CROSS_DOWN",
-        "bucket": "liderazgo",
-        "ticker": "IXP",
-        "name": "Global servicios de comunicaciones",
-        "text": "IXP cayó a nuevo rezagado (score 8.3%)",
-        "sortMagnitude": 0.9166666666666666
-      },
-      {
-        "id": "2026-10-19_VEGI_LEADER_CROSS_DOWN",
-        "date": "2026-10-19",
-        "rule": "LEADER_CROSS_DOWN",
-        "bucket": "liderazgo",
-        "ticker": "VEGI",
-        "name": "Productores agrícolas",
-        "text": "VEGI cayó a nuevo rezagado (score 8.3%)",
-        "sortMagnitude": 0.9166666666666666
-      },
-      {
-        "id": "2026-10-19_KWEB_LEADER_CROSS_DOWN",
-        "date": "2026-10-19",
-        "rule": "LEADER_CROSS_DOWN",
-        "bucket": "liderazgo",
-        "ticker": "KWEB",
-        "name": "Internet en China",
-        "text": "KWEB cayó a nuevo rezagado (score 16.7%)",
-        "sortMagnitude": 0.8333333333333334
-      },
-      {
-        "id": "2026-10-19_MOO_LEADER_CROSS_DOWN",
-        "date": "2026-10-19",
-        "rule": "LEADER_CROSS_DOWN",
-        "bucket": "liderazgo",
-        "ticker": "MOO",
-        "name": "Agricultura",
-        "text": "MOO cayó a nuevo rezagado (score 16.7%)",
-        "sortMagnitude": 0.8333333333333334
-      },
-      {
-        "id": "2026-10-19_XLC_REGIME_CROSS_DOWN",
-        "date": "2026-10-19",
-        "rule": "REGIME_CROSS_DOWN",
-        "bucket": "liderazgo",
-        "ticker": "XLC",
-        "name": "Servicios de comunicación",
-        "text": "XLC pasó a más débil que el benchmark, sostenido 2 cierres (score 20.8%)",
-        "sortMagnitude": 0.7916666666666666
-      },
-      {
-        "id": "2026-10-19_IGV_REGIME_CROSS_DOWN",
-        "date": "2026-10-19",
-        "rule": "REGIME_CROSS_DOWN",
-        "bucket": "liderazgo",
-        "ticker": "IGV",
-        "name": "Software de tecnología",
-        "text": "IGV pasó a más débil que el benchmark, sostenido 2 cierres (score 25%)",
-        "sortMagnitude": 0.75
-      },
-      {
-        "id": "2026-10-19_IBB_REGIME_CROSS_DOWN",
-        "date": "2026-10-19",
-        "rule": "REGIME_CROSS_DOWN",
+        "id": "2026-10-20_IBB_LEADER_CROSS_UP",
+        "date": "2026-10-20",
+        "rule": "LEADER_CROSS_UP",
         "bucket": "liderazgo",
         "ticker": "IBB",
         "name": "Biotecnología",
-        "text": "IBB pasó a más débil que el benchmark, sostenido 2 cierres (score 33.3%)",
+        "text": "IBB cruzó a nuevo líder (score 87.5%)",
+        "sortMagnitude": 1.875
+      },
+      {
+        "id": "2026-10-20_XLU_LEADER_CROSS_UP",
+        "date": "2026-10-20",
+        "rule": "LEADER_CROSS_UP",
+        "bucket": "liderazgo",
+        "ticker": "XLU",
+        "name": "Servicios públicos",
+        "text": "XLU cruzó a nuevo líder (score 87.5%)",
+        "sortMagnitude": 1.875
+      },
+      {
+        "id": "2026-10-20_XLF_LEADER_CROSS_UP",
+        "date": "2026-10-20",
+        "rule": "LEADER_CROSS_UP",
+        "bucket": "liderazgo",
+        "ticker": "XLF",
+        "name": "Servicios financieros",
+        "text": "XLF cruzó a nuevo líder (score 83.3%)",
+        "sortMagnitude": 1.8333333333333335
+      },
+      {
+        "id": "2026-10-20_MLPX_LEADER_CROSS_UP",
+        "date": "2026-10-20",
+        "rule": "LEADER_CROSS_UP",
+        "bucket": "liderazgo",
+        "ticker": "MLPX",
+        "name": "Infraestructura de energía",
+        "text": "MLPX cruzó a nuevo líder (score 83.3%)",
+        "sortMagnitude": 1.8333333333333335
+      },
+      {
+        "id": "2026-10-20_XLI_LEADER_CROSS_DOWN",
+        "date": "2026-10-20",
+        "rule": "LEADER_CROSS_DOWN",
+        "bucket": "liderazgo",
+        "ticker": "XLI",
+        "name": "Sector industrial",
+        "text": "XLI cayó a nuevo rezagado (score 8.3%)",
+        "sortMagnitude": 0.9166666666666666
+      },
+      {
+        "id": "2026-10-20_GDX_LEADER_CROSS_DOWN",
+        "date": "2026-10-20",
+        "rule": "LEADER_CROSS_DOWN",
+        "bucket": "liderazgo",
+        "ticker": "GDX",
+        "name": "Minería de oro",
+        "text": "GDX cayó a nuevo rezagado (score 8.3%)",
+        "sortMagnitude": 0.9166666666666666
+      },
+      {
+        "id": "2026-10-20_GDX_REGIME_CROSS_DOWN",
+        "date": "2026-10-20",
+        "rule": "REGIME_CROSS_DOWN",
+        "bucket": "liderazgo",
+        "ticker": "GDX",
+        "name": "Minería de oro",
+        "text": "GDX pasó a más débil que el benchmark, sostenido 2 cierres (score 8.3%)",
+        "sortMagnitude": 0.9166666666666666
+      },
+      {
+        "id": "2026-10-20_XLC_LEADER_CROSS_DOWN",
+        "date": "2026-10-20",
+        "rule": "LEADER_CROSS_DOWN",
+        "bucket": "liderazgo",
+        "ticker": "XLC",
+        "name": "Servicios de comunicación",
+        "text": "XLC cayó a nuevo rezagado (score 12.5%)",
+        "sortMagnitude": 0.875
+      },
+      {
+        "id": "2026-10-20_KWEB_REGIME_CROSS_DOWN",
+        "date": "2026-10-20",
+        "rule": "REGIME_CROSS_DOWN",
+        "bucket": "liderazgo",
+        "ticker": "KWEB",
+        "name": "Internet en China",
+        "text": "KWEB pasó a más débil que el benchmark, sostenido 2 cierres (score 16.7%)",
+        "sortMagnitude": 0.8333333333333334
+      },
+      {
+        "id": "2026-10-20_MOO_REGIME_CROSS_DOWN",
+        "date": "2026-10-20",
+        "rule": "REGIME_CROSS_DOWN",
+        "bucket": "liderazgo",
+        "ticker": "MOO",
+        "name": "Agricultura",
+        "text": "MOO pasó a más débil que el benchmark, sostenido 2 cierres (score 25%)",
+        "sortMagnitude": 0.75
+      },
+      {
+        "id": "2026-10-20_ITA_REGIME_CROSS_DOWN",
+        "date": "2026-10-20",
+        "rule": "REGIME_CROSS_DOWN",
+        "bucket": "liderazgo",
+        "ticker": "ITA",
+        "name": "Aeroespacial y defensa",
+        "text": "ITA pasó a más débil que el benchmark, sostenido 2 cierres (score 33.3%)",
         "sortMagnitude": 0.6666666666666667
       }
     ],
     "rotacion": [
       {
-        "id": "2026-10-19_XLV_LEVEL_PLUS_ACCEL",
-        "date": "2026-10-19",
+        "id": "2026-10-20_IBB_LEVEL_PLUS_ACCEL",
+        "date": "2026-10-20",
         "rule": "LEVEL_PLUS_ACCEL",
         "bucket": "rotacion",
-        "ticker": "XLV",
-        "name": "Sector Salud",
-        "text": "XLV líder ganando tracción: score 91.7% y Δ1W +62.5pp",
-        "sortMagnitude": 2062.5
+        "ticker": "IBB",
+        "name": "Biotecnología",
+        "text": "IBB líder ganando tracción: score 87.5% y Δ1W +66.7pp",
+        "sortMagnitude": 2066.6666666666665
       },
       {
-        "id": "2026-10-19_XLY_LEVEL_PLUS_ACCEL",
-        "date": "2026-10-19",
+        "id": "2026-10-20_IPAY_LEVEL_PLUS_ACCEL",
+        "date": "2026-10-20",
+        "rule": "LEVEL_PLUS_ACCEL",
+        "bucket": "rotacion",
+        "ticker": "IPAY",
+        "name": "Servicios de pagos",
+        "text": "IPAY líder ganando tracción: score 100% y Δ1W +41.7pp",
+        "sortMagnitude": 2041.6666666666667
+      },
+      {
+        "id": "2026-10-20_XLY_LEVEL_PLUS_ACCEL",
+        "date": "2026-10-20",
         "rule": "LEVEL_PLUS_ACCEL",
         "bucket": "rotacion",
         "ticker": "XLY",
         "name": "Consumo discrecional",
-        "text": "XLY líder ganando tracción: score 100% y Δ1W +45.8pp",
-        "sortMagnitude": 2045.8333333333333
+        "text": "XLY líder ganando tracción: score 100% y Δ1W +41.7pp",
+        "sortMagnitude": 2041.6666666666667
       },
       {
-        "id": "2026-10-19_XLB_LEVEL_PLUS_ACCEL",
-        "date": "2026-10-19",
+        "id": "2026-10-20_SOCL_LEVEL_PLUS_ACCEL",
+        "date": "2026-10-20",
+        "rule": "LEVEL_PLUS_ACCEL",
+        "bucket": "rotacion",
+        "ticker": "SOCL",
+        "name": "Redes sociales",
+        "text": "SOCL líder ganando tracción: score 79.2% y Δ1W +41.7pp",
+        "sortMagnitude": 2041.6666666666667
+      },
+      {
+        "id": "2026-10-20_XLB_LEVEL_PLUS_ACCEL",
+        "date": "2026-10-20",
         "rule": "LEVEL_PLUS_ACCEL",
         "bucket": "rotacion",
         "ticker": "XLB",
         "name": "Materiales básicos",
-        "text": "XLB líder ganando tracción: score 83.3% y Δ1W +45.8pp",
-        "sortMagnitude": 2045.8333333333333
+        "text": "XLB líder ganando tracción: score 91.7% y Δ1W +41.7pp",
+        "sortMagnitude": 2041.6666666666667
       },
       {
-        "id": "2026-10-19_XLV_ROTATION_ACCEL",
-        "date": "2026-10-19",
+        "id": "2026-10-20_IBB_ROTATION_ACCEL",
+        "date": "2026-10-20",
         "rule": "ROTATION_ACCEL",
         "bucket": "rotacion",
-        "ticker": "XLV",
-        "name": "Sector Salud",
-        "text": "XLV rotación acelerada: Δ1W +62.5pp, Δ1M +66.1pp",
-        "sortMagnitude": 1128.5852713178294
+        "ticker": "IBB",
+        "name": "Biotecnología",
+        "text": "IBB rotación acelerada: Δ1W +66.7pp, Δ1M +68.9pp",
+        "sortMagnitude": 1135.562015503876
       },
       {
-        "id": "2026-10-19_XLY_ROTATION_ACCEL",
-        "date": "2026-10-19",
+        "id": "2026-10-20_IPAY_ROTATION_ACCEL",
+        "date": "2026-10-20",
+        "rule": "ROTATION_ACCEL",
+        "bucket": "rotacion",
+        "ticker": "IPAY",
+        "name": "Servicios de pagos",
+        "text": "IPAY rotación acelerada: Δ1W +41.7pp, Δ1M +67.4pp",
+        "sortMagnitude": 1109.108527131783
+      },
+      {
+        "id": "2026-10-20_XLY_ROTATION_ACCEL",
+        "date": "2026-10-20",
         "rule": "ROTATION_ACCEL",
         "bucket": "rotacion",
         "ticker": "XLY",
         "name": "Consumo discrecional",
-        "text": "XLY rotación acelerada: Δ1W +45.8pp, Δ1M +69.8pp",
-        "sortMagnitude": 1115.6007751937984
+        "text": "XLY rotación acelerada: Δ1W +41.7pp, Δ1M +67.4pp",
+        "sortMagnitude": 1109.108527131783
       },
       {
-        "id": "2026-10-19_XLB_ROTATION_ACCEL",
-        "date": "2026-10-19",
+        "id": "2026-10-20_XLB_ROTATION_ACCEL",
+        "date": "2026-10-20",
         "rule": "ROTATION_ACCEL",
         "bucket": "rotacion",
         "ticker": "XLB",
         "name": "Materiales básicos",
-        "text": "XLB rotación acelerada: Δ1W +45.8pp, Δ1M +62.4pp",
-        "sortMagnitude": 1108.2364341085272
+        "text": "XLB rotación acelerada: Δ1W +41.7pp, Δ1M +63.8pp",
+        "sortMagnitude": 1105.4263565891472
       },
       {
-        "id": "2026-10-19_FDN_ROTATION_ACCEL",
-        "date": "2026-10-19",
+        "id": "2026-10-20_SOCL_ROTATION_ACCEL",
+        "date": "2026-10-20",
         "rule": "ROTATION_ACCEL",
         "bucket": "rotacion",
-        "ticker": "FDN",
-        "name": "Empresas de internet",
-        "text": "FDN rotación acelerada: Δ1W -87.5pp, Δ1M -89.3pp",
-        "sortMagnitude": 176.8410852713178
+        "ticker": "SOCL",
+        "name": "Redes sociales",
+        "text": "SOCL rotación acelerada: Δ1W +41.7pp, Δ1M +58.2pp",
+        "sortMagnitude": 1099.9031007751937
       },
       {
-        "id": "2026-10-19_CIBR_ROTATION_ACCEL",
-        "date": "2026-10-19",
-        "rule": "ROTATION_ACCEL",
-        "bucket": "rotacion",
-        "ticker": "CIBR",
-        "name": "Nasdaq Ciberseguridad",
-        "text": "CIBR rotación acelerada: Δ1W -83.3pp, Δ1M -88.9pp",
-        "sortMagnitude": 172.18992248062017
-      },
-      {
-        "id": "2026-10-19_HACK_ROTATION_ACCEL",
-        "date": "2026-10-19",
-        "rule": "ROTATION_ACCEL",
-        "bucket": "rotacion",
-        "ticker": "HACK",
-        "name": "Ciberseguridad",
-        "text": "HACK rotación acelerada: Δ1W -79.2pp, Δ1M -84.7pp",
-        "sortMagnitude": 163.8565891472868
-      },
-      {
-        "id": "2026-10-19_IGV_ROTATION_ACCEL",
-        "date": "2026-10-19",
-        "rule": "ROTATION_ACCEL",
-        "bucket": "rotacion",
-        "ticker": "IGV",
-        "name": "Software de tecnología",
-        "text": "IGV rotación acelerada: Δ1W -62.5pp, Δ1M -63.4pp",
-        "sortMagnitude": 125.87209302325581
-      },
-      {
-        "id": "2026-10-19_BOAT_ROTATION_ACCEL",
-        "date": "2026-10-19",
+        "id": "2026-10-20_BOAT_ROTATION_ACCEL",
+        "date": "2026-10-20",
         "rule": "ROTATION_ACCEL",
         "bucket": "rotacion",
         "ticker": "BOAT",
         "name": "Transporte marítimo",
-        "text": "BOAT rotación acelerada: Δ1W -62.5pp, Δ1M -62.5pp",
-        "sortMagnitude": 125
+        "text": "BOAT rotación acelerada: Δ1W -75.0pp, Δ1M -76.8pp",
+        "sortMagnitude": 151.8410852713178
+      },
+      {
+        "id": "2026-10-20_CIBR_ROTATION_ACCEL",
+        "date": "2026-10-20",
+        "rule": "ROTATION_ACCEL",
+        "bucket": "rotacion",
+        "ticker": "CIBR",
+        "name": "Nasdaq Ciberseguridad",
+        "text": "CIBR rotación acelerada: Δ1W -45.8pp, Δ1M -66.1pp",
+        "sortMagnitude": 111.91860465116278
+      },
+      {
+        "id": "2026-10-20_HACK_ROTATION_ACCEL",
+        "date": "2026-10-20",
+        "rule": "ROTATION_ACCEL",
+        "bucket": "rotacion",
+        "ticker": "HACK",
+        "name": "Ciberseguridad",
+        "text": "HACK rotación acelerada: Δ1W -41.7pp, Δ1M -63.8pp",
+        "sortMagnitude": 105.42635658914728
       }
     ],
     "confirmacion": [
       {
-        "id": "2026-10-19_XLE_CONFIRMED_LEADER",
-        "date": "2026-10-19",
-        "rule": "CONFIRMED_LEADER",
-        "bucket": "confirmacion",
-        "ticker": "XLE",
-        "name": "Sector energético",
-        "text": "XLE líder confirmado: score 95.8% y a -1.0% de su máximo de 52 semanas",
-        "sortMagnitude": 1.9583333333333335
-      },
-      {
-        "id": "2026-10-19_XLV_CONFIRMED_LEADER",
-        "date": "2026-10-19",
+        "id": "2026-10-20_XLV_CONFIRMED_LEADER",
+        "date": "2026-10-20",
         "rule": "CONFIRMED_LEADER",
         "bucket": "confirmacion",
         "ticker": "XLV",
         "name": "Sector Salud",
-        "text": "XLV líder confirmado: score 91.7% y a -1.8% de su máximo de 52 semanas",
+        "text": "XLV líder confirmado: score 100% y a -0.1% de su máximo de 52 semanas",
+        "sortMagnitude": 2
+      },
+      {
+        "id": "2026-10-20_XHS_CONFIRMED_LEADER",
+        "date": "2026-10-20",
+        "rule": "CONFIRMED_LEADER",
+        "bucket": "confirmacion",
+        "ticker": "XHS",
+        "name": "Servicios de salud",
+        "text": "XHS líder confirmado: score 100% y a -0.0% de su máximo de 52 semanas",
+        "sortMagnitude": 2
+      },
+      {
+        "id": "2026-10-20_XLP_CONFIRMED_LEADER",
+        "date": "2026-10-20",
+        "rule": "CONFIRMED_LEADER",
+        "bucket": "confirmacion",
+        "ticker": "XLP",
+        "name": "Bienes de consumo básicos",
+        "text": "XLP líder confirmado: score 95.8% y a -2.7% de su máximo de 52 semanas",
+        "sortMagnitude": 1.9583333333333335
+      },
+      {
+        "id": "2026-10-20_IWD_CONFIRMED_LEADER",
+        "date": "2026-10-20",
+        "rule": "CONFIRMED_LEADER",
+        "bucket": "confirmacion",
+        "ticker": "IWD",
+        "name": "Value",
+        "text": "IWD líder confirmado: score 95.8% y a -1.0% de su máximo de 52 semanas",
+        "sortMagnitude": 1.9583333333333335
+      },
+      {
+        "id": "2026-10-20_XLE_CONFIRMED_LEADER",
+        "date": "2026-10-20",
+        "rule": "CONFIRMED_LEADER",
+        "bucket": "confirmacion",
+        "ticker": "XLE",
+        "name": "Sector energético",
+        "text": "XLE líder confirmado: score 91.7% y a -0.8% de su máximo de 52 semanas",
         "sortMagnitude": 1.9166666666666665
       },
       {
-        "id": "2026-10-19_XOP_CONFIRMED_LEADER",
-        "date": "2026-10-19",
+        "id": "2026-10-20_XOP_CONFIRMED_LEADER",
+        "date": "2026-10-20",
         "rule": "CONFIRMED_LEADER",
         "bucket": "confirmacion",
         "ticker": "XOP",
         "name": "Exploración de Oil & Gas",
-        "text": "XOP líder confirmado: score 91.7% y a -1.4% de su máximo de 52 semanas",
+        "text": "XOP líder confirmado: score 91.7% y a -1.1% de su máximo de 52 semanas",
         "sortMagnitude": 1.9166666666666665
       },
       {
-        "id": "2026-10-19_IWD_DIVERGENCE_UP",
-        "date": "2026-10-19",
+        "id": "2026-10-20_MLPX_DIVERGENCE_UP",
+        "date": "2026-10-20",
         "rule": "DIVERGENCE_UP",
         "bucket": "confirmacion",
-        "ticker": "IWD",
-        "name": "Value",
-        "text": "IWD divergencia: score sube (Δ1W +37.5pp) con precio plano/negativo esta semana (0.3%)",
-        "sortMagnitude": 1.9166666666666665
+        "ticker": "MLPX",
+        "name": "Infraestructura de energía",
+        "text": "MLPX divergencia: score sube (Δ1W +25.0pp) con precio plano/negativo esta semana (-0.9%)",
+        "sortMagnitude": 1.8333333333333335
       },
       {
-        "id": "2026-10-19_IWD_CONFIRMED_LEADER",
-        "date": "2026-10-19",
-        "rule": "CONFIRMED_LEADER",
-        "bucket": "confirmacion",
-        "ticker": "IWD",
-        "name": "Value",
-        "text": "IWD líder confirmado: score 91.7% y a -1.8% de su máximo de 52 semanas",
-        "sortMagnitude": 1.9166666666666665
-      },
-      {
-        "id": "2026-10-19_XLF_DIVERGENCE_UP",
-        "date": "2026-10-19",
+        "id": "2026-10-20_SOCL_DIVERGENCE_UP",
+        "date": "2026-10-20",
         "rule": "DIVERGENCE_UP",
         "bucket": "confirmacion",
-        "ticker": "XLF",
-        "name": "Servicios financieros",
-        "text": "XLF divergencia: score sube (Δ1W +41.7pp) con precio plano/negativo esta semana (0.0%)",
-        "sortMagnitude": 1.75
+        "ticker": "SOCL",
+        "name": "Redes sociales",
+        "text": "SOCL divergencia: score sube (Δ1W +41.7pp) con precio plano/negativo esta semana (-1.0%)",
+        "sortMagnitude": 1.7916666666666665
       },
       {
-        "id": "2026-10-19_IYT_DIVERGENCE_UP",
-        "date": "2026-10-19",
-        "rule": "DIVERGENCE_UP",
-        "bucket": "confirmacion",
-        "ticker": "IYT",
-        "name": "Transporte",
-        "text": "IYT divergencia: score sube (Δ1W +50.0pp) con precio plano/negativo esta semana (-0.8%)",
-        "sortMagnitude": 1.5833333333333335
-      },
-      {
-        "id": "2026-10-19_ITA_DIVERGENCE_UP",
-        "date": "2026-10-19",
-        "rule": "DIVERGENCE_UP",
-        "bucket": "confirmacion",
-        "ticker": "ITA",
-        "name": "Aeroespacial y defensa",
-        "text": "ITA divergencia: score sube (Δ1W +37.5pp) con precio plano/negativo esta semana (0.8%)",
-        "sortMagnitude": 1.4166666666666667
-      },
-      {
-        "id": "2026-10-19_SLX_DIVERGENCE_UP",
-        "date": "2026-10-19",
+        "id": "2026-10-20_SLX_DIVERGENCE_UP",
+        "date": "2026-10-20",
         "rule": "DIVERGENCE_UP",
         "bucket": "confirmacion",
         "ticker": "SLX",
         "name": "Industria del acero",
-        "text": "SLX divergencia: score sube (Δ1W +33.3pp) con precio plano/negativo esta semana (-0.2%)",
+        "text": "SLX divergencia: score sube (Δ1W +33.3pp) con precio plano/negativo esta semana (0.4%)",
+        "sortMagnitude": 1.5
+      },
+      {
+        "id": "2026-10-20_OIH_DIVERGENCE_UP",
+        "date": "2026-10-20",
+        "rule": "DIVERGENCE_UP",
+        "bucket": "confirmacion",
+        "ticker": "OIH",
+        "name": "Servicios petroleros",
+        "text": "OIH divergencia: score sube (Δ1W +33.3pp) con precio plano/negativo esta semana (-1.4%)",
         "sortMagnitude": 1.4166666666666667
       },
       {
-        "id": "2026-10-19_KBE_DIVERGENCE_UP",
-        "date": "2026-10-19",
+        "id": "2026-10-20_IWM_DIVERGENCE_UP",
+        "date": "2026-10-20",
         "rule": "DIVERGENCE_UP",
         "bucket": "confirmacion",
-        "ticker": "KBE",
-        "name": "Bancos",
-        "text": "KBE divergencia: score sube (Δ1W +33.3pp) con precio plano/negativo esta semana (-0.4%)",
+        "ticker": "IWM",
+        "name": "Small Caps",
+        "text": "IWM divergencia: score sube (Δ1W +33.3pp) con precio plano/negativo esta semana (-0.3%)",
         "sortMagnitude": 1.3333333333333333
       },
       {
-        "id": "2026-10-19_IBB_DIVERGENCE_UP",
-        "date": "2026-10-19",
+        "id": "2026-10-20_IAI_DIVERGENCE_UP",
+        "date": "2026-10-20",
         "rule": "DIVERGENCE_UP",
         "bucket": "confirmacion",
-        "ticker": "IBB",
-        "name": "Biotecnología",
-        "text": "IBB divergencia: score sube (Δ1W +33.3pp) con precio plano/negativo esta semana (-0.1%)",
-        "sortMagnitude": 1.3333333333333333
+        "ticker": "IAI",
+        "name": "Brokers",
+        "text": "IAI divergencia: score sube (Δ1W +25.0pp) con precio plano/negativo esta semana (-0.8%)",
+        "sortMagnitude": 1.2916666666666667
+      },
+      {
+        "id": "2026-10-20_KCE_DIVERGENCE_UP",
+        "date": "2026-10-20",
+        "rule": "DIVERGENCE_UP",
+        "bucket": "confirmacion",
+        "ticker": "KCE",
+        "name": "Capital Markets",
+        "text": "KCE divergencia: score sube (Δ1W +25.0pp) con precio plano/negativo esta semana (-0.4%)",
+        "sortMagnitude": 1.25
       }
     ],
     "persistencia": [
       {
-        "id": "2026-10-19_PEJ_SUSTAINED_LEADERSHIP",
-        "date": "2026-10-19",
+        "id": "2026-10-20_XRT_SUSTAINED_LEADERSHIP",
+        "date": "2026-10-20",
         "rule": "SUSTAINED_LEADERSHIP",
         "bucket": "persistencia",
-        "ticker": "PEJ",
-        "name": "Ocio y entretenimiento",
-        "text": "PEJ liderazgo sostenido 5 sesiones seguidas (score actual 95.8%)",
+        "ticker": "XRT",
+        "name": "Comercio minorista",
+        "text": "XRT liderazgo sostenido 5 sesiones seguidas (score actual 100%)",
         "sortMagnitude": 5
       },
       {
-        "id": "2026-10-19_XOP_SUSTAINED_LEADERSHIP",
-        "date": "2026-10-19",
+        "id": "2026-10-20_PBJ_SUSTAINED_LEADERSHIP",
+        "date": "2026-10-20",
         "rule": "SUSTAINED_LEADERSHIP",
         "bucket": "persistencia",
-        "ticker": "XOP",
-        "name": "Exploración de Oil & Gas",
-        "text": "XOP liderazgo sostenido 5 sesiones seguidas (score actual 91.7%)",
+        "ticker": "PBJ",
+        "name": "Comida & Bebida",
+        "text": "PBJ liderazgo sostenido 5 sesiones seguidas (score actual 91.7%)",
+        "sortMagnitude": 5
+      },
+      {
+        "id": "2026-10-20_XLV_SUSTAINED_LEADERSHIP",
+        "date": "2026-10-20",
+        "rule": "SUSTAINED_LEADERSHIP",
+        "bucket": "persistencia",
+        "ticker": "XLV",
+        "name": "Sector Salud",
+        "text": "XLV liderazgo sostenido 5 sesiones seguidas (score actual 100%)",
+        "sortMagnitude": 5
+      },
+      {
+        "id": "2026-10-20_IHI_SUSTAINED_LEADERSHIP",
+        "date": "2026-10-20",
+        "rule": "SUSTAINED_LEADERSHIP",
+        "bucket": "persistencia",
+        "ticker": "IHI",
+        "name": "Dispositivos médicos",
+        "text": "IHI liderazgo sostenido 5 sesiones seguidas (score actual 100%)",
+        "sortMagnitude": 5
+      },
+      {
+        "id": "2026-10-20_XHS_SUSTAINED_LEADERSHIP",
+        "date": "2026-10-20",
+        "rule": "SUSTAINED_LEADERSHIP",
+        "bucket": "persistencia",
+        "ticker": "XHS",
+        "name": "Servicios de salud",
+        "text": "XHS liderazgo sostenido 5 sesiones seguidas (score actual 100%)",
+        "sortMagnitude": 5
+      },
+      {
+        "id": "2026-10-20_XLP_SUSTAINED_LEADERSHIP",
+        "date": "2026-10-20",
+        "rule": "SUSTAINED_LEADERSHIP",
+        "bucket": "persistencia",
+        "ticker": "XLP",
+        "name": "Bienes de consumo básicos",
+        "text": "XLP liderazgo sostenido 5 sesiones seguidas (score actual 95.8%)",
+        "sortMagnitude": 5
+      },
+      {
+        "id": "2026-10-20_XLU_SUSTAINED_LEADERSHIP",
+        "date": "2026-10-20",
+        "rule": "SUSTAINED_LEADERSHIP",
+        "bucket": "persistencia",
+        "ticker": "XLU",
+        "name": "Servicios públicos",
+        "text": "XLU liderazgo sostenido 5 sesiones seguidas (score actual 87.5%)",
+        "sortMagnitude": 5
+      },
+      {
+        "id": "2026-10-20_RSP_SUSTAINED_LEADERSHIP",
+        "date": "2026-10-20",
+        "rule": "SUSTAINED_LEADERSHIP",
+        "bucket": "persistencia",
+        "ticker": "RSP",
+        "name": "S&P 500 Equiponderado",
+        "text": "RSP liderazgo sostenido 5 sesiones seguidas (score actual 95.8%)",
+        "sortMagnitude": 5
+      },
+      {
+        "id": "2026-10-20_IWD_SUSTAINED_LEADERSHIP",
+        "date": "2026-10-20",
+        "rule": "SUSTAINED_LEADERSHIP",
+        "bucket": "persistencia",
+        "ticker": "IWD",
+        "name": "Value",
+        "text": "IWD liderazgo sostenido 5 sesiones seguidas (score actual 95.8%)",
         "sortMagnitude": 5
       }
     ]

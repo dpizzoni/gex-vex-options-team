@@ -1745,6 +1745,16 @@
     "spot": 165.91
   },
   {
+    "id": "GLD_2026-10-21",
+    "ticker": "GLD",
+    "date": "2026-10-21",
+    "detected_at": "2026-10-21T15:17:14.387Z",
+    "type": "LONG_GAMMA_ENTRY",
+    "net_gex": 112194,
+    "ema3_net_gex": 83963,
+    "spot": 378.44
+  },
+  {
     "id": "IBIT_2026-10-21_DOUBLE_GEX",
     "ticker": "IBIT",
     "date": "2026-10-21",
@@ -1859,5 +1869,26 @@
     "previous_net_gex": 451,
     "ema3_net_gex": 863,
     "spot": 500.01
+  },
+  {
+    "id": "VZ_2026-10-21",
+    "ticker": "VZ",
+    "date": "2026-10-21",
+    "detected_at": "2026-10-21T15:17:14.404Z",
+    "type": "SHORT_GAMMA_ENTRY",
+    "net_gex": -303732,
+    "ema3_net_gex": 219560,
+    "spot": 43.34
+  },
+  {
+    "id": "ZS_2026-10-21_DOUBLE_GEX",
+    "ticker": "ZS",
+    "date": "2026-10-21",
+    "detected_at": "2026-10-21T15:17:14.405Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 23177,
+    "previous_net_gex": 10327,
+    "ema3_net_gex": 20462,
+    "spot": 226.99
   }
 ]

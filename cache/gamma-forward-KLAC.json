@@ -1,58 +1,50 @@
 {
   "ticker": "KLAC",
-  "date": "2026-10-22",
-  "spot": 147.83,
+  "date": "2026-10-23",
+  "spot": 149.24,
   "expirations": [
     {
-      "expiration": "2026-10-23",
-      "dte": 1,
-      "call_gex": 8246,
-      "put_gex": -12677,
-      "net_gex": -4430,
-      "p_c_ratio": 1.5373
-    },
-    {
       "expiration": "2026-10-30",
-      "dte": 8,
-      "call_gex": 3202,
-      "put_gex": -4470,
-      "net_gex": -1268,
-      "p_c_ratio": 1.396
+      "dte": 7,
+      "call_gex": 14650,
+      "put_gex": -4481,
+      "net_gex": 10169,
+      "p_c_ratio": 0.3058
     },
     {
       "expiration": "2026-11-06",
-      "dte": 15,
-      "call_gex": 714,
-      "put_gex": -1925,
-      "net_gex": -1211,
-      "p_c_ratio": 2.6971
+      "dte": 14,
+      "call_gex": 753,
+      "put_gex": -1956,
+      "net_gex": -1204,
+      "p_c_ratio": 2.5988
     },
     {
       "expiration": "2026-11-13",
-      "dte": 22,
-      "call_gex": 1099,
-      "put_gex": -1566,
-      "net_gex": -467,
-      "p_c_ratio": 1.4247
+      "dte": 21,
+      "call_gex": 1151,
+      "put_gex": -1579,
+      "net_gex": -428,
+      "p_c_ratio": 1.3722
     },
     {
       "expiration": "2026-11-20",
-      "dte": 29,
-      "call_gex": 13877,
-      "put_gex": -26797,
-      "net_gex": -12920,
-      "p_c_ratio": 1.931
+      "dte": 28,
+      "call_gex": 13278,
+      "put_gex": -26898,
+      "net_gex": -13619,
+      "p_c_ratio": 2.0257
     },
     {
       "expiration": "2026-11-27",
-      "dte": 36,
-      "call_gex": 155,
-      "put_gex": -595,
-      "net_gex": -440,
-      "p_c_ratio": 3.8332
+      "dte": 35,
+      "call_gex": 189,
+      "put_gex": -628,
+      "net_gex": -439,
+      "p_c_ratio": 3.3234
     }
   ],
   "putWall": 140,
-  "callWall": 170,
+  "callWall": 160,
   "limitedData": false
 }

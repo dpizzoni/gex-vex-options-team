@@ -1,50 +1,58 @@
 {
   "ticker": "CHTR",
-  "date": "2026-10-23",
-  "spot": 108.61,
+  "date": "2026-10-26",
+  "spot": null,
   "expirations": [
     {
       "expiration": "2026-10-30",
-      "dte": 7,
-      "call_gex": 5391,
-      "put_gex": -4931,
-      "net_gex": 461,
-      "p_c_ratio": 0.9146
+      "dte": 4,
+      "call_gex": 6321,
+      "put_gex": -5449,
+      "net_gex": 872,
+      "p_c_ratio": 0.862
     },
     {
       "expiration": "2026-11-06",
-      "dte": 14,
-      "call_gex": 1465,
-      "put_gex": -2452,
-      "net_gex": -987,
-      "p_c_ratio": 1.6735
+      "dte": 11,
+      "call_gex": 2090,
+      "put_gex": -2675,
+      "net_gex": -585,
+      "p_c_ratio": 1.2801
     },
     {
       "expiration": "2026-11-13",
-      "dte": 21,
-      "call_gex": 130,
-      "put_gex": -1082,
-      "net_gex": -952,
-      "p_c_ratio": 8.3474
+      "dte": 18,
+      "call_gex": 155,
+      "put_gex": -1069,
+      "net_gex": -915,
+      "p_c_ratio": 6.9159
     },
     {
       "expiration": "2026-11-20",
-      "dte": 28,
-      "call_gex": 13275,
-      "put_gex": -14770,
-      "net_gex": -1496,
-      "p_c_ratio": 1.1127
+      "dte": 25,
+      "call_gex": 13434,
+      "put_gex": -14836,
+      "net_gex": -1402,
+      "p_c_ratio": 1.1044
     },
     {
       "expiration": "2026-11-27",
-      "dte": 35,
-      "call_gex": 55,
-      "put_gex": -271,
-      "net_gex": -216,
-      "p_c_ratio": 4.9427
+      "dte": 32,
+      "call_gex": 63,
+      "put_gex": -308,
+      "net_gex": -245,
+      "p_c_ratio": 4.8904
+    },
+    {
+      "expiration": "2026-12-04",
+      "dte": 39,
+      "call_gex": 1,
+      "put_gex": -3,
+      "net_gex": -2,
+      "p_c_ratio": 3.098
     }
   ],
-  "putWall": 105,
-  "callWall": 120,
+  "putWall": null,
+  "callWall": null,
   "limitedData": false
 }

@@ -1,50 +1,58 @@
 {
   "ticker": "UBER",
-  "date": "2026-10-23",
-  "spot": 66.7,
+  "date": "2026-10-26",
+  "spot": null,
   "expirations": [
     {
       "expiration": "2026-10-30",
-      "dte": 7,
-      "call_gex": 191189,
-      "put_gex": -215850,
-      "net_gex": -24661,
-      "p_c_ratio": 1.129
+      "dte": 4,
+      "call_gex": 189559,
+      "put_gex": -316391,
+      "net_gex": -126832,
+      "p_c_ratio": 1.6691
     },
     {
       "expiration": "2026-11-06",
-      "dte": 14,
-      "call_gex": 42440,
-      "put_gex": -105882,
-      "net_gex": -63442,
-      "p_c_ratio": 2.4949
+      "dte": 11,
+      "call_gex": 56267,
+      "put_gex": -142504,
+      "net_gex": -86237,
+      "p_c_ratio": 2.5326
     },
     {
       "expiration": "2026-11-13",
-      "dte": 21,
-      "call_gex": 15851,
-      "put_gex": -110063,
-      "net_gex": -94212,
-      "p_c_ratio": 6.9436
+      "dte": 18,
+      "call_gex": 17477,
+      "put_gex": -143059,
+      "net_gex": -125581,
+      "p_c_ratio": 8.1853
     },
     {
       "expiration": "2026-11-20",
-      "dte": 28,
-      "call_gex": 218532,
-      "put_gex": -296122,
-      "net_gex": -77590,
-      "p_c_ratio": 1.3551
+      "dte": 25,
+      "call_gex": 207826,
+      "put_gex": -337375,
+      "net_gex": -129549,
+      "p_c_ratio": 1.6234
     },
     {
       "expiration": "2026-11-27",
-      "dte": 35,
-      "call_gex": 4268,
-      "put_gex": -5254,
-      "net_gex": -986,
-      "p_c_ratio": 1.2311
+      "dte": 32,
+      "call_gex": 4223,
+      "put_gex": -6516,
+      "net_gex": -2293,
+      "p_c_ratio": 1.543
+    },
+    {
+      "expiration": "2026-12-04",
+      "dte": 39,
+      "call_gex": 1431,
+      "put_gex": -585,
+      "net_gex": 847,
+      "p_c_ratio": 0.4085
     }
   ],
-  "putWall": 65,
-  "callWall": 70,
+  "putWall": null,
+  "callWall": null,
   "limitedData": false
 }

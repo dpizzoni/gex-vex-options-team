@@ -1,7 +1,7 @@
 {
   "ticker": "IBIT",
   "date": "2026-10-26",
-  "spot": null,
+  "spot": 45.505,
   "expirations": [
     {
       "expiration": "2026-10-27",
@@ -76,6 +76,14 @@
       "p_c_ratio": 0.9135
     },
     {
+      "expiration": "2026-11-09",
+      "dte": 14,
+      "call_gex": 0,
+      "put_gex": 0,
+      "net_gex": 0,
+      "p_c_ratio": 0
+    },
+    {
       "expiration": "2026-11-13",
       "dte": 18,
       "call_gex": 119670,
@@ -116,7 +124,7 @@
       "p_c_ratio": 1.0288
     }
   ],
-  "putWall": null,
-  "callWall": null,
+  "putWall": 45,
+  "callWall": 50,
   "limitedData": false
 }

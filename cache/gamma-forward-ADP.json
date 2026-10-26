@@ -1,39 +1,39 @@
 {
   "ticker": "ADP",
   "date": "2026-10-26",
-  "spot": null,
+  "spot": 302.25,
   "expirations": [
     {
       "expiration": "2026-10-30",
       "dte": 4,
-      "call_gex": 916,
-      "put_gex": -193,
-      "net_gex": 723,
-      "p_c_ratio": 0.2107
+      "call_gex": 940,
+      "put_gex": -184,
+      "net_gex": 756,
+      "p_c_ratio": 0.1957
     },
     {
       "expiration": "2026-11-06",
       "dte": 11,
-      "call_gex": 204,
-      "put_gex": -27,
-      "net_gex": 177,
-      "p_c_ratio": 0.13
+      "call_gex": 203,
+      "put_gex": -25,
+      "net_gex": 179,
+      "p_c_ratio": 0.1219
     },
     {
       "expiration": "2026-11-13",
       "dte": 18,
-      "call_gex": 244,
+      "call_gex": 248,
       "put_gex": -5,
-      "net_gex": 239,
-      "p_c_ratio": 0.0203
+      "net_gex": 244,
+      "p_c_ratio": 0.0182
     },
     {
       "expiration": "2026-11-20",
       "dte": 25,
-      "call_gex": 6195,
-      "put_gex": -854,
-      "net_gex": 5342,
-      "p_c_ratio": 0.1378
+      "call_gex": 6284,
+      "put_gex": -781,
+      "net_gex": 5503,
+      "p_c_ratio": 0.1243
     },
     {
       "expiration": "2026-11-27",
@@ -41,7 +41,7 @@
       "call_gex": 71,
       "put_gex": -49,
       "net_gex": 22,
-      "p_c_ratio": 0.6893
+      "p_c_ratio": 0.6873
     },
     {
       "expiration": "2026-12-04",
@@ -49,10 +49,10 @@
       "call_gex": 8,
       "put_gex": -1,
       "net_gex": 7,
-      "p_c_ratio": 0.0923
+      "p_c_ratio": 0.089
     }
   ],
-  "putWall": null,
-  "callWall": null,
+  "putWall": 250,
+  "callWall": 310,
   "limitedData": false
 }

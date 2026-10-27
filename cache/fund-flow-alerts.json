@@ -1,35 +1,5 @@
 [
   {
-    "id": "SPY_2026-10-12_FUND_FLOW_SHIFT",
-    "ticker": "SPY",
-    "type": "QUIET_DISTRIBUTION",
-    "streak_days": 3,
-    "net_flow_dates": [
-      "2026-10-08",
-      "2026-10-09",
-      "2026-10-12"
-    ],
-    "net_flow_total": -1400000,
-    "price_change_pct": 0.54,
-    "date": "2026-10-12",
-    "detected_at": "2026-10-13T10:50:27.844Z"
-  },
-  {
-    "id": "XLB_2026-10-12_FUND_FLOW_SHIFT",
-    "ticker": "XLB",
-    "type": "QUIET_ACCUMULATION",
-    "streak_days": 3,
-    "net_flow_dates": [
-      "2026-10-08",
-      "2026-10-09",
-      "2026-10-12"
-    ],
-    "net_flow_total": 850000,
-    "price_change_pct": 0.35,
-    "date": "2026-10-12",
-    "detected_at": "2026-10-13T10:50:27.847Z"
-  },
-  {
     "id": "XLB_2026-10-14_FUND_FLOW_SHIFT",
     "ticker": "XLB",
     "type": "QUIET_ACCUMULATION",
@@ -163,5 +133,35 @@
     "price_change_pct": 1.33,
     "date": "2026-10-23",
     "detected_at": "2026-10-26T10:49:31.883Z"
+  },
+  {
+    "id": "GLD_2026-10-26_FUND_FLOW_SHIFT",
+    "ticker": "GLD",
+    "type": "QUIET_DISTRIBUTION",
+    "streak_days": 3,
+    "net_flow_dates": [
+      "2026-10-22",
+      "2026-10-23",
+      "2026-10-26"
+    ],
+    "net_flow_total": -5900000,
+    "price_change_pct": -0.32,
+    "date": "2026-10-26",
+    "detected_at": "2026-10-27T10:49:53.373Z"
+  },
+  {
+    "id": "XLC_2026-10-26_FUND_FLOW_SHIFT",
+    "ticker": "XLC",
+    "type": "QUIET_ACCUMULATION",
+    "streak_days": 3,
+    "net_flow_dates": [
+      "2026-10-22",
+      "2026-10-23",
+      "2026-10-26"
+    ],
+    "net_flow_total": 1100000,
+    "price_change_pct": -3.32,
+    "date": "2026-10-26",
+    "detected_at": "2026-10-27T10:49:53.360Z"
   }
 ]

@@ -1,166 +1,5 @@
 [
   {
-    "id": "AMD_2026-10-19",
-    "ticker": "AMD",
-    "date": "2026-10-19",
-    "detected_at": "2026-10-19T10:47:47.093Z",
-    "type": "LONG_GAMMA_ENTRY",
-    "net_gex": 16164,
-    "ema3_net_gex": -44,
-    "spot": 546.8
-  },
-  {
-    "id": "BA_2026-10-19",
-    "ticker": "BA",
-    "date": "2026-10-19",
-    "detected_at": "2026-10-19T10:47:47.096Z",
-    "type": "SHORT_GAMMA_ENTRY",
-    "net_gex": -46414,
-    "ema3_net_gex": -55602,
-    "spot": 190.75
-  },
-  {
-    "id": "BKNG_2026-10-19",
-    "ticker": "BKNG",
-    "date": "2026-10-19",
-    "detected_at": "2026-10-19T10:47:47.096Z",
-    "type": "SHORT_GAMMA_ENTRY",
-    "net_gex": -44235,
-    "ema3_net_gex": -15062,
-    "spot": 164.09
-  },
-  {
-    "id": "CHTR_2026-10-19_DOUBLE_GEX",
-    "ticker": "CHTR",
-    "date": "2026-10-19",
-    "detected_at": "2026-10-19T10:47:47.099Z",
-    "type": "DOUBLE_GEX",
-    "net_gex": 12362,
-    "previous_net_gex": 1704,
-    "ema3_net_gex": 4764,
-    "spot": null
-  },
-  {
-    "id": "CSCO_2026-10-19",
-    "ticker": "CSCO",
-    "date": "2026-10-19",
-    "detected_at": "2026-10-19T10:47:47.100Z",
-    "type": "LONG_GAMMA_ENTRY",
-    "net_gex": 33609,
-    "ema3_net_gex": 24932,
-    "spot": 108.62
-  },
-  {
-    "id": "EXC_2026-10-19",
-    "ticker": "EXC",
-    "date": "2026-10-19",
-    "detected_at": "2026-10-19T10:47:47.103Z",
-    "type": "LONG_GAMMA_ENTRY",
-    "net_gex": 43370,
-    "ema3_net_gex": 27933,
-    "spot": null
-  },
-  {
-    "id": "FAST_2026-10-19",
-    "ticker": "FAST",
-    "date": "2026-10-19",
-    "detected_at": "2026-10-19T10:47:47.103Z",
-    "type": "LONG_GAMMA_ENTRY",
-    "net_gex": 250207,
-    "ema3_net_gex": 149565,
-    "spot": null
-  },
-  {
-    "id": "GS_2026-10-19",
-    "ticker": "GS",
-    "date": "2026-10-19",
-    "detected_at": "2026-10-19T10:47:47.104Z",
-    "type": "SHORT_GAMMA_ENTRY",
-    "net_gex": -3899,
-    "ema3_net_gex": -3125,
-    "spot": 887
-  },
-  {
-    "id": "ILMN_2026-10-19",
-    "ticker": "ILMN",
-    "date": "2026-10-19",
-    "detected_at": "2026-10-19T10:47:47.105Z",
-    "type": "LONG_GAMMA_ENTRY",
-    "net_gex": 975,
-    "ema3_net_gex": 497,
-    "spot": 265
-  },
-  {
-    "id": "INTC_2026-10-19",
-    "ticker": "INTC",
-    "date": "2026-10-19",
-    "detected_at": "2026-10-19T15:12:33.080Z",
-    "type": "LONG_GAMMA_ENTRY",
-    "net_gex": 131912,
-    "ema3_net_gex": -48755,
-    "spot": 94.26
-  },
-  {
-    "id": "MU_2026-10-19",
-    "ticker": "MU",
-    "date": "2026-10-19",
-    "detected_at": "2026-10-19T10:47:47.110Z",
-    "type": "LONG_GAMMA_ENTRY",
-    "net_gex": 12854,
-    "ema3_net_gex": 1641,
-    "spot": 909.99
-  },
-  {
-    "id": "NEE_2026-10-19",
-    "ticker": "NEE",
-    "date": "2026-10-19",
-    "detected_at": "2026-10-19T15:12:33.085Z",
-    "type": "SHORT_GAMMA_ENTRY",
-    "net_gex": -43501,
-    "ema3_net_gex": -6454,
-    "spot": 78.37
-  },
-  {
-    "id": "NFLX_2026-10-19",
-    "ticker": "NFLX",
-    "date": "2026-10-19",
-    "detected_at": "2026-10-19T10:47:47.111Z",
-    "type": "SHORT_GAMMA_ENTRY",
-    "net_gex": -395127,
-    "ema3_net_gex": -64073,
-    "spot": 70.58
-  },
-  {
-    "id": "ROST_2026-10-19",
-    "ticker": "ROST",
-    "date": "2026-10-19",
-    "detected_at": "2026-10-19T10:47:47.114Z",
-    "type": "SHORT_GAMMA_ENTRY",
-    "net_gex": -3482,
-    "ema3_net_gex": -2208,
-    "spot": null
-  },
-  {
-    "id": "UBER_2026-10-19",
-    "ticker": "UBER",
-    "date": "2026-10-19",
-    "detected_at": "2026-10-19T10:47:47.117Z",
-    "type": "SHORT_GAMMA_ENTRY",
-    "net_gex": -184195,
-    "ema3_net_gex": -123193,
-    "spot": 70.25
-  },
-  {
-    "id": "WFC_2026-10-19",
-    "ticker": "WFC",
-    "date": "2026-10-19",
-    "detected_at": "2026-10-19T10:47:47.118Z",
-    "type": "SHORT_GAMMA_ENTRY",
-    "net_gex": -308127,
-    "ema3_net_gex": -340472,
-    "spot": 84.2
-  },
-  {
     "id": "ADBE_2026-10-20_DOUBLE_GEX",
     "ticker": "ADBE",
     "date": "2026-10-20",
@@ -1350,5 +1189,134 @@
     "net_gex": 803675,
     "ema3_net_gex": 387485,
     "spot": null
+  },
+  {
+    "id": "AMD_2026-10-27_DOUBLE_GEX",
+    "ticker": "AMD",
+    "date": "2026-10-27",
+    "detected_at": "2026-10-27T10:47:11.408Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 27506,
+    "previous_net_gex": 9463,
+    "ema3_net_gex": 9395,
+    "spot": 536.98
+  },
+  {
+    "id": "CDNS_2026-10-27_DOUBLE_GEX",
+    "ticker": "CDNS",
+    "date": "2026-10-27",
+    "detected_at": "2026-10-27T10:47:11.412Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 3550,
+    "previous_net_gex": 92,
+    "ema3_net_gex": 1642,
+    "spot": 333
+  },
+  {
+    "id": "CSCO_2026-10-27_DOUBLE_GEX",
+    "ticker": "CSCO",
+    "date": "2026-10-27",
+    "detected_at": "2026-10-27T10:47:11.415Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 113456,
+    "previous_net_gex": 39391,
+    "ema3_net_gex": 49367,
+    "spot": 110.43
+  },
+  {
+    "id": "ETHA_2026-10-27_DOUBLE_GEX",
+    "ticker": "ETHA",
+    "date": "2026-10-27",
+    "detected_at": "2026-10-27T10:47:11.417Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": -192894,
+    "previous_net_gex": -62738,
+    "ema3_net_gex": -159629,
+    "spot": 52.07
+  },
+  {
+    "id": "GS_2026-10-27",
+    "ticker": "GS",
+    "date": "2026-10-27",
+    "detected_at": "2026-10-27T10:47:11.419Z",
+    "type": "LONG_GAMMA_ENTRY",
+    "net_gex": 2122,
+    "ema3_net_gex": -994,
+    "spot": 899.95
+  },
+  {
+    "id": "MELI_2026-10-27",
+    "ticker": "MELI",
+    "date": "2026-10-27",
+    "detected_at": "2026-10-27T10:47:11.424Z",
+    "type": "SHORT_GAMMA_ENTRY",
+    "net_gex": -540,
+    "ema3_net_gex": 89,
+    "spot": 1709.99
+  },
+  {
+    "id": "MU_2026-10-27_DOUBLE_GEX",
+    "ticker": "MU",
+    "date": "2026-10-27",
+    "detected_at": "2026-10-27T10:47:11.426Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 42895,
+    "previous_net_gex": 18824,
+    "ema3_net_gex": 25284,
+    "spot": 922
+  },
+  {
+    "id": "ODFL_2026-10-27",
+    "ticker": "ODFL",
+    "date": "2026-10-27",
+    "detected_at": "2026-10-27T10:47:11.427Z",
+    "type": "SHORT_GAMMA_ENTRY",
+    "net_gex": -475,
+    "ema3_net_gex": 242,
+    "spot": null
+  },
+  {
+    "id": "QCOM_2026-10-27_DOUBLE_GEX",
+    "ticker": "QCOM",
+    "date": "2026-10-27",
+    "detected_at": "2026-10-27T10:47:11.429Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 53002,
+    "previous_net_gex": 7355,
+    "ema3_net_gex": 17778,
+    "spot": 178.83
+  },
+  {
+    "id": "RTX_2026-10-27_DOUBLE_GEX",
+    "ticker": "RTX",
+    "date": "2026-10-27",
+    "detected_at": "2026-10-27T10:47:11.430Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 50130,
+    "previous_net_gex": 10120,
+    "ema3_net_gex": 35347,
+    "spot": 197.85
+  },
+  {
+    "id": "SCHW_2026-10-27_DOUBLE_GEX",
+    "ticker": "SCHW",
+    "date": "2026-10-27",
+    "detected_at": "2026-10-27T10:47:11.431Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": -330293,
+    "previous_net_gex": -142918,
+    "ema3_net_gex": -228829,
+    "spot": null
+  },
+  {
+    "id": "SNPS_2026-10-27_DOUBLE_GEX",
+    "ticker": "SNPS",
+    "date": "2026-10-27",
+    "detected_at": "2026-10-27T10:47:11.431Z",
+    "type": "DOUBLE_GEX",
+    "net_gex": 6027,
+    "previous_net_gex": 3078,
+    "ema3_net_gex": 4481,
+    "spot": 457.16
   }
 ]

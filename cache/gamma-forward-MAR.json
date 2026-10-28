@@ -1,7 +1,7 @@
 {
   "ticker": "MAR",
   "date": "2026-10-28",
-  "spot": null,
+  "spot": 392.54,
   "expirations": [
     {
       "expiration": "2026-10-30",
@@ -22,10 +22,10 @@
     {
       "expiration": "2026-11-13",
       "dte": 16,
-      "call_gex": 276,
-      "put_gex": -28,
-      "net_gex": 248,
-      "p_c_ratio": 0.1009
+      "call_gex": 283,
+      "put_gex": -44,
+      "net_gex": 239,
+      "p_c_ratio": 0.1567
     },
     {
       "expiration": "2026-11-20",
@@ -38,10 +38,10 @@
     {
       "expiration": "2026-11-27",
       "dte": 30,
-      "call_gex": 56,
-      "put_gex": -48,
-      "net_gex": 9,
-      "p_c_ratio": 0.8454
+      "call_gex": 66,
+      "put_gex": -50,
+      "net_gex": 16,
+      "p_c_ratio": 0.7539
     },
     {
       "expiration": "2026-12-04",
@@ -52,7 +52,7 @@
       "p_c_ratio": 0.0787
     }
   ],
-  "putWall": null,
-  "callWall": null,
+  "putWall": 385,
+  "callWall": 400,
   "limitedData": false
 }

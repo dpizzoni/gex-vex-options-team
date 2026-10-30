@@ -1,15 +1,15 @@
 {
   "ticker": "HON",
   "date": "2026-10-30",
-  "spot": null,
+  "spot": 220.98,
   "expirations": [
     {
       "expiration": "2026-11-06",
       "dte": 7,
       "call_gex": 2906,
-      "put_gex": -1427,
-      "net_gex": 1480,
-      "p_c_ratio": 0.4909
+      "put_gex": -1428,
+      "net_gex": 1478,
+      "p_c_ratio": 0.4913
     },
     {
       "expiration": "2026-11-13",
@@ -17,15 +17,15 @@
       "call_gex": 1199,
       "put_gex": -163,
       "net_gex": 1036,
-      "p_c_ratio": 0.1358
+      "p_c_ratio": 0.1359
     },
     {
       "expiration": "2026-11-20",
       "dte": 21,
-      "call_gex": 9886,
-      "put_gex": -2969,
-      "net_gex": 6917,
-      "p_c_ratio": 0.3003
+      "call_gex": 9885,
+      "put_gex": -2971,
+      "net_gex": 6914,
+      "p_c_ratio": 0.3005
     },
     {
       "expiration": "2026-11-27",
@@ -33,7 +33,7 @@
       "call_gex": 477,
       "put_gex": -291,
       "net_gex": 186,
-      "p_c_ratio": 0.6097
+      "p_c_ratio": 0.6101
     },
     {
       "expiration": "2026-12-04",
@@ -41,10 +41,10 @@
       "call_gex": 88,
       "put_gex": -143,
       "net_gex": -55,
-      "p_c_ratio": 1.6303
+      "p_c_ratio": 1.6314
     }
   ],
-  "putWall": null,
-  "callWall": null,
+  "putWall": 220,
+  "callWall": 230,
   "limitedData": false
 }
